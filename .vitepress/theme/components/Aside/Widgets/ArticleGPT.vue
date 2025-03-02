@@ -7,7 +7,7 @@
         文章摘要
         <i class="iconfont icon-up"></i>
       </span>
-      <span :class="['logo', { loading }]" @click="showOther"> FakeGPT </span>
+      <span :class="['logo', { loading }]" @click="showOther"> DeepSeek-R1 </span>
     </div>
     <div class="content s-card">
       <span class="text">{{ abstractData === "" ? "加载中..." : abstractData }}</span>
@@ -74,7 +74,7 @@ const initAbstract = () => {
 const showOther = () => {
   if (loading.value) return false;
   const text =
-    "我是無名开发的摘要生成助理 FakeGPT，如你所见，这是一个假的 GPT，所有文本皆源于本地书写的内容。我在这里只负责显示，并仿照 GPT 的形式输出，如果你像我一样囊中羞涩，你也可以像我这样做，当然，你也可以使用 Tianli 开发的 TianliGPT 来更简单地实现真正的 AI 摘要。";
+    "我是深度求索开发的推理模型 Deepseek-R1智能助手，高效解答问题，提供多领域可靠建议。";
   showIndex.value = 0;
   loading.value = true;
   abstractData.value = "";
