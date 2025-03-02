@@ -22,7 +22,7 @@
     "build": "vitepress build",
     "preview": "vitepress preview",
     "deploy:vercel": "vercel deploy",
-    "build:vercel": "vercel build"
+    "build:vercel": "vercel build --prod"
   },
   "devDependencies": {
     "cheerio": "1.0.0-rc.12",
