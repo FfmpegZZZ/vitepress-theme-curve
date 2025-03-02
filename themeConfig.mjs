@@ -154,7 +154,7 @@ export const themeConfig = {
         {
           icon: "/images/logo/logo.webp",
           name: "博客镜像站",
-          url: "https://blog-backup.imsyy.top/",
+          url: "https://www.b23.ink",
         },
       ],
     },
@@ -162,19 +162,19 @@ export const themeConfig = {
       name: "服务",
       list: [
         {
-          icon: "https://pic.efefee.cn/uploads/2024/04/08/6613465358077.png",
+          icon: "/images/logo/logo.webp",
           name: "起始页",
-          url: "https://nav.imsyy.top/",
+          url: "https://www.696898.xyz/",
         },
         {
-          icon: "https://pic.efefee.cn/uploads/2024/04/08/661346d418ad7.png",
+          icon: "/images/logo/logo.webp",
           name: "今日热榜",
-          url: "https://hot.imsyy.top/",
+          url: "https://www.696898.xyz/",
         },
         {
-          icon: "https://pic.efefee.cn/uploads/2024/04/08/66134722586fa.png",
+          icon: "/images/logo/logo.webp",
           name: "站点监测",
-          url: "https://status.imsyy.top/",
+          url: "https://www.696898.xyz/",
         },
       ],
     },
