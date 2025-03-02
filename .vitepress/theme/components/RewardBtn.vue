@@ -18,10 +18,10 @@
         <span class="thank">🙏 感谢您赐予我前进的力量</span>
         <div class="qr">
           <a v-if="rewardData?.wechat" :href="rewardData.wechat" class="qr-img" target="_blank">
-            <img v-if="rewardData?.wechat" :src="rewardData.wechat" alt="微信" />
+            <img v-if="rewardData?.wechat" :src="rewardData.wechat" alt="USDT" />
             <span class="tip">
               <i class="iconfont icon-wechat-pay" />
-              微信
+              USDT
             </span>
           </a>
           <a v-if="rewardData?.alipay" :href="rewardData.alipay" class="qr-img" target="_blank">

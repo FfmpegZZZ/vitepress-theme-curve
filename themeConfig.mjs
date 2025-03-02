@@ -357,6 +357,8 @@ export const themeConfig = {
   // 打赏
   rewardData: {
     enable: true,
+    // 微信二维码
+    wechat: "https://vip.123pan.cn/1825579031/13208156",
     // 支付宝二维码
     alipay: "https://vip.123pan.cn/1825579031/13207919",
   },
