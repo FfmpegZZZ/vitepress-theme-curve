@@ -358,7 +358,7 @@ export const themeConfig = {
   rewardData: {
     enable: true,
     // 支付宝二维码
-    alipay: "/public/images/zfb.jpg",
+    alipay: "https://vip.123pan.cn/1825579031/13207919",
   },
   // 图片灯箱
   fancybox: {
