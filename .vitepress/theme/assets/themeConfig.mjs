@@ -240,15 +240,6 @@ export const themeConfig = {
         ],
       },
       {
-        text: "项目",
-        items: [
-          { text: "Home", link: "https://github.com/imsyy/home/", newTab: true },
-          { text: "SPlayer", link: "https://github.com/imsyy/SPlayer/", newTab: true },
-          { text: "DailyHotApi", link: "https://github.com/imsyy/DailyHotApi/", newTab: true },
-          { text: "Snavigation", link: "https://github.com/imsyy/Snavigation/", newTab: true },
-        ],
-      },
-      {
         text: "专栏",
         items: [
           { text: "技术分享", link: "/pages/categories/技术分享" },
