@@ -19,8 +19,6 @@ test.html
 .vitepress/cache
 .vitepress/components.d.ts
 .vitepress/auto-imports.d.ts
-themeConfig.mjs
-!.vitepress/theme/assets/themeConfig.mjs
 
 posts/*
 !posts/2024/1010.md
