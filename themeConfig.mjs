@@ -16,7 +16,7 @@ export const themeConfig = {
     author: {
       name: "Orwells",
       cover: "/images/logo/logo.webp",
-      email: "114514@gmail.com",
+      email: "up@orwells.one",
       link: "https://www.696898.xyz",
     },
   },
@@ -339,7 +339,7 @@ export const themeConfig = {
   music: {
     enable: false,
     // url
-    url: "https://api-meting.example.com",
+    url: "https://meting-dd.2333332.xyz/api",
     // id
     id: 9379831714,
     // netease / tencent / kugou
@@ -357,10 +357,8 @@ export const themeConfig = {
   // 打赏
   rewardData: {
     enable: true,
-    // 微信二维码
-    wechat: "https://pic.efefee.cn/uploads/2024/04/07/66121049d1e80.webp",
     // 支付宝二维码
-    alipay: "https://pic.efefee.cn/uploads/2024/04/07/661206631d3b5.webp",
+    alipay: "/public/images/zfb.jpg",
   },
   // 图片灯箱
   fancybox: {

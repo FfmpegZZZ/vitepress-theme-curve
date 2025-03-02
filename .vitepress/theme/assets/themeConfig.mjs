@@ -16,7 +16,7 @@ export const themeConfig = {
     author: {
       name: "Orwells",
       cover: "/images/logo/logo.webp",
-      email: "114514@gmail.com",
+      email: "up@orwells.one",
       link: "https://www.696898.xyz",
     },
   },
