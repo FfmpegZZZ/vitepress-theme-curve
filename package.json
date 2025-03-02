@@ -60,5 +60,15 @@
     "vue": "^3.5.13",
     "vue-instantsearch": "^4.20.1",
     "vue-slider-component": "4.1.0-beta.7"
+  },
+  "pnpm": {
+    "ignoredBuiltDependencies": [
+      "@parcel/watcher",
+      "esbuild",
+      "vue-demi"
+    ],
+    "onlyBuiltDependencies": [
+      "@parcel/watcher"
+    ]
   }
 }

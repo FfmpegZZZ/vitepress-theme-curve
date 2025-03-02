@@ -20,8 +20,6 @@ test.html
 .vitepress/components.d.ts
 .vitepress/auto-imports.d.ts
 
-posts/*
-!posts/2024/1010.md
 
 # Editor directories and files
 .vscode/*
