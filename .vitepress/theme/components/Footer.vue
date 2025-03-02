@@ -16,7 +16,7 @@
           target="_blank"
         >
           <i class="iconfont icon-upyun" />
-          又拍云
+          华为云
         </a>
       </div>
       <div class="meta">

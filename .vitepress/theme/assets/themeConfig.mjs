@@ -3,21 +3,21 @@ export const themeConfig = {
   // 站点信息
   siteMeta: {
     // 站点标题
-    title: "Curve",
+    title: "Orwells",
     // 站点描述
     description: "Hello World",
     // 站点logo
     logo: "/images/logo/logo.webp",
     // 站点地址
-    site: "https://blog.imsyy.top",
+    site: "https://www.696898.xyz",
     // 语言
     lang: "zh-CN",
     // 作者
     author: {
-      name: "Admin",
+      name: "Orwells",
       cover: "/images/logo/logo.webp",
       email: "114514@gmail.com",
-      link: "https://www.imsyy.top",
+      link: "https://www.696898.xyz",
     },
   },
   // 备案信息
@@ -40,7 +40,7 @@ export const themeConfig = {
           rel: "alternate",
           type: "application/rss+xml",
           title: "RSS",
-          href: "https://blog.imsyy.top/rss.xml",
+          href: "https://www.696898.xyz/rss.xml",
         },
       ],
       // 预载 CDN
@@ -129,15 +129,14 @@ export const themeConfig = {
     {
       text: "友链",
       items: [
-        { text: "友链鱼塘", link: "/pages/friends", icon: "fish" },
         { text: "友情链接", link: "/pages/link", icon: "people" },
       ],
     },
     {
       text: "我的",
       items: [
-        { text: "畅所欲言", link: "/pages/message", icon: "chat" },
-        { text: "致谢名单", link: "/pages/thanks", icon: "reward" },
+        { text: "隐私政策", link: "/pages/privacy", icon: "privacy" },
+        { text: "版权协议", link: "/pages/cc", icon: "accessible" },
         { text: "关于本站", link: "/pages/about", icon: "contacts" },
       ],
     },
@@ -179,41 +178,6 @@ export const themeConfig = {
         },
       ],
     },
-    {
-      name: "项目",
-      list: [
-        {
-          icon: "/images/logo/logo.webp",
-          name: "Curve",
-          url: "https://github.com/imsyy/vitepress-theme-curve",
-        },
-        {
-          icon: "https://pic.efefee.cn/uploads/2024/04/07/66124f5fc63c8.png",
-          name: "SPlayer",
-          url: "https://github.com/imsyy/SPlayer",
-        },
-        {
-          icon: "https://pic.efefee.cn/uploads/2024/04/08/6613465358077.png",
-          name: "Snavigation",
-          url: "https://github.com/imsyy/SPlayer",
-        },
-        {
-          icon: "/images/logo/logo.webp",
-          name: "Home",
-          url: "https://github.com/imsyy/home",
-        },
-        {
-          icon: "https://pic.efefee.cn/uploads/2024/04/08/661346d418ad7.png",
-          name: "DailyHotApi",
-          url: "https://github.com/imsyy/DailyHotApi",
-        },
-        {
-          icon: "https://pic.efefee.cn/uploads/2024/04/08/66134722586fa.png",
-          name: "site-status",
-          url: "https://github.com/imsyy/site-status",
-        },
-      ],
-    },
   ],
   // 封面配置
   cover: {
@@ -227,9 +191,11 @@ export const themeConfig = {
       coverLayout: 'both',
       // 默认封面(随机展示)
       defaultCover: [
-        'https://example.com/1.avif',
-        'https://example.com/2.avif',
-        'https://example.com/3.avif'
+        'https://vip.123pan.cn/1825579031/13162523',
+        'https://vip.123pan.cn/1825579031/13162522',
+        'https://vip.123pan.cn/1825579031/13162521',
+        'https://vip.123pan.cn/1825579031/13162520',
+        'https://vip.123pan.cn/1825579031/13162519'
       ]
     }
   },

@@ -3,9 +3,9 @@
     <Banner
       type="page"
       title="我的项目"
-      desc="源于热爱开发优秀的作品"
+      desc="无限进步"
       footer="写 BUG 小能手"
-      image="https://pic.efefee.cn/uploads/2024/02/27/65dd8dae6043c.webp"
+      image="https://vip.123pan.cn/1825579031/13162562"
     >
       <template #footer-slot>
         <a class="to-github" href="https://github.com/imsyy/" target="_blank">
@@ -32,8 +32,7 @@ import Banner from "@/components/Banner.vue";
       justify-content: center;
       border-radius: 50px;
       color: #fff;
-      background-color: var(--main-dark-opacity);
-      backdrop-filter: blur(20px);
+      background-color: #000000;
       transition:
         color 0.3s,
         background-color 0.3s;
@@ -42,10 +41,10 @@ import Banner from "@/components/Banner.vue";
         transition: color 0.3s;
       }
       &:hover {
-        color: var(--main-card-background);
-        background-color: var(--main-color);
+        color: #fff;
+        background-color: #333333;
         .iconfont {
-          color: var(--main-card-background) !important;
+          color: #fff !important;
         }
       }
     }

@@ -72,7 +72,7 @@ const props = defineProps({
     type: String,
     default: "",
   },
-  // 背景
+  // 背景 
   image: {
     type: String,
     default: "",
@@ -217,6 +217,7 @@ onBeforeUnmount(() => {
         font-weight: bold;
         line-height: 1.2;
         margin-top: 12px;
+        color: #000000;
       }
     }
   }
