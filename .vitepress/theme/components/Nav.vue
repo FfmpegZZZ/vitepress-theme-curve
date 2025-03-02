@@ -55,7 +55,7 @@
           <a
             class="menu-btn nav-btn travellings"
             title="开往-友链接力"
-            href="https://www.travellings.cn/go.html"
+            href="https://www.napcat.wiki/"
             target="_blank"
           >
             <i class="iconfont icon-subway"></i>
