@@ -261,7 +261,7 @@ export const themeConfig = {
         items: [
           { text: "站点状态", link: "https://status.imsyy.top/", newTab: true },
           { text: "一个导航", link: "https://nav.imsyy.top/", newTab: true },
-          { text: "站点订阅", link: "https://blog.imsyy.top/rss.xml", newTab: true },
+          { text: "站点订阅", link: "https://www.696898.xyz/rss.xml", newTab: true },
           {
             text: "反馈投诉",
             link: "https://eqnxweimkr5.feishu.cn/share/base/form/shrcnCXCPmxCKKJYI3RKUfefJre",
