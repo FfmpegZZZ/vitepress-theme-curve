@@ -205,27 +205,19 @@ export const themeConfig = {
     social: [
       {
         icon: "email",
-        link: "mailto:one@imsyy.top",
+        link: "mailto:up@orwells.one",
       },
       {
         icon: "github",
         link: "https://www.github.com/imsyy/",
       },
       {
-        icon: "telegram",
-        link: "https://t.me/bottom_user",
-      },
-      {
         icon: "bilibili",
-        link: "https://space.bilibili.com/98544142",
+        link: "https://space.bilibili.com/620953103",
       },
       {
         icon: "qq",
-        link: "https://res.abeim.cn/api/qq/?qq=1539250352",
-      },
-      {
-        icon: "twitter-x",
-        link: "https://twitter.com/iimmsyy",
+        link: "https://res.abeim.cn/api/qq/?qq=3122662728",
       },
     ],
     // sitemap
@@ -259,8 +251,8 @@ export const themeConfig = {
       {
         text: "服务",
         items: [
-          { text: "站点状态", link: "https://status.imsyy.top/", newTab: true },
-          { text: "一个导航", link: "https://nav.imsyy.top/", newTab: true },
+          { text: "站点状态", link: "https://www.696898.xyz/", newTab: true },
+          { text: "一个导航", link: "https://www.696898.xyz/", newTab: true },
           { text: "站点订阅", link: "https://www.696898.xyz/rss.xml", newTab: true },
           {
             text: "反馈投诉",
