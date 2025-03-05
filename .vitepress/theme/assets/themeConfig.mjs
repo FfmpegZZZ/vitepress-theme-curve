@@ -21,7 +21,7 @@ export const themeConfig = {
     },
   },
   // 备案信息
-  icp: "萌ICP备114514号",
+  icp: "萌ICP备20250696号",
   // 建站日期
   since: "2020-07-28",
   // 每页文章数据
@@ -154,7 +154,7 @@ export const themeConfig = {
         {
           icon: "/images/logo/logo.webp",
           name: "博客镜像站",
-          url: "https://blog-backup.imsyy.top/",
+          url: "https://www.b23.ink",
         },
       ],
     },
@@ -205,27 +205,19 @@ export const themeConfig = {
     social: [
       {
         icon: "email",
-        link: "mailto:one@imsyy.top",
+        link: "mailto:up@orwells.one",
       },
       {
         icon: "github",
         link: "https://www.github.com/imsyy/",
       },
       {
-        icon: "telegram",
-        link: "https://t.me/bottom_user",
-      },
-      {
         icon: "bilibili",
-        link: "https://space.bilibili.com/98544142",
+        link: "https://space.bilibili.com/620953103",
       },
       {
         icon: "qq",
-        link: "https://res.abeim.cn/api/qq/?qq=1539250352",
-      },
-      {
-        icon: "twitter-x",
-        link: "https://twitter.com/iimmsyy",
+        link: "https://res.abeim.cn/api/qq/?qq=3122662728",
       },
     ],
     // sitemap
@@ -264,7 +256,7 @@ export const themeConfig = {
           { text: "站点订阅", link: "https://www.696898.xyz/rss.xml", newTab: true },
           {
             text: "反馈投诉",
-            link: "mailto:up@orwells.one",
+            link: "https://eqnxweimkr5.feishu.cn/share/base/form/shrcnCXCPmxCKKJYI3RKUfefJre",
             newTab: true,
           },
         ],
@@ -273,10 +265,10 @@ export const themeConfig = {
   },
   // 评论
   comment: {
-    enable: false,
+    enable: true,
     // 评论系统选择
     // artalk / twikoo
-    type: "artalk",
+    type: "twikoo",
     // artalk
     // https://artalk.js.org/
     artalk: {
@@ -288,9 +280,9 @@ export const themeConfig = {
     twikoo: {
       // 必填，若不想使用 CDN，可以使用 pnpm add twikoo 安装并引入
       js: "https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/twikoo/1.6.39/twikoo.all.min.js",
-      envId: "",
+      envId: "https://twikoo.696898.xyz",
       // 环境地域，默认为 ap-shanghai，腾讯云环境填 ap-shanghai 或 ap-guangzhou；Vercel 环境不填
-      region: "ap-shanghai",
+      region: "",
       lang: "zh-CN",
     },
   },
@@ -315,7 +307,7 @@ export const themeConfig = {
       // 倒计时日期
       data: {
         name: "春节",
-        date: "2025-01-29",
+        date: "2026-02-17",
       },
     },
     // 站点数据
@@ -339,7 +331,7 @@ export const themeConfig = {
   music: {
     enable: false,
     // url
-    url: "https://api-meting.example.com",
+    url: "https://meting-dd.2333332.xyz/api",
     // id
     id: 9379831714,
     // netease / tencent / kugou
