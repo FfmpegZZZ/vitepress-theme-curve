@@ -256,7 +256,7 @@ export const themeConfig = {
           { text: "站点订阅", link: "https://www.696898.xyz/rss.xml", newTab: true },
           {
             text: "反馈投诉",
-            link: "https://eqnxweimkr5.feishu.cn/share/base/form/shrcnCXCPmxCKKJYI3RKUfefJre",
+            link: "mailto:up@orwells.one",
             newTab: true,
           },
         ],
