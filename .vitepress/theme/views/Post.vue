@@ -78,7 +78,7 @@
             </a>
           </div>
           <a
-            href="https://eqnxweimkr5.feishu.cn/share/base/form/shrcnCXCPmxCKKJYI3RKUfefJre"
+            href="mailto:up@orwells.one"
             class="report"
             target="_blank"
           >

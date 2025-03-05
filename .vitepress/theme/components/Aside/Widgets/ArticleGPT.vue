@@ -16,7 +16,7 @@
     <div class="meta">
       <span class="tip">此内容根据文章生成，并经过人工审核，仅用于文章内容的解释与总结</span>
       <a
-        href="https://eqnxweimkr5.feishu.cn/share/base/form/shrcnCXCPmxCKKJYI3RKUfefJre"
+        href="mailto:up@orwells.one"
         class="report"
         target="_blank"
       >
