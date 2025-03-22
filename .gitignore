@@ -9,13 +9,11 @@ lerna-debug.log*
 
 node_modules/
 .DS_Store
-dist
 dist-ssr
 coverage
 *.local
 test.html
 .env
-.vitepress/dist
 .vitepress/cache
 .vitepress/components.d.ts
 .vitepress/auto-imports.d.ts
