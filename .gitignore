@@ -13,7 +13,9 @@ dist-ssr
 coverage
 *.local
 test.html
+dist
 .env
+.vitepress/dist
 .vitepress/cache
 .vitepress/components.d.ts
 .vitepress/auto-imports.d.ts
