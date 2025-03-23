@@ -119,14 +119,6 @@ export const themeConfig = {
       ],
     },
     {
-      text: "专栏",
-      items: [
-        { text: "技术分享", link: "/pages/categories/技术分享", icon: "technical" },
-        { text: "我的项目", link: "/pages/project", icon: "code" },
-        { text: "效率工具", link: "/pages/tools", icon: "tools" },
-      ],
-    },
-    {
       text: "友链",
       items: [
         { text: "友情链接", link: "/pages/link", icon: "people" },
@@ -229,14 +221,6 @@ export const themeConfig = {
           { text: "全部分类", link: "/pages/categories" },
           { text: "全部标签", link: "/pages/tags" },
           { text: "文章归档", link: "/pages/archives", newTab: true },
-        ],
-      },
-      {
-        text: "专栏",
-        items: [
-          { text: "技术分享", link: "/pages/categories/技术分享" },
-          { text: "我的项目", link: "/pages/project" },
-          { text: "效率工具", link: "/pages/tools" },
         ],
       },
       {
