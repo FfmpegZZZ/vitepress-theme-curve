@@ -12,6 +12,12 @@ const linkData = [
         desc: "啥？AI？",
         url: "https://www.b23.ink",
       },
+      {
+        name: "snowykami的个人主页",
+        avatar: "https://q.qlogo.cn/g?b=qq&nk=2751454815&s=640",
+        desc: "snowykami的个人主页", 
+        url: "https://sfkm.me",
+      },
     ],
   },
 ];
