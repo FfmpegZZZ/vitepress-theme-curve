@@ -5,6 +5,8 @@
   "rewrites": [
     { "source": "/sitemap.xml", "destination": "/sitemap.xml" },
     { "source": "/feed.xml", "destination": "/feed.xml" },
+    { "source": "/api/download-list", "destination": "/api/download-list" },
+    { "source": "/api/download", "destination": "/api/download" },
     { "source": "/:path*", "destination": "/index.html" }
   ]
 }
