@@ -129,7 +129,6 @@ export const themeConfig = {
       items: [
         { text: "隐私政策", link: "/pages/privacy", icon: "privacy" },
         { text: "版权协议", link: "/pages/cc", icon: "accessible" },
-        { text: "关于本站", link: "/pages/about", icon: "contacts" },
       ],
     },
   ],
@@ -227,7 +226,6 @@ export const themeConfig = {
         text: "页面",
         items: [
           { text: "畅所欲言", link: "/pages/message" },
-          { text: "关于本站", link: "/pages/about" },
           { text: "隐私政策", link: "/pages/privacy" },
           { text: "版权协议", link: "/pages/cc" },
         ],
