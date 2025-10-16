@@ -3,27 +3,27 @@ export const themeConfig = {
   // 站点信息
   siteMeta: {
     // 站点标题
-    title: "Orwells",
+    title: "WUDU",
     // 站点描述
-    description: "Hello World",
+    description: "无度的文档站",
     // 站点logo
     logo: "/images/logo/logo.webp",
     // 站点地址
-    site: "https://www.696898.xyz",
+    site: "https://www.wudu.hk",
     // 语言
     lang: "zh-CN",
     // 作者
     author: {
-      name: "Orwells",
+      name: "摸鱼的无度",
       cover: "/images/logo/logo.webp",
-      email: "up@orwells.one",
-      link: "https://www.696898.xyz",
+      email: "admin@wudu.hk",
+      link: "https://www.wudu.hk",
     },
   },
   // 备案信息
-  icp: "萌ICP备20250696号",
+  icp: "粤ICP备2025460121号-1",
   // 建站日期
-  since: "2020-07-28",
+  since: "2025-10-16",
   // 每页文章数据
   postSize: 8,
   // inject
@@ -40,7 +40,7 @@ export const themeConfig = {
           rel: "alternate",
           type: "application/rss+xml",
           title: "RSS",
-          href: "https://www.696898.xyz/rss.xml",
+          href: "https://www.wudu.hk/rss.xml",
         },
       ],
       // 预载 CDN
@@ -111,17 +111,11 @@ export const themeConfig = {
   // 导航栏菜单
   nav: [
     {
-      text: "文库",
+      text: "游戏",
       items: [
-        { text: "文章列表", link: "/pages/archives", icon: "article" },
+        { text: "游戏列表", link: "/pages/archives", icon: "article" },
         { text: "全部分类", link: "/pages/categories", icon: "folder" },
         { text: "全部标签", link: "/pages/tags", icon: "hashtag" },
-      ],
-    },
-    {
-      text: "友链",
-      items: [
-        { text: "友情链接", link: "/pages/link", icon: "people" },
       ],
     },
     {
@@ -273,7 +267,7 @@ export const themeConfig = {
     // 站点简介
     hello: {
       enable: true,
-      text: "这里有关于<strong>开发</strong>相关的问题和看法，也会有一些<strong>奇技淫巧</strong>的分享，其中大部分内容会侧重于<strong>前端开发</strong>。希望你可以在这里找到对你有用的知识和教程。",
+      text: "你可以在这里找到你想要的快乐！",
     },
     // 目录
     toc: {
@@ -294,7 +288,7 @@ export const themeConfig = {
     },
     // 站点数据
     siteData: {
-      enable: true,
+      enable: false,
     },
   },
   // 友链
@@ -324,9 +318,9 @@ export const themeConfig = {
   // 搜索
   // https://www.algolia.com/
   search: {
-    enable: false,
-    appId: "",
-    apiKey: "",
+    enable: true,
+    appId: "J2YUVM5GIE",
+    apiKey: "e6f5d491ea40dc599879476725fbb141",
   },
   // 打赏
   rewardData: {

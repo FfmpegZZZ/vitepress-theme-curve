@@ -2,7 +2,7 @@
   <footer id="main-footer" class="main-footer">
     <div class="footer-content">
       <div class="copyright">
-        <span class="time">@ 2019 - {{ thisYear }} By </span>
+        <span class="time">@ 2025 - {{ thisYear }} By </span>
         <a :href="theme.siteMeta.author.link" class="author link" target="_blank">
           {{ theme.siteMeta.author.name }}
         </a>
@@ -12,11 +12,11 @@
         </a>
         <a
           class="upyun link"
-          href="https://www.vercel.com/"
+          href="https://edgeone.ai/"
           target="_blank"
         >
           <i class="iconfont icon-safe" />
-          Powered by Vercel
+          Edgeone CDN
         </a>
       </div>
       <div class="meta">

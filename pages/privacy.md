@@ -9,7 +9,7 @@ card: true
 **更新日期：2025 年 03 月 01 日**  
 **生效日期：2025 年 03 月 01 日**
 
-欢迎来到 [Orwells](https://www.696898.xyz/)（ 以下简称 “本站” ）。本站非常重视您的隐私和个人信息保护。您在使用网站时，可能会收集和使用您的相关信息。通过本页面向您说明在您访问本站时，本站是如何收集、使用、保存、共享和转让这些信息。
+欢迎来到 [无度的小屋](https://www.wudu.hk/)（ 以下简称 “本站” ）。本站非常重视您的隐私和个人信息保护。您在使用网站时，可能会收集和使用您的相关信息。通过本页面向您说明在您访问本站时，本站是如何收集、使用、保存、共享和转让这些信息。
 
 ## 信息收集与使用
 
@@ -24,8 +24,9 @@ card: true
 > 在访问时，本站内置的第三方服务会通过以下或更多途径，来获取您的以下或更多信息：
 
 - **腾讯云** 会收集您的访问信息，用于提供网站服务。[腾讯云隐私政策](https://www.tencentcloud.com/zh/document/product/301/17345)
-- **华为云** 会收集您的访问信息，用于提供网站服务。[华为云隐私权政策](https://www.huaweicloud.com/zh-cn/privacypolicy/)
+- **阿里云** 会收集您的访问信息，用于提供网站服务。[阿里云隐私权政策](https://help.aliyun.com/document_detail/2705226.html)
 - **腾讯Codesign** 会收集您的访问信息，用于提供图标显示。[CoDesign 设计协作平台隐私保护指引](https://codesign.qq.com/privacy.html)
+- **百度统计** 会收集您的访问信息，用于网站流量统计与分析。[百度统计隐私政策](https://www.baidu.com/duty/yinsiquan.html)
 
 > 第三方信息获取方将您的数据用于以下用途：
 
@@ -55,8 +56,6 @@ card: true
 **内置服务**
 
 - 评论系统
-- 中控台
-- 胶囊音乐
 
 
 详情参考 [在 Chrome 中删除、允许和管理 Cookie](https://support.google.com/chrome/answer/95647?co=GENIE.Platform=Desktop&hl=zh-Hans)

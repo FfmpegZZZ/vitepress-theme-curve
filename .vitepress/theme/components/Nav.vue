@@ -63,7 +63,7 @@
           <!-- 随机文章 -->
           <div
             class="menu-btn nav-btn"
-            title="随机前往一篇文章"
+            title="随机寻找一个游戏"
             @click="router.go(shufflePost(theme.postData))"
           >
             <i class="iconfont icon-shuffle"></i>
