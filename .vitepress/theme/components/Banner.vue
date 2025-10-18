@@ -536,13 +536,16 @@ onBeforeUnmount(() => {
     cursor: pointer;
   }
   @media (max-width: 768px) {
-    align-items: flex-start;
-    height: 240px;
+    align-items: center;
+    height: 260px;
+    padding: 0 1rem;
     .title {
-      font-size: 2.25rem;
+      font-size: 2rem;
+      text-align: center;
     }
     .search-container {
-      width: 90%;
+      width: 100%;
+      max-width: 100%;
       margin-top: 1.5rem;
       
       .search-wrapper {
