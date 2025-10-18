@@ -14,9 +14,6 @@ import "@/style/main.scss";
 const pinia = createPinia();
 pinia.use(piniaPluginPersistedstate);
 
-// InstantSearch
-import InstantSearch from "vue-instantsearch/vue3/es";
-
 // Theme
 const Theme = {
   // extends: Theme,
@@ -26,7 +23,6 @@ const Theme = {
   enhanceApp({ app, router, siteData }) {
     // 挂载
     app.use(pinia);
-    app.use(InstantSearch);
     app.component("LazyLoader", LazyLoader);
     // 插件
     enhanceAppWithTabs(app);

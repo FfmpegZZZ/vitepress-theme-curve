@@ -97,15 +97,6 @@ export const themeConfig = {
           rel: "stylesheet",
         },
       ],
-      // 预载 DocSearch
-      [
-        "link",
-        {
-          href: "https://X5EBEZB53I-dsn.algolia.net",
-          rel: "preconnect",
-          crossorigin: "",
-        },
-      ],
     ],
   },
   // 导航栏菜单
@@ -315,12 +306,9 @@ export const themeConfig = {
     // playlist / album / song
     type: "playlist",
   },
-  // 搜索
-  // https://www.algolia.com/
+  // 搜索 - 本地搜索
   search: {
     enable: true,
-    appId: "J2YUVM5GIE",
-    apiKey: "e6f5d491ea40dc599879476725fbb141",
   },
   // 打赏
   rewardData: {

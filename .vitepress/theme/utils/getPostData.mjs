@@ -30,13 +30,32 @@ const getPostMDFilePaths = async () => {
 const compareDate = (obj1, obj2) => {
   return obj1.date < obj2.date ? 1 : -1;
 };
+
+/**
+ * 基于优先级、置顶和日期排序文章
+ * @param {Object} a - 第一篇文章对象
+ * @param {Object} b - 第二篇文章对象
+ * @returns {number} - 比较结果
+ */
 const comparePostPriority = (a, b) => {
+  // 获取优先级，默认为 0
+  const priorityA = a.priority || 0;
+  const priorityB = b.priority || 0;
+  
+  // 1. 首先按优先级数字排序（数字越大越靠前）
+  if (priorityA !== priorityB) {
+    return priorityB - priorityA;
+  }
+  
+  // 2. 优先级相同时，按置顶排序
   if (a.top && !b.top) {
     return -1;
   }
   if (!a.top && b.top) {
     return 1;
   }
+  
+  // 3. 最后按日期排序
   return compareDate(a, b);
 };
 
@@ -60,7 +79,7 @@ export const getAllPosts = async () => {
           const { birthtimeMs, mtimeMs } = stat;
           // 解析 front matter
           const { data } = matter(content);
-          const { title, date, categories, description, tags, top, cover } = data;
+          const { title, date, categories, description, tags, top, cover, priority } = data;
           // 计算文章的过期天数
           const expired = Math.floor(
             (new Date().getTime() - new Date(date).getTime()) / (1000 * 60 * 60 * 24),
@@ -78,6 +97,7 @@ export const getAllPosts = async () => {
             regularPath: `/${item.replace(".md", ".html")}`,
             top,
             cover,
+            priority: priority || 0, // 优先级字段，默认为 0
           };
         } catch (error) {
           console.error(`处理文章文件 '${item}' 时出错:`, error);

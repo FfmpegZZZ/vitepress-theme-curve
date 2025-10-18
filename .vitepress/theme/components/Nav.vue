@@ -120,7 +120,7 @@
     <MobileMenu />
     <!-- 全局搜索 -->
     <ClientOnly>
-      <Search v-if="theme.search.enable" />
+      <LocalSearch v-if="theme.search.enable" />
     </ClientOnly>
   </header>
 </template>
