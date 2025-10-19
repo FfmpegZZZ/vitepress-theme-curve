@@ -52,6 +52,8 @@
     </div>
     <div class="post-content">
       <article class="post-article s-card">
+        <!-- 游戏信息 -->
+        <GameInfo v-if="frontmatter.gameInfo" :gameData="frontmatter.gameInfo" />
         <!-- 过期提醒 -->
         <div class="expired s-card" v-if="postMetaData?.expired >= 180">
           本文发表于 <strong>{{ postMetaData?.expired }}</strong> 天前，其中的信息可能已经事过境迁
