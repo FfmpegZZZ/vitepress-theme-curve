@@ -112,6 +112,7 @@ export const themeConfig = {
     {
       text: "我的",
       items: [
+        { text: "社交平台", link: "/pages/social", icon: "link" },
         { text: "隐私政策", link: "/pages/privacy", icon: "privacy" },
         { text: "版权协议", link: "/pages/cc", icon: "accessible" },
       ],
@@ -178,24 +179,7 @@ export const themeConfig = {
   // 页脚信息
   footer: {
     // 社交链接（请确保为偶数个）
-    social: [
-      {
-        icon: "email",
-        link: "mailto:up@orwells.one",
-      },
-      {
-        icon: "github",
-        link: "https://www.github.com/imsyy/",
-      },
-      {
-        icon: "bilibili",
-        link: "https://space.bilibili.com/620953103",
-      },
-      {
-        icon: "qq",
-        link: "https://res.abeim.cn/api/qq/?qq=3122662728",
-      },
-    ],
+    social: [],
     // sitemap
     sitemap: [
       {
@@ -210,7 +194,7 @@ export const themeConfig = {
       {
         text: "页面",
         items: [
-          { text: "畅所欲言", link: "/pages/message" },
+          { text: "社交平台", link: "/pages/social" },
           { text: "隐私政策", link: "/pages/privacy" },
           { text: "版权协议", link: "/pages/cc" },
         ],
@@ -232,7 +216,7 @@ export const themeConfig = {
   },
   // 评论
   comment: {
-    enable: true,
+    enable: false,
     // 评论系统选择
     // artalk / twikoo
     type: "twikoo",

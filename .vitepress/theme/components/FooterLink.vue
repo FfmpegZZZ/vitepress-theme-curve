@@ -6,7 +6,7 @@
       <span class="site-desc">{{ site.description }}</span>
       <a href="/" class="to-home">了解更多</a>
     </div>
-    <div class="footer-social">
+    <div class="footer-social" v-if="footer.social && footer.social.length > 0">
       <a
         v-for="(item, index) in socialLinkData.first"
         :key="index"
@@ -16,9 +16,6 @@
       >
         <i :class="`iconfont icon-${item.icon}`"></i>
       </a>
-      <div class="logo" title="返回顶部" @click="smoothScrolling">
-        <img :src="siteMeta.author.cover" alt="author" class="author" />
-      </div>
       <a
         v-for="(item, index) in socialLinkData.second"
         :key="index"

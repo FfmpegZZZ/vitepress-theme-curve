@@ -14,11 +14,8 @@
         <span class="desc">{{ theme.siteMeta.description }}</span>
       </div>
       <div class="link">
-        <a href="https://github.com/FfmpegZzz" target="_blank" class="social-link">
-          <i class="iconfont icon-github"></i>
-        </a>
-        <a href="mailto:up@orwells.one" target="_blank" class="social-link">
-          <i class="iconfont icon-email"></i>
+        <a href="/pages/social" class="social-link">
+          <i class="iconfont icon-link"></i>
         </a>
       </div>
     </div>

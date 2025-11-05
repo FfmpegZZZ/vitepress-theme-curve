@@ -4,27 +4,8 @@
       <div class="nav-all">
         <!-- 导航栏左侧 -->
         <div class="left-nav">
-          <div class="more-menu nav-btn" title="更多内容">
-            <i class="iconfont icon-menu" />
-            <div class="more-card s-card">
-              <div v-for="(item, index) in theme.navMore" :key="index" class="more-item">
-                <span class="more-name">{{ item.name }}</span>
-                <div class="more-list">
-                  <a
-                    v-for="(link, i) in item.list"
-                    :key="i"
-                    :href="link.url"
-                    class="more-link"
-                    target="_blank"
-                  >
-                    <img class="link-icon" :src="link.icon" :alt="link.name" />
-                    <span class="link-name">{{ link.name }}</span>
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
           <div class="site-name" @click="router.go('/')">
+            <i class="iconfont icon-menu" />
             {{ site.title }}
           </div>
         </div>
@@ -51,15 +32,6 @@
           </span>
         </div>
         <div class="right-nav">
-          <!-- 开往 -->
-          <a
-            class="menu-btn nav-btn travellings"
-            title="开往-友链接力"
-            href="https://www.napcat.wiki/"
-            target="_blank"
-          >
-            <i class="iconfont icon-subway"></i>
-          </a>
           <!-- 随机文章 -->
           <div
             class="menu-btn nav-btn"
@@ -76,15 +48,6 @@
             @click="store.changeShowStatus('searchShow')"
           >
             <i class="iconfont icon-search"></i>
-          </div>
-          <!-- 中控台 -->
-          <div
-            id="open-control"
-            class="menu-btn nav-btn pc"
-            title="打开中控台"
-            @click="store.changeShowStatus('controlShow')"
-          >
-            <i class="iconfont icon-dashboard" />
           </div>
           <!-- 返回顶部 -->
           <div
@@ -291,6 +254,10 @@ const { site, theme, frontmatter, page } = useData();
         text-overflow: ellipsis;
         transition: transform 0.3s;
         cursor: pointer;
+        .iconfont {
+          margin-right: 8px;
+          font-size: 20px;
+        }
         &::after {
           content: "\e032";
           font-family: "iconfont";

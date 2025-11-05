@@ -169,38 +169,6 @@
               </span>
             </div>
           </div>
-          <!-- 播放器控制 -->
-          <div v-if="playerShow" class="all-menu general player">
-            <div class="data">
-              <span class="name">{{ playerData.name }}</span>
-              <span class="artist">{{ playerData.artist }}</span>
-            </div>
-            <div class="volume" @click.stop>
-              <i
-                class="iconfont icon-volume-down"
-                @click="playerVolume = Math.max(0, playerVolume - 0.1)"
-              />
-              <Slider :value="playerVolume" @update="(val) => (playerVolume = val)" />
-              <i
-                class="iconfont icon-volume-up"
-                @click="playerVolume = Math.min(1, playerVolume + 0.1)"
-              />
-            </div>
-            <div class="control" @click.stop>
-              <div class="btn" title="上一曲" @click="playerControl('prev')">
-                <i class="iconfont icon-prev"></i>
-              </div>
-              <div v-if="playState" class="btn" title="暂停" @click="playerControl('toggle')">
-                <i class="iconfont icon-pause"></i>
-              </div>
-              <div v-else class="btn" title="播放" @click="playerControl('toggle')">
-                <i class="iconfont icon-play"></i>
-              </div>
-              <div class="btn" title="下一曲" @click="playerControl('next')">
-                <i class="iconfont icon-next"></i>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </Transition>
@@ -226,7 +194,7 @@ import { smoothScrolling, shufflePost, copyText, copyImage, downloadImage } from
 const router = useRouter();
 const store = mainStore();
 const { theme } = useData();
-const { useRightMenu, themeType, playerShow, playerVolume, playState, playerData } =
+const { useRightMenu, themeType } =
   storeToRefs(store);
 
 // 右键菜单数据
@@ -371,26 +339,6 @@ const rightMenuFunc = async (type) => {
   } catch (error) {
     $message.error("右键菜单发生错误，请重试");
     console.error("右键菜单出错：", error);
-  }
-};
-
-// 播放器控制
-const playerControl = (type) => {
-  if (typeof $player !== "object" || !type) return false;
-  switch (type) {
-    case "toggle":
-      $player?.toggle();
-      break;
-    case "next":
-      $player?.skipForward();
-      $player?.play();
-      break;
-    case "prev":
-      $player?.skipBack();
-      $player?.play();
-      break;
-    default:
-      return false;
   }
 };
 

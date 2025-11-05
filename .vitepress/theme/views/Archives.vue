@@ -1,7 +1,7 @@
 <template>
   <div class="archives s-card">
     <div class="title">
-      <h1 class="name">文章</h1>
+      <h1 class="name">文章列表</h1>
       <sup v-if="theme.postData?.length" class="num">{{ theme.postData.length }}</sup>
     </div>
     <div class="archives-list">

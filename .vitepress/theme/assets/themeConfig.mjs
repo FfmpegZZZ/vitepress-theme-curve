@@ -225,7 +225,7 @@ export const themeConfig = {
       {
         text: "页面",
         items: [
-          { text: "畅所欲言", link: "/pages/message" },
+          { text: "社交平台", link: "/pages/social" },
           { text: "隐私政策", link: "/pages/privacy" },
           { text: "版权协议", link: "/pages/cc" },
         ],
