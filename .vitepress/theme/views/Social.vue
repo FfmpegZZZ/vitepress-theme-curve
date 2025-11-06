@@ -1,9 +1,10 @@
 <template>
-  <div class="social" v-if="mounted">
-    <h1 class="title">谢谢你关注我</h1>
-    <p class="subtitle">欢迎在各大平台关注摸鱼的无度</p>
-    
-    <div class="social-content">
+  <ClientOnly>
+    <div class="social">
+      <h1 class="title">谢谢你关注我</h1>
+      <p class="subtitle">欢迎在各大平台关注摸鱼的无度</p>
+      
+      <div class="social-content">
       <!-- Bilibili -->
       <a
         href="https://space.bilibili.com/3493289432975797"
@@ -159,17 +160,11 @@
       </a>
     </div>
   </div>
+  </ClientOnly>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-
-// 确保组件在客户端挂载
-const mounted = ref(false);
-
-onMounted(() => {
-  mounted.value = true;
-});
+// 社交平台数据可以在这里添加
 </script>
 
 <style lang="scss" scoped>
