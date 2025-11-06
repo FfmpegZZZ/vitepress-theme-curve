@@ -114,14 +114,21 @@ export const themeConfig = {
       text: "游戏",
       items: [
         { text: "游戏列表", link: "/pages/archives", icon: "article" },
-        { text: "全部分类", link: "/pages/categories", icon: "folder" },
-        { text: "全部标签", link: "/pages/tags", icon: "hashtag" },
+        { text: "Q&A", link: "/pages/qa", icon: "folder" },
+        { text: "运行平台", link: "/pages/tags", icon: "hashtag" },
       ],
     },
     {
       text: "我的",
       items: [
         { text: "社交平台", link: "/pages/social", icon: "link" },
+        { text: "QQ群组", link: "/pages/qqgroup", icon: "qq" },
+        { text: "其他工具", link: "/pages/tool", icon: "download" },
+      ],
+    },
+    {
+      text: "关于",
+      items: [
         { text: "隐私政策", link: "/pages/privacy", icon: "privacy" },
         { text: "版权协议", link: "/pages/cc", icon: "accessible" },
       ],

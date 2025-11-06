@@ -13,7 +13,13 @@
         <div class="nav-center">
           <div class="site-menu">
             <div v-for="(item, index) in theme.nav" :key="index" class="menu-item">
-              <span class="link-btn"> {{ item.text }}</span>
+              <span 
+                class="link-btn" 
+                :style="{ cursor: item.link ? 'pointer' : 'default' }"
+                @click="item.link && router.go(item.link)"
+              > 
+                {{ item.text }}
+              </span>
               <div v-if="item.items" class="link-child">
                 <span
                   v-for="(child, childIndex) in item.items"

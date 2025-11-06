@@ -14,7 +14,13 @@
             <!-- 菜单 -->
             <div class="menu-list">
               <div v-for="(item, index) in nav" :key="index" class="menu-item">
-                <span class="link-title"> {{ item.text }}</span>
+                <span 
+                  class="link-title"
+                  :style="{ cursor: item.link ? 'pointer' : 'default' }"
+                  @click="item.link && pageJump(item.link)"
+                > 
+                  {{ item.text }}
+                </span>
                 <div v-if="item.items" class="link-child">
                   <div
                     v-for="(child, childIndex) in item.items"
