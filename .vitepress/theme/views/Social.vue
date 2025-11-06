@@ -1,5 +1,5 @@
 <template>
-  <div class="social">
+  <div class="social" v-if="mounted">
     <h1 class="title">谢谢你关注我</h1>
     <p class="subtitle">欢迎在各大平台关注摸鱼的无度</p>
     
@@ -162,7 +162,14 @@
 </template>
 
 <script setup>
-// 社交平台数据可以在这里添加
+import { ref, onMounted } from 'vue';
+
+// 确保组件在客户端挂载
+const mounted = ref(false);
+
+onMounted(() => {
+  mounted.value = true;
+});
 </script>
 
 <style lang="scss" scoped>
@@ -171,7 +178,7 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem 0;
-  animation: show 0.5s backwards;
+  animation: fade-up 0.5s ease-out;
 
   .title {
     font-size: 2.5rem;
@@ -310,7 +317,7 @@
   }
 }
 
-@keyframes show {
+@keyframes fade-up {
   from {
     opacity: 0;
     transform: translateY(20px);
