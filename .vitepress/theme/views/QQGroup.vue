@@ -22,7 +22,7 @@
             </span>
           </div>
           <span class="qqgroup-number">群号：{{ group.number }}</span>
-          <span v-if="group.status === '可加入'" class="qqgroup-hint">点击加入群聊</span>
+          <span v-if="group.status !== '已满'" class="qqgroup-hint">点击加入群聊</span>
         </div>
         <div class="qqgroup-arrow">
           <i class="iconfont icon-arrow-right"></i>
@@ -40,42 +40,42 @@ const groupList = ref([
   {
     name: "交流1群",
     number: "827825605",
-    status: "已满",
+    status: "未满",
     inviteCode: "dIubB0pmIa"
   }, {
     name: "交流2群",
     number: "465585624",
-    status: "可加入",
+    status: "未满",
     inviteCode: "Hlj63QvA0c"
   }, {
     name: "交流3群",
     number: "276501029",
-    status: "可加入",
+    status: "未满",
     inviteCode: "ZvBuT4DZSe"
   }, {
     name: "交流4群",
     number: "1027523228",
-    status: "已满",
+    status: "未满",
     inviteCode: "T3H9WcipOi"
   }, {
     name: "交流5群",
     number: "362211607",
-    status: "可加入",
+    status: "未满",
     inviteCode: "Jy1ES7NIuC"
   }, {
     name: "交流6群",
     number: "982730234",
-    status: "可加入",
+    status: "未满",
     inviteCode: "o7oNm6ko1"
   }, {
     name: "交流7群",
     number: "1004682263",
-    status: "可加入",
+    status: "未满",
     inviteCode: "6PQoY4elji"
   }, {
     name: "交流8群",
     number: "686304544",
-    status: "已满",
+    status: "未满",
     inviteCode: "6zSNBAOp3"
   }, {
     name: "交流9群",
@@ -90,13 +90,23 @@ const groupList = ref([
   }, {
     name: "交流11群",
     number: "1050398192",
-    status: "可加入",
+    status: "已满",
     inviteCode: "pWsIR0w5wc"
   }, {
     name: "交流12群",
     number: "1018276775",
-    status: "可加入",
+    status: "已满",
     inviteCode: "E791Eik9Q4"
+  }, {
+    name: "无度的宝宝13群",
+    number: "未知",
+    status: "已满",
+    inviteCode: "GNtHNXXJaC"
+  }, {
+    name: "无度的宝宝14群",
+    number: "未知",
+    status: "未满",
+    inviteCode: "bVd9p5arYI"
   }, {
     name: "防走失1群（禁言群）",
     number: "958187921",
@@ -110,8 +120,18 @@ const groupList = ref([
   }, {
     name: "防走失3群（禁言群）",
     number: "1033695913",
-    status: "可加入",
+    status: "已满",
     inviteCode: "feNAD2o2fm"
+  }, {
+    name: "防走失4群（禁言群）",
+    number: "未知",
+    status: "已满",
+    inviteCode: "Rbw5Wn6Tuw"
+  }, {
+    name: "防走失5群（禁言群）",
+    number: "未知",
+    status: "未满",
+    inviteCode: "7SpGNhiiSQ"
   }
 ]);
 
