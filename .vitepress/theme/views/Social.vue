@@ -1,10 +1,9 @@
 <template>
-  <ClientOnly>
-    <div class="social">
-      <h1 class="title">谢谢你关注我</h1>
-      <p class="subtitle">欢迎在各大平台关注摸鱼的无度</p>
-      
-      <div class="social-content">
+  <div class="social">
+    <h1 class="title">谢谢你关注我</h1>
+    <p class="subtitle">欢迎在各大平台关注摸鱼的无度</p>
+    
+    <div class="social-content">
       <!-- Bilibili -->
       <a
         href="https://space.bilibili.com/3493289432975797"
@@ -160,11 +159,22 @@
       </a>
     </div>
   </div>
-  </ClientOnly>
 </template>
 
 <script setup>
-// 社交平台数据可以在这里添加
+import { onMounted } from 'vue';
+
+onMounted(() => {
+  // 强制重绘 SVG 以确保正确渲染
+  const socialItems = document.querySelectorAll('.social-item svg');
+  socialItems.forEach(svg => {
+    // 触发重绘
+    svg.style.opacity = '0.99';
+    requestAnimationFrame(() => {
+      svg.style.opacity = '1';
+    });
+  });
+});
 </script>
 
 <style lang="scss" scoped>
@@ -274,6 +284,10 @@
           width: 40px;
           height: 40px;
           fill: currentColor;
+          // 强制 SVG 渲染
+          will-change: transform;
+          backface-visibility: hidden;
+          -webkit-backface-visibility: hidden;
         }
 
         .iconfont {

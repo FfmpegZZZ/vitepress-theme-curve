@@ -82,6 +82,15 @@ export const themeConfig = {
         "link",
         {
           crossorigin: "anonymous",
+          rel: "preload",
+          as: "style",
+          href: "https://cdn2.codesign.qq.com/icons/g5ZpEgx3z4VO6j2/latest/iconfont.css",
+        },
+      ],
+      [
+        "link",
+        {
+          crossorigin: "anonymous",
           rel: "stylesheet",
           href: "https://cdn2.codesign.qq.com/icons/g5ZpEgx3z4VO6j2/latest/iconfont.css",
         },
