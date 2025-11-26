@@ -230,6 +230,40 @@ const markdownConfig = (md, themeConfig) => {
     }
     return fence(...args);
   };  
+
+  // spoiler
+  md.inline.ruler.push('spoiler', (state, silent) => {
+    const marker = '[spoiler]';
+    const markerEnd = '[/spoiler]';
+    const max = state.posMax;
+    const start = state.pos;
+
+    if (state.src.slice(start, start + marker.length) !== marker) {
+      return false;
+    }
+
+    if (silent) {
+      return false;
+    }
+
+    const end = state.src.indexOf(markerEnd, start + marker.length);
+    if (end === -1) {
+      return false;
+    }
+
+    const content = state.src.slice(start + marker.length, end);
+
+    const tokenOpen = state.push('spoiler_open', 'span', 1);
+    tokenOpen.attrs = [['class', 'spoiler'], ['title', '你知道的太多了']];
+
+    const tokenText = state.push('text', '', 0);
+    tokenText.content = content;
+
+    const tokenClose = state.push('spoiler_close', 'span', -1);
+
+    state.pos = end + markerEnd.length;
+    return true;
+  });
 };
 
 export default markdownConfig;

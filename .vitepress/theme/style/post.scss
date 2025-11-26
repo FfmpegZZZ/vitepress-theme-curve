@@ -127,6 +127,19 @@
     strong {
       color: var(--main-color);
     }
+    // 剧透
+    .spoiler {
+      background-color: var(--main-font-color);
+      color: var(--main-font-color);
+      border-radius: 4px;
+      padding: 0 4px;
+      transition: all 0.3s ease;
+      cursor: help;
+      &:hover {
+        background-color: var(--main-card-border);
+        color: var(--main-font-color);
+      }
+    }
   }
   // 图片
   img {
