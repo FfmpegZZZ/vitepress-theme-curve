@@ -44,6 +44,7 @@
 
       <!-- 发布日期 -->
       <div v-if="gameData.releaseDate" class="detail-item">
+        <i class="iconfont icon-language" />
         <div class="detail-content">
           <span class="label">发布日期</span>
           <span class="value">{{ gameData.releaseDate }}</span>
