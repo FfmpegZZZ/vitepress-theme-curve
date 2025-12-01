@@ -34,6 +34,8 @@
   <RightMenu ref="rightMenuRef" />
   <!-- 全局消息 -->
   <Message />
+  <!-- 阅读引导弹窗 -->
+  <ReadGuide :show="showReadGuide" @close="closeReadGuide" />
 </template>
 
 <script setup>
@@ -50,11 +52,45 @@ const { loadingStatus, footerIsShow, themeValue, themeType, backgroundType, font
 // 右键菜单
 const rightMenuRef = ref(null);
 
+// 阅读引导弹窗
+const showReadGuide = ref(false);
+const READ_GUIDE_KEY = "read_guide_shown";
+
 // 判断是否为文章页面
 const isPostPage = computed(() => {
   const routePath = decodeURIComponent(route.path);
   return routePath.includes("/posts/");
 });
+
+// 检查是否需要显示引导弹窗
+const checkShowReadGuide = () => {
+  // 只在文章页面显示
+  if (!isPostPage.value) return;
+  
+  // 检查 localStorage 是否已显示过
+  try {
+    const hasShown = localStorage.getItem(READ_GUIDE_KEY);
+    if (!hasShown) {
+      // 延迟显示，等待页面加载完成
+      setTimeout(() => {
+        showReadGuide.value = true;
+      }, 800);
+    }
+  } catch (e) {
+    // localStorage 不可用时不显示
+    console.warn("localStorage 不可用", e);
+  }
+};
+
+// 关闭引导弹窗
+const closeReadGuide = () => {
+  showReadGuide.value = false;
+  try {
+    localStorage.setItem(READ_GUIDE_KEY, "1");
+  } catch (e) {
+    console.warn("localStorage 写入失败", e);
+  }
+};
 
 // 开启右键菜单
 const openRightMenu = (e) => {
@@ -141,6 +177,8 @@ onMounted(() => {
   window.addEventListener("copy", copyTip);
   // 监听系统颜色
   window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", changeSiteThemeType);
+  // 检查是否需要显示阅读引导
+  checkShowReadGuide();
 });
 
 onBeforeUnmount(() => {
