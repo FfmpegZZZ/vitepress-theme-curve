@@ -55,6 +55,7 @@ const rightMenuRef = ref(null);
 // 阅读引导弹窗
 const showReadGuide = ref(false);
 const READ_GUIDE_KEY = "read_guide_shown";
+const hasCheckedGuide = ref(false); // 防止重复检查
 
 // 判断是否为文章页面
 const isPostPage = computed(() => {
@@ -64,13 +65,14 @@ const isPostPage = computed(() => {
 
 // 检查是否需要显示引导弹窗
 const checkShowReadGuide = () => {
-  // 只在文章页面显示
-  if (!isPostPage.value) return;
+  // 只在文章页面显示，且未检查过
+  if (!isPostPage.value || hasCheckedGuide.value) return;
   
   // 检查 localStorage 是否已显示过
   try {
     const hasShown = localStorage.getItem(READ_GUIDE_KEY);
     if (!hasShown) {
+      hasCheckedGuide.value = true;
       // 延迟显示，等待页面加载完成
       setTimeout(() => {
         showReadGuide.value = true;
@@ -91,6 +93,17 @@ const closeReadGuide = () => {
     console.warn("localStorage 写入失败", e);
   }
 };
+
+// 监听路由变化，检查是否需要显示引导弹窗
+watch(
+  () => route.path,
+  () => {
+    nextTick(() => {
+      checkShowReadGuide();
+    });
+  },
+  { immediate: true }
+);
 
 // 开启右键菜单
 const openRightMenu = (e) => {
@@ -177,8 +190,6 @@ onMounted(() => {
   window.addEventListener("copy", copyTip);
   // 监听系统颜色
   window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", changeSiteThemeType);
-  // 检查是否需要显示阅读引导
-  checkShowReadGuide();
 });
 
 onBeforeUnmount(() => {
