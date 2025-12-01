@@ -68,8 +68,8 @@ const changeLoading = (option = {}) => {
   loadingTimer = setTimeout(
     () => {
       console.log("加载动画延时结束");
-      console.log("杂鱼~ 看控制台想干嘛！");
-      console.log(`摸　　　摸　　摸　　　　　　鱼鱼鱼鱼鱼鱼鱼　　　　　　　的　　　的　　　　　　无无无无无无无无无　　　　　　　　　度
+      console.info("杂鱼~ 看控制台想干嘛！");
+      console.info(`摸　　　摸　　摸　　　　　　鱼鱼鱼鱼鱼鱼鱼　　　　　　　的　　　的　　　　　　无无无无无无无无无　　　　　　　　　度
 　摸　摸摸摸摸摸摸摸摸　　　鱼　　　　　　鱼　　　　　　的　　　　的　　　　　　　　　　无　　　　　　　　度度度度度度度度度度
 摸摸摸　　摸　　摸　　　　鱼鱼鱼鱼鱼鱼鱼鱼鱼鱼　　　的的的的的　　的的的的　　　　　　　无　　　　　　　　度　　度　　　度
 　摸　　摸摸摸摸摸摸　　　　鱼　　　鱼　　　鱼　　　的　　　的　的　　　的　　　　　　　无　　　　　　　　度度度度度度度度度度
@@ -80,7 +80,7 @@ const changeLoading = (option = {}) => {
 　摸　　　　摸摸　　　　　　鱼鱼鱼鱼鱼鱼鱼鱼鱼　　　的　　　的　　　　　的　　　　　无　　无　　　无　　　度　　度　　　　度
 　摸　　　摸　　摸　　　　　　　　　　　　　　　　　的　　　的　　　　　的　　　　无　　　无　　　无　　度　　　　度度度度
 摸摸　摸摸　　　　摸摸　　鱼鱼鱼鱼鱼鱼鱼鱼鱼鱼鱼　　的的的的的　　　的的的　　无无　　　　无无无无无　　度　　度度　　　　度度`);
-      console.log("赶紧来关注我！！！！ https://space.bilibili.com/3493289432975797");
+      console.info("赶紧来关注我！！！！ https://space.bilibili.com/3493289432975797");
       store.loadingStatus = false;
       // 替换链接
       // jumpRedirect(null, true);
