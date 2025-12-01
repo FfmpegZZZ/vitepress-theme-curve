@@ -19,7 +19,7 @@
             
             <!-- 引导链接 -->
             <div class="guide-links">
-              <a href="/pages/social" class="guide-link social">
+              <a href="/pages/social" class="guide-link social" @click="handleLinkClick">
                 <div class="link-icon">
                   <i class="iconfont icon-link"></i>
                 </div>
@@ -30,7 +30,7 @@
                 <i class="iconfont icon-arrow-right link-arrow"></i>
               </a>
               
-              <a href="/pages/qqgroup" class="guide-link qq">
+              <a href="/pages/qqgroup" class="guide-link qq" @click="handleLinkClick">
                 <div class="link-icon">
                   <i class="iconfont icon-qq"></i>
                 </div>
@@ -79,6 +79,11 @@ let timer = null;
 // 关闭弹窗
 const closeGuide = () => {
   if (countdown.value > 0) return;
+  emit('close');
+};
+
+// 点击链接时关闭弹窗
+const handleLinkClick = () => {
   emit('close');
 };
 
