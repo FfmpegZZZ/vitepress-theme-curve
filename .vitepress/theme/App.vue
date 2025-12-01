@@ -34,8 +34,8 @@
   <RightMenu ref="rightMenuRef" />
   <!-- 全局消息 -->
   <Message />
-  <!-- 阅读引导弹窗 -->
-  <ReadGuide :show="showReadGuide" @close="closeReadGuide" />
+  <!-- 阅读引导弹窗 - 暂时禁用 -->
+  <!-- <ReadGuide :show="showReadGuide" @close="closeReadGuide" /> -->
 </template>
 
 <script setup>
