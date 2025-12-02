@@ -22,6 +22,29 @@ const getPostMDFilePaths = async () => {
 };
 
 /**
+ * 获取所有隐藏文章的路径（用于sitemap排除）
+ * @returns {Promise<string[]>} - 隐藏文章的路径数组
+ */
+export const getHiddenPaths = async () => {
+  try {
+    const paths = await getPostMDFilePaths();
+    const hiddenPaths = [];
+    for (const item of paths) {
+      const content = await fs.readFile(item, "utf-8");
+      const { data } = matter(content);
+      if (data.hidden) {
+        // 转换为 URL 路径格式
+        hiddenPaths.push(item.replace(".md", ""));
+      }
+    }
+    return hiddenPaths;
+  } catch (error) {
+    console.error("获取隐藏文章路径时出错:", error);
+    return [];
+  }
+};
+
+/**
  * 基于 frontMatter 日期降序排序文章
  * @param {Object} obj1 - 第一篇文章对象
  * @param {Object} obj2 - 第二篇文章对象
@@ -79,7 +102,11 @@ export const getAllPosts = async () => {
           const { birthtimeMs, mtimeMs } = stat;
           // 解析 front matter
           const { data } = matter(content);
-          const { title, date, categories, description, tags, top, cover, priority } = data;
+          const { title, date, categories, description, tags, top, cover, priority, hidden } = data;
+          // 如果文章被标记为隐藏，则跳过
+          if (hidden) {
+            return null;
+          }
           // 计算文章的过期天数
           const expired = Math.floor(
             (new Date().getTime() - new Date(date).getTime()) / (1000 * 60 * 60 * 24),
@@ -105,6 +132,8 @@ export const getAllPosts = async () => {
         }
       }),
     );
+    // 过滤掉隐藏的文章（null值）
+    posts = posts.filter((post) => post !== null);
     // 根据日期排序文章
     posts.sort(comparePostPriority);
     return posts;

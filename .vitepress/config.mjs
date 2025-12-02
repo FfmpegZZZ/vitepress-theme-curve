@@ -6,6 +6,7 @@ import {
   getAllType,
   getAllCategories,
   getAllArchives,
+  getHiddenPaths,
 } from "./theme/utils/getPostData.mjs";
 import { jumpRedirect } from "./theme/utils/commonTools.mjs";
 import { getThemeConfig } from "./init.mjs";
@@ -16,6 +17,7 @@ import path from "path";
 
 // 获取全局数据
 const postData = await getAllPosts();
+const hiddenPaths = await getHiddenPaths();
 
 // 获取主题配置
 const themeConfig = await getThemeConfig();
@@ -37,6 +39,10 @@ export default withPwa(
     // sitemap
     sitemap: {
       hostname: themeConfig.siteMeta.site,
+      transformItems: (items) => {
+        // 过滤掉隐藏的文章
+        return items.filter((item) => !hiddenPaths.some((path) => item.url.includes(path)));
+      },
     },
     // 主题配置
     themeConfig: {
