@@ -118,13 +118,14 @@ export const themeConfig = {
   s.parentNode.insertBefore(hm, s);
 })();`
       ],
-      // Umami 统计
+      // Umami 统计 (本地托管)
       [
         "script",
         {
           defer: "",
-          src: "https://analytics.wudu.hk/script.js",
-          "data-website-id": "e19780f4-b072-4b1d-b77a-d9085c7350c7"
+          src: "/js/umami.js",
+          "data-website-id": "e19780f4-b072-4b1d-b77a-d9085c7350c7",
+          "data-host-url": "https://analytics.wudu.hk"
         }
       ],
     ],
