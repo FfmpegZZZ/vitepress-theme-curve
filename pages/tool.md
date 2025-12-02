@@ -6,13 +6,13 @@ aside: false
 
 <div class="tool-source-info">
   <p>
-    📌 本頁面鏡像自 <a href="https://linecross.github.io/nuCarnivalAttackCalculator/Main.html" target="_blank">nuCarnival Attack Calculator</a>
+    本頁面鏡像自 <a href="https://linecross.github.io/nuCarnivalAttackCalculator/Main.html" target="_blank">nuCarnival Attack Calculator</a>
   </p>
   <p>
-    🔗 GitHub 代碼倉庫：<a href="https://github.com/linecross/nuCarnivalAttackCalculator" target="_blank">linecross/nuCarnivalAttackCalculator</a>
+    GitHub 代碼倉庫：<a href="https://github.com/linecross/nuCarnivalAttackCalculator" target="_blank">linecross/nuCarnivalAttackCalculator</a>
   </p>
   <p>
-    🙏 感謝原作者 <a href="https://github.com/linecross" target="_blank">linecross</a> 的開源貢獻！
+    感謝原作者 <a href="https://github.com/linecross" target="_blank">linecross</a> 的開源貢獻！
   </p>
 </div>
 
