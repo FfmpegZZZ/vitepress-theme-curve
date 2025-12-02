@@ -118,6 +118,15 @@ export const themeConfig = {
   s.parentNode.insertBefore(hm, s);
 })();`
       ],
+      // Umami 统计
+      [
+        "script",
+        {
+          defer: "",
+          src: "https://analytics.wudu.hk/script.js",
+          "data-website-id": "e19780f4-b072-4b1d-b77a-d9085c7350c7"
+        }
+      ],
     ],
   },
   // 导航栏菜单
