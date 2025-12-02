@@ -3,4 +3,4 @@ Allow: /
 Allow: /pages/
 Allow: /posts/
 
-Sitemap: https://www.696898.xyz/sitemap.xml
+Sitemap: https://www.wudu.hk/sitemap.xml
