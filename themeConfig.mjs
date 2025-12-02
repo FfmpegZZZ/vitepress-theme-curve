@@ -106,6 +106,18 @@ export const themeConfig = {
           rel: "stylesheet",
         },
       ],
+      // 百度统计
+      [
+        "script",
+        {},
+        `var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?a4b578c9da4cf49f939db7f4caab0963";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();`
+      ],
     ],
   },
   // 导航栏菜单
