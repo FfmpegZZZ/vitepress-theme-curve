@@ -111,13 +111,13 @@ const markdownConfig = (md, themeConfig) => {
               <span class="yunpan-badge">可用</span>
             </div>
             ${link ? `<div class="yunpan-link">
-              <a href="${link}" target="_blank" rel="noopener noreferrer" class="yunpan-btn" data-umami-event="网盘下载" data-umami-event-type="${type}">
+              <a href="${link}" target="_blank" rel="noopener noreferrer" class="yunpan-btn" data-umami-event="网盘下载" data-umami-event-type="${type}" data-umami-event-link="${link}">
                 <svg class="yunpan-download-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
                 </svg>
                 立即下载
               </a>
-              <button class="yunpan-copy-btn" onclick="(function(){var g=document.querySelector('.game-info .game-title h3');var name=g?g.textContent:document.title.split('|')[0].trim();navigator.clipboard.writeText('${link}').then(function(){alert('链接已复制，关注无度谢谢喵~')});if(window.umami)umami.track('网盘复制',{game:name,type:'${type}'})})()">
+              <button class="yunpan-copy-btn" onclick="navigator.clipboard.writeText('${link}').then(() => alert('链接已复制，关注无度谢谢喵~')); if(window.umami) umami.track('网盘复制', {type: '${type}', link: '${link}'})">
                 <svg class="yunpan-copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                   <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
                   <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
@@ -152,7 +152,7 @@ const markdownConfig = (md, themeConfig) => {
               <span class="offical-badge">官方</span>
             </div>
             ${link ? `<div class="offical-link">
-              <a href="${link}" target="_blank" rel="noopener noreferrer" class="offical-btn" data-umami-event="官方链接" data-umami-event-name="${name}">
+              <a href="${link}" target="_blank" rel="noopener noreferrer" class="offical-btn" data-umami-event="官方链接" data-umami-event-name="${name}" data-umami-event-link="${link}">
                 <svg class="offical-visit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                   <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
                   <polyline points="15 3 21 3 21 9"/>
@@ -160,7 +160,7 @@ const markdownConfig = (md, themeConfig) => {
                 </svg>
                 ${buttonText}
               </a>
-              <button class="offical-copy-btn" onclick="(function(){var g=document.querySelector('.game-info .game-title h3');var game=g?g.textContent:document.title.split('|')[0].trim();navigator.clipboard.writeText('${link}').then(function(){alert('官网链接已复制！')});if(window.umami)umami.track('官方复制',{game:game,name:'${name}'})})()">
+              <button class="offical-copy-btn" onclick="navigator.clipboard.writeText('${link}').then(() => alert('官网链接已复制！')); if(window.umami) umami.track('官方复制', {name: '${name}', link: '${link}'})">
                 <svg class="offical-copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                   <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
                   <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
