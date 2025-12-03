@@ -1,9 +1,9 @@
 <!-- 打赏按钮 -->
 <template>
   <div v-if="rewardData.enable" class="reward">
-    <div class="reward-btn" @click="rewardShow = true">
+    <div class="reward-btn" @click="toSocial">
       <i class="iconfont icon-reward" />
-      <span class="text">赞赏博主</span>
+      <span class="text">关注博主</span>
     </div>
     <!-- 设置面板 -->
     <Modal
@@ -57,6 +57,11 @@ const props = defineProps({
 
 // 赞赏显示
 const rewardShow = ref(false);
+
+// 跳转至社交页面
+const toSocial = () => {
+  router.go("/pages/social");
+};
 
 // 跳转至赞赏名单
 const toRewardList = () => {
