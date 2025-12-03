@@ -1,28 +1,27 @@
 <!-- 分页 -->
 <template>
   <div v-if="total > 0" class="pagination">
-    <div
+    <a
       v-if="currentPage > 1"
       class="page-item prev"
-      @click="
-        jumpPage(
-          currentPage === 2 ? `${routePath}` : `${routePath}/page/${currentPage - 1}`,
-          currentPage === 2 ? 1 : currentPage - 1,
-        )
-      "
+      :href="getPageUrl(currentPage - 1)"
+      @click.prevent="jumpPage(getPageUrl(currentPage - 1), currentPage - 1)"
     >
       <i class="iconfont icon-page-right" />
       <span class="page-text">上页</span>
-    </div>
+    </a>
     <div class="page-number">
-      <div
-        v-for="(item, index) in pageNumber"
-        :key="index"
-        :class="[item === '...' ? 'point' : 'page-item', { choose: item === currentPage }]"
-        @click="jumpPage(item === 1 ? `${routePath}` : `${routePath}/page/${item}`, item)"
-      >
-        <span class="page-num">{{ item }}</span>
-      </div>
+      <template v-for="(item, index) in pageNumber" :key="index">
+        <span v-if="item === '...'" class="point">{{ item }}</span>
+        <a
+          v-else
+          :class="['page-item', { choose: item === currentPage }]"
+          :href="getPageUrl(item)"
+          @click.prevent="jumpPage(getPageUrl(item), item)"
+        >
+          <span class="page-num">{{ item }}</span>
+        </a>
+      </template>
       <!-- 快速跳转 -->
       <div :class="['fast-jump', { focus: inputFocus }]" title="快速跳转">
         <input
@@ -37,14 +36,15 @@
         <i :class="['iconfont icon-arrow-right', { click: jumpInput }]" @click.stop="fastJump" />
       </div>
     </div>
-    <div
+    <a
       v-if="currentPage * limit < total"
       class="page-item next"
-      @click="jumpPage(`${routePath}/page/${currentPage + 1}`, currentPage + 1)"
+      :href="getPageUrl(currentPage + 1)"
+      @click.prevent="jumpPage(getPageUrl(currentPage + 1), currentPage + 1)"
     >
       <span class="page-text">下页</span>
       <i class="iconfont icon-page-right" />
-    </div>
+    </a>
   </div>
 </template>
 
@@ -87,6 +87,14 @@ const inputFocus = ref(false);
 // 页数数据
 const currentPage = ref(props.page);
 const totalPages = computed(() => Math.ceil(props.total / props.limit));
+
+// 获取页面 URL
+const getPageUrl = (page) => {
+  if (props.useParams) {
+    return page === 1 ? `${props.routePath}` : `${props.routePath}?page=${page}`;
+  }
+  return page === 1 ? `${props.routePath || '/'}` : `${props.routePath}/page/${page}`;
+};
 
 // 分页指示器数据
 const pageNumber = computed(() => {
@@ -135,28 +143,14 @@ const validateInput = () => {
 
 // 跳转页面
 const jumpPage = (url, page) => {
-  // 使用参数跳转
-  if (props.useParams) {
-    if (page === 1) {
-      router.go(`${props.routePath}`);
-    } else {
-      router.go(`${props.routePath}?page=${page}`);
-    }
-  }
-  // 正常跳转
-  else {
-    router.go(url);
-  }
+  router.go(url);
 };
 
 // 快速跳转
 const fastJump = () => {
   inputFocus.value = false;
   if (!jumpInput.value) return false;
-  jumpPage(
-    jumpInput.value === 1 ? `${props.routePath}` : `${props.routePath}/page/${jumpInput.value}`,
-    jumpInput.value,
-  );
+  jumpPage(getPageUrl(jumpInput.value), jumpInput.value);
 };
 
 // 检查当前路径参数
@@ -184,6 +178,10 @@ onMounted(() => {
   width: 100%;
   height: 40px;
   animation: fade-up 0.6s 0.4s backwards;
+  a.page-item {
+    text-decoration: none;
+    color: inherit;
+  }
   .page-item {
     position: relative;
     display: flex;
