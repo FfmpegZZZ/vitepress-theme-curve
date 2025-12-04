@@ -129,6 +129,34 @@ const markdownConfig = (md, themeConfig) => {
       }
     },
   });
+  // qiyou - 奇游加速器推广卡片
+  md.use(container, "qiyou", {
+    render: (tokens, idx, _options) => {
+      const token = tokens[idx];
+      if (token.nesting === 1) {
+        return `<div class="qiyou-container">
+          <div class="qiyou-card">
+            <div class="qiyou-header">
+              <img class="qiyou-icon" src="/images/app/logo黑.png" alt="奇游加速器" />
+              <span class="qiyou-title">奇游加速器</span>
+              <span class="qiyou-badge">可加速</span>
+            </div>
+            <div class="qiyou-content">
+              <p class="qiyou-desc">部分地区由于网络问题无法正常游戏，本游戏支持奇游加速，输入口令 <strong>WD</strong> 免费获取加速时长！</p>
+            </div>
+            <div class="qiyou-link">
+              <a href="/posts/2025/015" class="qiyou-btn" data-umami-event="奇游推广" data-umami-event-action="点击下载">
+                <svg class="qiyou-download-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+                </svg>
+                前往下载
+              </a>
+            </div>`;
+      } else {
+        return `</div></div>`;
+      }
+    },
+  });
   // offical - 官网链接容器
   md.use(container, "offical", {
     render: (tokens, idx, _options) => {

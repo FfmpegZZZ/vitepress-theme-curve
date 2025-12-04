@@ -934,6 +934,113 @@
       }
     }
   }
+  // qiyou - 奇游加速器推广卡片（与yunpan风格统一）
+  .qiyou-container {
+    display: block;
+    width: 100%;
+    margin: 0.75rem 0;
+    box-sizing: border-box;
+    .qiyou-card {
+      padding: 1rem 1.2rem;
+      border-radius: 12px;
+      border: 2px solid var(--main-card-border);
+      background-color: var(--main-card-second-background);
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      &:hover {
+        border-color: var(--main-color);
+        box-shadow: 0 4px 12px var(--main-border-shadow);
+      }
+      .qiyou-header {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-shrink: 0;
+        .qiyou-icon {
+          width: 1.8rem;
+          height: 1.8rem;
+          display: block;
+          object-fit: contain;
+        }
+        .qiyou-title {
+          font-size: 1rem;
+          font-weight: bold;
+          color: var(--main-font-color);
+        }
+        .qiyou-badge {
+          padding: 2px 8px;
+          font-size: 0.75rem;
+          border-radius: 4px;
+          border: 1px solid var(--main-color);
+          color: var(--main-color);
+          background-color: transparent;
+        }
+      }
+      .qiyou-content {
+        flex: 1;
+        .qiyou-desc {
+          font-size: 0.85rem;
+          color: var(--main-font-second-color);
+          margin: 0;
+          line-height: 1.5;
+          strong {
+            color: var(--main-color);
+            font-weight: 700;
+            padding: 1px 4px;
+            background-color: var(--main-color-bg);
+            border-radius: 3px;
+          }
+        }
+      }
+      .qiyou-link {
+        flex-shrink: 0;
+        .qiyou-btn {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+          padding: 0.5rem 1rem;
+          border-radius: 8px;
+          background-color: var(--main-color);
+          color: var(--main-card-background);
+          font-size: 0.9rem;
+          font-weight: 500;
+          text-decoration: none;
+          transition: all 0.3s;
+          white-space: nowrap;
+          &::before {
+            display: none;
+          }
+          .qiyou-download-icon {
+            width: 1rem;
+            height: 1rem;
+            stroke-width: 2;
+          }
+          &:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px var(--main-border-shadow);
+          }
+        }
+      }
+    }
+    // 移动端响应式
+    @media (max-width: 768px) {
+      .qiyou-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+        .qiyou-link {
+          width: 100%;
+          .qiyou-btn {
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
   // 官网 - 官方网站链接(旧版,保留兼容)
   .official-sites-wrapper {
     font-size: 0; // 消除inline-block间隙
