@@ -117,7 +117,7 @@ const markdownConfig = (md, themeConfig) => {
                 </svg>
                 立即下载
               </a>
-              <button class="yunpan-copy-btn" onclick="navigator.clipboard.writeText('${link}').then(() => alert('链接已复制，关注无度谢谢喵~')); if(window.umami) umami.track('网盘复制', {type: '${type}', link: '${link}'})">
+              <button class="yunpan-copy-btn" onclick="navigator.clipboard.writeText('${link}').then(() => { if(typeof $message !== 'undefined') $message.success('链接已复制，关注无度谢谢喵~') }).catch(() => { if(typeof $message !== 'undefined') $message.error('复制失败，请手动复制') }); if(window.umami) umami.track('网盘复制', {type: '${type}', link: '${link}'})">
                 <svg class="yunpan-copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                   <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
                   <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
@@ -160,7 +160,7 @@ const markdownConfig = (md, themeConfig) => {
                 </svg>
                 ${buttonText}
               </a>
-              <button class="offical-copy-btn" onclick="navigator.clipboard.writeText('${link}').then(() => alert('官网链接已复制！')); if(window.umami) umami.track('官方复制', {name: '${name}', link: '${link}'})">
+              <button class="offical-copy-btn" onclick="navigator.clipboard.writeText('${link}').then(() => { if(typeof $message !== 'undefined') $message.success('官网链接已复制！') }).catch(() => { if(typeof $message !== 'undefined') $message.error('复制失败，请手动复制') }); if(window.umami) umami.track('官方复制', {name: '${name}', link: '${link}'})">
                 <svg class="offical-copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                   <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
                   <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
