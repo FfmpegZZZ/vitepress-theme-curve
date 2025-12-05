@@ -98,9 +98,37 @@ export default withPwa(
         // 更新页面标题（这将影响 <title> 标签）
         title = seoTitleParts.join(' ');
         pageData.title = title;
+      } else if (pageData.relativePath.startsWith('pages/tags/')) {
+        // 标签详情页 SEO 优化
+        // 格式: [标签名] BL 游戏推荐下载
+        pageData.frontmatter.shortTitle = title;
+        title = `${title} BL 游戏推荐下载`;
+        pageData.title = title;
+      } else if (pageData.relativePath.startsWith('pages/categories/')) {
+        // 分类详情页 SEO 优化
+        // 格式: [分类名] BL 游戏推荐下载
+        pageData.frontmatter.shortTitle = title;
+        title = `${title} BL 游戏推荐下载`;
+        pageData.title = title;
       }
 
-      const description = pageData.frontmatter.description || themeConfig.siteMeta.seoDescription || themeConfig.siteMeta.description;
+      let description = pageData.frontmatter.description || themeConfig.siteMeta.seoDescription || themeConfig.siteMeta.description;
+
+      // 动态优化描述
+      if (pageData.frontmatter.gameInfo) {
+        const gameInfo = pageData.frontmatter.gameInfo;
+        const baseDesc = pageData.frontmatter.description || '';
+        const system = gameInfo.system ? `支持${gameInfo.system}` : '';
+        
+        description = `${pageData.frontmatter.shortTitle}下载。${baseDesc} ${system}。提供多种下载方式`;
+      } else if (pageData.relativePath.startsWith('pages/tags/')) {
+        const tagName = pageData.frontmatter.shortTitle;
+        description = `最新${tagName} BL游戏下载，更新${tagName}资源。`;
+      } else if (pageData.relativePath.startsWith('pages/categories/')) {
+        const catName = pageData.frontmatter.shortTitle;
+        description = `最新${catName}资源合集。提供${catName}多种下载方式`;
+      }
+
       const cover = pageData.frontmatter.cover 
         ? `${themeConfig.siteMeta.site}${pageData.frontmatter.cover}`
         : `${themeConfig.siteMeta.site}/images/logo/logo.webp`;
