@@ -34,7 +34,7 @@
             </div>
           </div>
           <span class="site-title" @click="smoothScrolling">
-            {{ (frontmatter.home ? site.description : page.title) || site.description }}
+            {{ (frontmatter.home ? theme.siteMeta.description : page.title) || theme.siteMeta.description }}
           </span>
         </div>
         <div class="right-nav">

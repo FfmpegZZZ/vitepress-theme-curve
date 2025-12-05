@@ -11,6 +11,7 @@ import {
 import { jumpRedirect } from "./theme/utils/commonTools.mjs";
 import { getThemeConfig } from "./init.mjs";
 import markdownConfig from "./theme/utils/markdownConfig.mjs";
+import { generateStructuredData, schemasToHeadConfig } from "./theme/utils/structuredData.mjs";
 import AutoImport from "unplugin-auto-import/vite";
 import Components from "unplugin-vue-components/vite";
 import path from "path";
@@ -26,7 +27,8 @@ const themeConfig = await getThemeConfig();
 export default withPwa(
   defineConfig({
     title: themeConfig.siteMeta.title,
-    description: themeConfig.siteMeta.description,
+    // 使用SEO描述用于搜索引擎
+    description: themeConfig.siteMeta.seoDescription || themeConfig.siteMeta.description,
     lang: themeConfig.siteMeta.lang,
     // 简洁的 URL
     cleanUrls: true,
@@ -73,6 +75,44 @@ export default withPwa(
         .replace(/\.md$/, "");
       pageData.frontmatter.head ??= [];
       pageData.frontmatter.head.push(["link", { rel: "canonical", href: canonicalUrl }]);
+      
+      // 动态SEO - 为每个页面添加Open Graph和Twitter Card
+      const title = pageData.frontmatter.title || themeConfig.siteMeta.title;
+      const description = pageData.frontmatter.description || themeConfig.siteMeta.seoDescription || themeConfig.siteMeta.description;
+      const cover = pageData.frontmatter.cover 
+        ? `${themeConfig.siteMeta.site}${pageData.frontmatter.cover}`
+        : `${themeConfig.siteMeta.site}/images/logo/logo.webp`;
+      
+      // 根据文章标签生成关键词
+      const tags = pageData.frontmatter.tags || [];
+      const categories = pageData.frontmatter.categories || [];
+      const gameName = pageData.frontmatter.gameInfo?.name || '';
+      const pageKeywords = [...tags, ...categories, gameName, 'BL游戏', '游戏下载'].filter(Boolean).join(',');
+      
+      // Open Graph
+      pageData.frontmatter.head.push(["meta", { property: "og:title", content: title }]);
+      pageData.frontmatter.head.push(["meta", { property: "og:description", content: description }]);
+      pageData.frontmatter.head.push(["meta", { property: "og:image", content: cover }]);
+      pageData.frontmatter.head.push(["meta", { property: "og:url", content: canonicalUrl }]);
+      pageData.frontmatter.head.push(["meta", { property: "og:type", content: pageData.relativePath.startsWith('posts/') ? 'article' : 'website' }]);
+      pageData.frontmatter.head.push(["meta", { property: "og:site_name", content: themeConfig.siteMeta.title }]);
+      pageData.frontmatter.head.push(["meta", { property: "og:locale", content: "zh_CN" }]);
+      
+      // Twitter Card
+      pageData.frontmatter.head.push(["meta", { name: "twitter:card", content: "summary_large_image" }]);
+      pageData.frontmatter.head.push(["meta", { name: "twitter:title", content: title }]);
+      pageData.frontmatter.head.push(["meta", { name: "twitter:description", content: description }]);
+      pageData.frontmatter.head.push(["meta", { name: "twitter:image", content: cover }]);
+      
+      // 页面专属关键词
+      if (pageKeywords) {
+        pageData.frontmatter.head.push(["meta", { name: "keywords", content: pageKeywords }]);
+      }
+      
+      // JSON-LD 结构化数据
+      const schemas = generateStructuredData(pageData, themeConfig.siteMeta);
+      const schemaHeadConfigs = schemasToHeadConfig(schemas);
+      pageData.frontmatter.head.push(...schemaHeadConfigs);
     },
     // transformHtml
     transformHtml: (html) => {
@@ -171,7 +211,7 @@ export default withPwa(
       manifest: {
         name: themeConfig.siteMeta.title,
         short_name: themeConfig.siteMeta.title,
-        description: themeConfig.siteMeta.description,
+        description: themeConfig.siteMeta.seoDescription || themeConfig.siteMeta.description,
         display: "standalone",
         start_url: "/",
         theme_color: "#fff",

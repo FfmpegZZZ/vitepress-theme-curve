@@ -1,6 +1,40 @@
+# WUDU - 游戏资源站 robots.txt
+# 更新时间: 2025-12-05
+
+# 通用爬虫规则
 User-agent: *
 Allow: /
-Allow: /pages/
 Allow: /posts/
+Allow: /pages/
+Allow: /page/
 
+# 禁止爬取的路径
+Disallow: /api/
+Disallow: /*.json$
+Disallow: /*?*
+Disallow: /404
+Disallow: /404.html
+
+# 爬取延迟（秒）- 防止服务器过载
+Crawl-delay: 1
+
+# Google 爬虫
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+# Bing 爬虫
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+# 百度爬虫
+User-agent: Baiduspider
+Allow: /
+Crawl-delay: 1
+
+# Sitemap 位置
 Sitemap: https://www.wudu.hk/sitemap.xml
+
+# RSS 订阅
+# RSS: https://www.wudu.hk/rss.xml

@@ -4,8 +4,10 @@ export const themeConfig = {
   siteMeta: {
     // 站点标题
     title: "WUDU",
-    // 站点描述
+    // 站点描述（用于网站展示）
     description: "无度的文档站",
+    // SEO专用描述（用于搜索引擎，建议50-160字符）
+    seoDescription: "WUDU游戏资源站 - 提供BL游戏、耽美游戏下载资源，包含Android/iOS/PC平台游戏，持续更新最新游戏资源与攻略。",
     // 站点logo
     logo: "/images/logo/logo.webp",
     // 站点地址
