@@ -77,7 +77,29 @@ export default withPwa(
       pageData.frontmatter.head.push(["link", { rel: "canonical", href: canonicalUrl }]);
       
       // 动态SEO - 为每个页面添加Open Graph和Twitter Card
-      const title = pageData.frontmatter.title || themeConfig.siteMeta.title;
+      let title = pageData.frontmatter.title || themeConfig.siteMeta.title;
+      
+      // 如果是游戏文章，生成更丰富的 SEO 标题
+      if (pageData.frontmatter.gameInfo) {
+        // 保存原始短标题供导航栏使用
+        pageData.frontmatter.shortTitle = title;
+        
+        const gameInfo = pageData.frontmatter.gameInfo;
+        const system = gameInfo.system ? gameInfo.system.replace(/\//g, ' ') : '';
+        const genre = gameInfo.genre || '';
+        
+        // 构造 SEO 标题: 游戏名 - 系统 类型 下载
+        // 例如: 新世界狂欢 - Android iOS 回合制RPG 下载
+        const seoTitleParts = [title];
+        if (system) seoTitleParts.push(system);
+        if (genre) seoTitleParts.push(genre);
+        seoTitleParts.push('下载');
+        
+        // 更新页面标题（这将影响 <title> 标签）
+        title = seoTitleParts.join(' ');
+        pageData.title = title;
+      }
+
       const description = pageData.frontmatter.description || themeConfig.siteMeta.seoDescription || themeConfig.siteMeta.description;
       const cover = pageData.frontmatter.cover 
         ? `${themeConfig.siteMeta.site}${pageData.frontmatter.cover}`
