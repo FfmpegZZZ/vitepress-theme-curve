@@ -1,28 +1,33 @@
 // 文章内容样式
 :deep(.markdown-main-style) {
+
   // 标题
-  div > {
+  div> {
     h1 {
       font-size: 2rem;
       text-align: center;
       border-bottom: 1px dashed var(--main-color-bg);
       padding-bottom: 1rem;
+
       .header-anchor {
         &::before {
           display: none;
         }
       }
     }
+
     h2 {
       font-size: 1.6rem;
       line-height: 1.6;
       border-bottom: 1px dashed var(--main-color-bg);
       padding-bottom: 0.5rem;
     }
+
     h3 {
       width: fit-content;
       font-size: 1.2rem;
       z-index: 0;
+
       &::after {
         content: "";
         position: absolute;
@@ -35,12 +40,14 @@
         z-index: -1;
       }
     }
+
     h1,
     h2,
     h3,
     h4 {
       position: relative;
       cursor: pointer;
+
       &:hover {
         .header-anchor {
           opacity: 1;
@@ -48,11 +55,13 @@
       }
     }
   }
+
   .header-anchor {
     position: absolute;
     left: 0;
     opacity: 0;
     transition: opacity 0.3s;
+
     &::before {
       content: "#";
       position: absolute;
@@ -61,10 +70,12 @@
       font-weight: bold;
     }
   }
+
   // 文本
   p {
     font-size: 1.1rem;
   }
+
   p,
   ul,
   li,
@@ -73,6 +84,7 @@
     text-align: left;
     letter-spacing: 0.6px;
     line-height: 2;
+
     // 行内代码
     code {
       display: inline-flex;
@@ -90,16 +102,19 @@
         color 0.3s,
         background-color 0.3s;
       cursor: pointer;
+
       &:hover {
         color: var(--main-color);
         background-color: var(--main-color-bg);
       }
     }
+
     // 超链接
     a {
       position: relative;
       display: inline-flex;
       color: var(--main-color);
+
       &::before {
         content: "";
         position: absolute;
@@ -113,6 +128,7 @@
         border-radius: 4px;
         transition: all 0.3s;
       }
+
       &:hover {
         &::before {
           height: 100%;
@@ -123,10 +139,12 @@
         }
       }
     }
+
     // 重点
     strong {
       color: var(--main-color);
     }
+
     // 剧透
     .spoiler {
       background-color: var(--main-font-color);
@@ -135,23 +153,27 @@
       padding: 0 4px;
       transition: all 0.3s ease;
       cursor: help;
+
       &:hover {
         background-color: var(--main-card-border);
         color: var(--main-font-color);
       }
     }
   }
+
   // 图片
   img {
     width: 100%;
     border-radius: 12px;
   }
+
   .img-fancybox {
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
     color: var(--main-font-color);
+
     .post-img {
       width: auto;
       max-height: 450px;
@@ -162,10 +184,12 @@
       transition:
         opacity 0.3s,
         filter 0.3s;
+
       &:hover {
         filter: blur(0) brightness(0.8);
       }
     }
+
     .post-img-tip {
       display: inline-flex;
       width: 100%;
@@ -175,13 +199,16 @@
       font-size: 14px;
       opacity: 0.6;
     }
+
     &::before {
       display: none;
     }
+
     &:hover {
       color: var(--main-font-color);
     }
   }
+
   // 代码块
   div {
     &[class*="language-"] {
@@ -194,10 +221,12 @@
       padding-top: 36px;
       margin: 1rem 0;
       overflow: hidden;
+
       .copy,
       .lang {
         position: absolute;
       }
+
       .lang {
         width: 100%;
         height: 36px;
@@ -212,6 +241,7 @@
         font-weight: bold;
         font-size: 18px;
       }
+
       .copy {
         top: 0;
         right: 0;
@@ -228,10 +258,12 @@
         z-index: 1;
         color: var(--main-font-color);
         cursor: pointer;
+
         &::after {
           content: "\e01c";
           transition: color 0.3s;
         }
+
         &::before {
           content: "复制成功";
           position: absolute;
@@ -245,19 +277,23 @@
             opacity 0.3s,
             transform 0.3s;
         }
+
         &.copied {
           &::before {
             opacity: 1;
             transform: translateX(0);
           }
         }
+
         &:hover {
+
           &::before,
           &::after {
             color: var(--main-color);
           }
         }
       }
+
       .line-numbers-wrapper {
         padding: 6px 10px;
         opacity: 0.6;
@@ -265,6 +301,7 @@
         user-select: none;
         color: var(--main-font-second-color);
         background-color: var(--main-card-second-background);
+
         .line-number {
           display: flex;
           align-items: center;
@@ -272,10 +309,12 @@
           height: 22px;
           font-size: 14px;
         }
+
         br {
           display: none;
         }
       }
+
       pre {
         margin: 0;
         padding: 6px 10px;
@@ -283,21 +322,26 @@
         overflow-y: auto;
         user-select: text;
         border-left: 1px solid var(--main-card-border);
+
         code {
           font-family: "Fira Code", var(--main-font-family), monospace;
           font-optical-sizing: auto;
+
           .line {
             display: inline-block;
             height: 22px;
+
             span {
               color: var(--shiki-light);
               transition: color 0.3s;
             }
+
             &.highlighted {
               width: 100%;
               background-color: var(--main-card-border);
               border-radius: 6px;
             }
+
             &:empty {
               height: 17px;
             }
@@ -306,11 +350,13 @@
       }
     }
   }
+
   pre {
     width: 100%;
     overflow-y: auto;
     user-select: text;
   }
+
   // blockquote
   blockquote {
     padding: 2px 16px;
@@ -321,19 +367,23 @@
     border-left: 8px solid var(--main-card-border);
     background-color: var(--main-card-second-background);
     border-radius: 4px 8px 8px 4px;
+
     p {
       margin: 0.5rem 0;
     }
   }
+
   // 标点
   ul {
     list-style-type: none;
     padding-left: 1rem;
+
     li {
       position: relative;
       padding-left: 1.2rem;
       margin: 0.6rem 0;
       overflow: auto;
+
       &::before {
         content: "";
         position: absolute;
@@ -344,18 +394,22 @@
         background-color: var(--main-color);
         border-radius: 50%;
       }
+
       p {
         &:first-child {
           margin-top: 0;
         }
+
         &:last-child {
           margin-bottom: 0;
         }
       }
     }
   }
+
   ol {
     padding-left: 2rem;
+
     li {
       &::marker {
         color: var(--main-color);
@@ -363,6 +417,7 @@
       }
     }
   }
+
   // 表格
   .table-container {
     width: 100%;
@@ -371,6 +426,7 @@
     border-radius: 8px;
     overflow-y: hidden;
     overflow-x: auto;
+
     table {
       width: 100%;
       min-width: 512px;
@@ -378,6 +434,7 @@
       margin: 0 auto;
       border-collapse: collapse;
       border-spacing: 0;
+
       td,
       th {
         margin: 0;
@@ -387,13 +444,16 @@
         vertical-align: middle;
         border: 1px solid var(--main-card-border);
       }
+
       thead {
         background-color: var(--main-card-second-background);
       }
+
       tbody {
         tr {
           transition: background-color 0.3s;
           cursor: pointer;
+
           &:hover {
             background-color: var(--main-card-second-background);
           }
@@ -401,6 +461,7 @@
       }
     }
   }
+
   // 分割线
   hr {
     margin: 1rem 0;
@@ -408,16 +469,19 @@
     border: none;
     background-color: var(--main-card-border);
   }
+
   // 其他
   label {
     cursor: pointer;
   }
+
   // mathjax
   mjx-container {
     overflow: auto;
     padding-bottom: 8px;
     font-family: auto;
   }
+
   // custom-block
   .custom-block {
     margin: 1rem 0;
@@ -427,37 +491,46 @@
     background-color: var(--main-card-border);
     border-left: 6px solid var(--main-color-gray);
     user-select: none;
+
     p {
       margin: 0;
       line-height: normal;
       font-size: 0.95rem;
+
       &.custom-block-title {
         font-size: 14px;
         font-weight: bold;
         margin-bottom: 6px;
       }
     }
+
     &.tip {
       background-color: var(--main-info-color-gray);
       border-left-color: var(--main-info-color);
+
       p {
         color: var(--main-info-color);
       }
     }
+
     &.warning {
       background-color: var(--main-warning-color-gray);
       border-left-color: var(--main-warning-color);
+
       p {
         color: var(--main-warning-color);
       }
     }
+
     &.danger {
       background-color: var(--main-error-color-gray);
       border-left-color: var(--main-error-color);
+
       p {
         color: var(--main-error-color);
       }
     }
+
     // details
     &.details {
       border: none;
@@ -465,6 +538,7 @@
       background-color: transparent;
       transition: max-height 0.4s ease-in-out;
       overflow: hidden;
+
       summary {
         display: flex;
         flex-direction: row;
@@ -480,6 +554,7 @@
           border-color 0.3s,
           background-color 0.3s;
         cursor: pointer;
+
         &::before {
           content: "\e057";
           font-family: "iconfont";
@@ -487,15 +562,18 @@
           font-size: 18px;
           transition: transform 0.3s;
         }
+
         &::after {
           content: "+";
           margin-left: auto;
         }
+
         &:hover {
           color: var(--main-card-background);
           background-color: var(--main-color);
         }
       }
+
       > :last-child {
         padding: 16px;
         font-size: 1rem;
@@ -504,23 +582,28 @@
         background-color: var(--main-card-background);
         border-top: none;
       }
+
       &[open] {
         summary {
           border-radius: 12px 12px 0 0;
           border-color: var(--main-color);
           color: var(--main-card-background);
           background-color: var(--main-color);
+
           &::before {
             transform: rotate(90deg);
           }
+
           &::after {
             content: "-";
           }
         }
+
         > :last-child {
           border-color: var(--main-color);
         }
       }
+
       &:hover {
         summary {
           color: var(--main-card-background);
@@ -529,6 +612,7 @@
       }
     }
   }
+
   // plugin-tabs
   .plugin-tabs {
     margin: 1rem 0;
@@ -536,10 +620,12 @@
     background-color: var(--main-card-background);
     border: 1px solid var(--main-card-border);
     overflow: hidden;
+
     .plugin-tabs--tab-list {
       padding: 0 12px;
       background-color: var(--main-card-second-background);
       border-bottom: 1px solid var(--main-card-border);
+
       .plugin-tabs--tab {
         padding: 12px 16px;
         margin-right: 12px;
@@ -553,12 +639,14 @@
         border-bottom: 2px solid transparent;
         transition: all 0.3s;
         cursor: pointer;
+
         &[aria-selected="true"] {
           color: var(--main-color);
           border-bottom-color: var(--main-color);
         }
       }
     }
+
     .plugin-tabs--content {
       padding: 1rem;
       max-height: 500px;
@@ -566,11 +654,13 @@
       animation: show 0.5s forwards;
     }
   }
+
   // timeline
   .timeline {
     position: relative;
     padding: 0 0 1rem 26px;
     cursor: pointer;
+
     .timeline-title {
       display: inline-block;
       font-size: 14px;
@@ -580,6 +670,7 @@
         color 0.3s,
         opacity 0.3s;
     }
+
     .timeline-content {
       margin-top: 12px;
       border-radius: 2px 12px 12px 12px;
@@ -588,13 +679,16 @@
       width: max-content;
       border: 1px solid var(--main-card-border);
       background-color: var(--main-card-second-background);
+
       > :first-child {
         margin-top: 0;
       }
+
       > :last-child {
         margin-bottom: 0;
       }
     }
+
     &::after {
       content: "";
       position: absolute;
@@ -606,6 +700,7 @@
       background-color: var(--main-card-border);
       z-index: 0;
     }
+
     &::before {
       content: "";
       position: absolute;
@@ -619,22 +714,26 @@
       transition: transform 0.3s;
       z-index: 1;
     }
+
     &:hover {
       .timeline-title {
         opacity: 1;
         color: var(--main-color);
       }
+
       &::before {
         transform: scale(1.2);
       }
     }
   }
+
   // radio
   .radio {
     display: flex;
     flex-direction: row;
     align-items: center;
     margin: 1rem 0;
+
     .radio-point {
       position: relative;
       display: flex;
@@ -646,6 +745,7 @@
       margin-right: 12px;
       outline: 2px solid var(--main-color);
       border-radius: 50%;
+
       &::after {
         content: "";
         opacity: 0;
@@ -655,16 +755,19 @@
         background-color: var(--main-color);
         border-radius: 50%;
       }
+
       &.checked {
         &::after {
           opacity: 1;
         }
       }
     }
+
     p {
       margin: 0;
     }
   }
+
   // card
   .card {
     padding: 1rem 1.2rem;
@@ -672,15 +775,18 @@
     border: 1px solid var(--main-card-border);
     background-color: var(--main-card-second-background);
     box-shadow: 0 8px 16px -4px var(--main-border-shadow);
+
     p {
       &:first-child {
         margin-top: 0;
       }
+
       &:last-child {
         margin-bottom: 0;
       }
     }
   }
+
   // button
   .button {
     outline: none;
@@ -690,24 +796,29 @@
     background-color: var(--main-card-second-background);
     transition: background-color 0.3s;
     cursor: pointer;
+
     p,
     a {
       padding: 0;
       margin: 0;
       font-size: 1rem;
       color: var(--main-font-color);
+
       &::before {
         display: none;
       }
     }
+
     &.primary {
       color: var(--main-card-background);
       background-color: var(--main-color);
     }
+
     &:hover {
       background-color: var(--main-card-border);
     }
   }
+
   // yunpan - 云盘下载链接
   .yunpan-container {
     display: inline-block;
@@ -715,6 +826,7 @@
     margin: 0.75rem 0.5rem;
     vertical-align: top;
     box-sizing: border-box;
+
     .yunpan-card {
       padding: 1rem 1.2rem;
       border-radius: 12px;
@@ -722,32 +834,38 @@
       background-color: var(--main-card-second-background);
       transition: all 0.3s;
       height: 100%;
+
       &:hover {
         border-color: var(--main-color);
         box-shadow: 0 4px 12px var(--main-border-shadow);
       }
+
       .yunpan-header {
         display: flex;
         align-items: center;
         gap: 0.5rem;
         margin-bottom: 1rem;
+
         .yunpan-icon {
           font-size: 1.5rem;
           display: flex;
           align-items: center;
           justify-content: center;
+
           .yunpan-brand-icon {
             width: 1.8rem;
             height: 1.8rem;
             display: block;
           }
         }
+
         .yunpan-type {
           font-size: 1rem;
           font-weight: bold;
           color: var(--main-font-color);
           flex: 1;
         }
+
         .yunpan-badge {
           padding: 2px 8px;
           font-size: 0.75rem;
@@ -757,10 +875,12 @@
           background-color: transparent;
         }
       }
+
       .yunpan-link {
         display: flex;
         gap: 0.5rem;
         align-items: center;
+
         .yunpan-btn {
           flex: 1;
           display: flex;
@@ -775,20 +895,24 @@
           font-weight: 500;
           text-decoration: none;
           transition: all 0.3s;
+
           &::before {
             display: none;
           }
+
           .yunpan-download-icon {
             width: 1rem;
             height: 1rem;
             stroke-width: 2;
           }
+
           &:hover {
             opacity: 0.9;
             transform: translateY(-2px);
             box-shadow: 0 4px 8px var(--main-border-shadow);
           }
         }
+
         .yunpan-copy-btn {
           display: flex;
           align-items: center;
@@ -799,15 +923,18 @@
           border: 1px solid var(--main-card-border);
           cursor: pointer;
           transition: all 0.3s;
+
           .yunpan-copy-icon {
             width: 1rem;
             height: 1rem;
             stroke: var(--main-font-color);
             stroke-width: 2;
           }
+
           &:hover {
             border-color: var(--main-color);
             background-color: var(--main-color-bg);
+
             .yunpan-copy-icon {
               stroke: var(--main-color);
             }
@@ -815,12 +942,14 @@
         }
       }
     }
+
     // 移动端响应式
     @media (max-width: 768px) {
       width: 100%;
       margin-right: 0 !important;
     }
   }
+
   // offical - 官网链接容器
   .offical-container {
     display: inline-block;
@@ -828,6 +957,7 @@
     margin: 0.75rem 0.5rem;
     vertical-align: top;
     box-sizing: border-box;
+
     .offical-card {
       padding: 1rem 1.2rem;
       border-radius: 12px;
@@ -835,15 +965,18 @@
       background-color: var(--main-card-second-background);
       transition: all 0.3s;
       height: 100%;
+
       &:hover {
         border-color: var(--main-color);
         box-shadow: 0 4px 12px var(--main-border-shadow);
       }
+
       .offical-header {
         display: flex;
         align-items: center;
         gap: 0.5rem;
         margin-bottom: 1rem;
+
         .offical-icon {
           width: 1.5rem;
           height: 1.5rem;
@@ -851,12 +984,14 @@
           align-items: center;
           justify-content: center;
         }
+
         .offical-type {
           font-size: 1rem;
           font-weight: 600;
           color: var(--main-font-color);
           flex: 1;
         }
+
         .offical-badge {
           padding: 2px 8px;
           font-size: 0.7rem;
@@ -866,9 +1001,11 @@
           font-weight: 600;
         }
       }
+
       .offical-link {
         display: flex;
         gap: 0.5rem;
+
         .offical-btn {
           flex: 1;
           display: flex;
@@ -883,19 +1020,23 @@
           font-weight: 500;
           text-decoration: none;
           transition: all 0.3s;
+
           &::before {
             display: none;
           }
+
           .offical-visit-icon {
             width: 1rem;
             height: 1rem;
             stroke-width: 2.5;
           }
+
           &:hover {
             opacity: 0.85;
             transform: translateY(-1px);
           }
         }
+
         .offical-copy-btn {
           display: flex;
           align-items: center;
@@ -907,12 +1048,14 @@
           border: 2px solid var(--main-card-border);
           cursor: pointer;
           transition: all 0.3s;
+
           .offical-copy-icon {
             width: 1rem;
             height: 1rem;
             stroke: var(--main-font-color);
             stroke-width: 2;
           }
+
           &:hover {
             border-color: var(--main-color);
             background-color: var(--main-color-bg);
@@ -920,10 +1063,12 @@
         }
       }
     }
+
     // 移动端响应式
     @media (max-width: 768px) {
       width: 100%;
       margin: 0.75rem 0;
+
       .offical-card {
         .offical-link {
           .offical-btn {
@@ -934,12 +1079,14 @@
       }
     }
   }
+
   // qiyou - 奇游加速器推广卡片（与yunpan风格统一）
   .qiyou-container {
     display: block;
     width: 100%;
     margin: 0.75rem 0;
     box-sizing: border-box;
+
     .qiyou-card {
       padding: 1rem 1.2rem;
       border-radius: 12px;
@@ -949,26 +1096,31 @@
       display: flex;
       align-items: center;
       gap: 1rem;
+
       &:hover {
         border-color: var(--main-color);
         box-shadow: 0 4px 12px var(--main-border-shadow);
       }
+
       .qiyou-header {
         display: flex;
         align-items: center;
         gap: 0.5rem;
         flex-shrink: 0;
+
         .qiyou-icon {
           width: 1.8rem;
           height: 1.8rem;
           display: block;
           object-fit: contain;
         }
+
         .qiyou-title {
           font-size: 1rem;
           font-weight: bold;
           color: var(--main-font-color);
         }
+
         .qiyou-badge {
           padding: 2px 8px;
           font-size: 0.75rem;
@@ -978,13 +1130,16 @@
           background-color: transparent;
         }
       }
+
       .qiyou-content {
         flex: 1;
+
         .qiyou-desc {
           font-size: 0.85rem;
           color: var(--main-font-second-color);
           margin: 0;
           line-height: 1.5;
+
           strong {
             color: var(--main-color);
             font-weight: 700;
@@ -994,8 +1149,10 @@
           }
         }
       }
+
       .qiyou-link {
         flex-shrink: 0;
+
         .qiyou-btn {
           display: flex;
           align-items: center;
@@ -1010,14 +1167,17 @@
           text-decoration: none;
           transition: all 0.3s;
           white-space: nowrap;
+
           &::before {
             display: none;
           }
+
           .qiyou-download-icon {
             width: 1rem;
             height: 1rem;
             stroke-width: 2;
           }
+
           &:hover {
             opacity: 0.9;
             transform: translateY(-2px);
@@ -1026,14 +1186,17 @@
         }
       }
     }
+
     // 移动端响应式
     @media (max-width: 768px) {
       .qiyou-card {
         flex-direction: column;
         align-items: flex-start;
         gap: 0.75rem;
+
         .qiyou-link {
           width: 100%;
+
           .qiyou-btn {
             width: 100%;
           }
@@ -1041,11 +1204,144 @@
       }
     }
   }
+
+  // mepay - 魔储MePay推广卡片（与qiyou风格统一）
+  .mepay-container {
+    display: block;
+    width: 100%;
+    margin: 0.75rem 0;
+    box-sizing: border-box;
+
+    .mepay-card {
+      padding: 1rem 1.2rem;
+      border-radius: 12px;
+      border: 2px solid var(--main-card-border);
+      background-color: var(--main-card-second-background);
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+
+      &:hover {
+        border-color: #667eea;
+        box-shadow: 0 4px 12px var(--main-border-shadow);
+      }
+
+      .mepay-header {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-shrink: 0;
+
+        .mepay-icon {
+          width: 1.8rem;
+          height: 1.8rem;
+          display: block;
+          object-fit: contain;
+        }
+
+        .mepay-title {
+          font-size: 1rem;
+          font-weight: bold;
+          color: var(--main-font-color);
+        }
+
+        .mepay-badge {
+          padding: 2px 8px;
+          font-size: 0.75rem;
+          border-radius: 4px;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: #fff;
+        }
+      }
+
+      .mepay-content {
+        flex: 1;
+
+        .mepay-desc {
+          font-size: 0.85rem;
+          color: var(--main-font-second-color);
+          margin: 0;
+          line-height: 1.5;
+
+          strong {
+            color: #667eea;
+            font-weight: 700;
+            padding: 1px 4px;
+            background-color: rgba(102, 126, 234, 0.1);
+            border-radius: 3px;
+          }
+        }
+
+        .mepay-disclaimer {
+          font-size: 10px;
+          color: #999;
+          margin: 0.25rem 0 0 0;
+          line-height: 1.3;
+        }
+      }
+
+      .mepay-link {
+        flex-shrink: 0;
+
+        .mepay-btn {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+          padding: 0.5rem 1rem;
+          border-radius: 8px;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: #fff;
+          font-size: 0.9rem;
+          font-weight: 500;
+          text-decoration: none;
+          transition: all 0.3s;
+          white-space: nowrap;
+
+          &::before {
+            display: none;
+          }
+
+          svg {
+            width: 1rem;
+            height: 1rem;
+            stroke-width: 2;
+          }
+
+          &:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.4);
+          }
+        }
+      }
+    }
+
+    // 移动端响应式
+    @media (max-width: 768px) {
+      .mepay-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+
+        .mepay-link {
+          width: 100%;
+
+          .mepay-btn {
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
+
   // 官网 - 官方网站链接(旧版,保留兼容)
   .official-sites-wrapper {
     font-size: 0; // 消除inline-block间隙
     margin: 1rem 0;
   }
+
   .official-site-container {
     display: inline-block;
     width: calc(50% - 0.5rem);
@@ -1053,33 +1349,39 @@
     vertical-align: top;
     box-sizing: border-box;
     font-size: 1rem; // 恢复字体大小
+
     .official-site-card {
       padding: 1.5rem;
       border-radius: 12px;
       border: 2px solid var(--main-color);
       background: linear-gradient(135deg, var(--main-card-second-background) 0%, var(--main-card-background) 100%);
       transition: all 0.3s;
+
       &:hover {
         box-shadow: 0 8px 16px var(--main-border-shadow);
         transform: translateY(-2px);
       }
+
       .official-site-header {
         display: flex;
         align-items: center;
         gap: 0.75rem;
         margin-bottom: 1rem;
+
         .official-site-icon {
           width: 2rem;
           height: 2rem;
           stroke: var(--main-color);
           stroke-width: 2;
         }
+
         .official-site-title {
           font-size: 1.2rem;
           font-weight: bold;
           color: var(--main-font-color);
           flex: 1;
         }
+
         .official-site-badge {
           padding: 4px 12px;
           font-size: 0.75rem;
@@ -1089,6 +1391,7 @@
           font-weight: 600;
         }
       }
+
       .official-site-url {
         font-size: 0.85rem;
         color: var(--main-font-second-color);
@@ -1098,10 +1401,12 @@
         border-top: 1px dashed var(--main-card-border);
         word-break: break-all;
       }
+
       .official-site-link {
         display: flex;
         gap: 0.75rem;
         align-items: center;
+
         .official-site-btn {
           flex: 1;
           display: flex;
@@ -1116,20 +1421,24 @@
           font-weight: 600;
           text-decoration: none;
           transition: all 0.3s;
+
           &::before {
             display: none;
           }
+
           .official-site-visit-icon {
             width: 1.2rem;
             height: 1.2rem;
             stroke-width: 2.5;
           }
+
           &:hover {
             opacity: 0.9;
             transform: scale(1.02);
             box-shadow: 0 4px 12px var(--main-border-shadow);
           }
         }
+
         .official-site-copy-btn {
           display: flex;
           align-items: center;
@@ -1140,14 +1449,17 @@
           border: 2px solid var(--main-color);
           cursor: pointer;
           transition: all 0.3s;
+
           .official-site-copy-icon {
             width: 1.2rem;
             height: 1.2rem;
             stroke: var(--main-color);
             stroke-width: 2;
           }
+
           &:hover {
             background-color: var(--main-color);
+
             .official-site-copy-icon {
               stroke: var(--main-card-background);
             }
@@ -1155,6 +1467,7 @@
         }
       }
     }
+
     // 移动端响应式
     @media (max-width: 768px) {
       width: 100%;
