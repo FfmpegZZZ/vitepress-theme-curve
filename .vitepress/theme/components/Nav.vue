@@ -55,6 +55,29 @@
           >
             <i class="iconfont icon-search"></i>
           </div>
+          <!-- 登录/用户 -->
+          <div v-if="!isAuthenticated" class="menu-btn nav-btn" title="登录" @click="showAuthModal = true">
+            <svg class="icon-svg" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          </div>
+          <div v-else class="user-menu">
+            <div class="user-avatar" @click="toggleUserMenu">
+              <svg class="icon-svg" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+              <span class="username">{{ authStore?.username }}</span>
+            </div>
+            <Transition name="fade-scale">
+              <div v-if="showUserMenu" class="user-dropdown" @click.stop>
+                <div class="user-info">
+                  <div class="user-name">{{ authStore?.username }}</div>
+                  <div class="user-email">{{ authStore?.email }}</div>
+                </div>
+                <div class="dropdown-divider"></div>
+                <button class="dropdown-item" @click="handleLogout">
+                  <svg class="icon-svg" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                  登出
+                </button>
+              </div>
+            </Transition>
+          </div>
           <!-- 返回顶部 -->
           <div
             :class="[
@@ -91,18 +114,68 @@
     <ClientOnly>
       <LocalSearch v-if="theme.search.enable" />
     </ClientOnly>
+    <!-- 认证模态框 -->
+    <AuthModal v-model:show="showAuthModal" />
   </header>
 </template>
 
 <script setup>
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { storeToRefs } from "pinia";
-import { mainStore } from "@/store";
+import { mainStore, useAuthStore } from "@/store";
 import { smoothScrolling, shufflePost } from "@/utils/helper";
+import AuthModal from './Auth/AuthModal.vue';
 
 const router = useRouter();
 const store = mainStore();
+const authStore = useAuthStore();
 const { scrollData } = storeToRefs(store);
 const { site, theme, frontmatter, page } = useData();
+
+// 认证状态
+const isAuthenticated = computed(() => authStore?.isAuthenticated || false);
+
+// 认证模态框
+const showAuthModal = ref(false);
+
+// 用户菜单
+const showUserMenu = ref(false);
+
+// 切换用户菜单
+const toggleUserMenu = () => {
+  showUserMenu.value = !showUserMenu.value;
+};
+
+// 登出
+const handleLogout = async () => {
+  try {
+    await authStore.logout();
+    showUserMenu.value = false;
+    if (typeof $message !== 'undefined') {
+      $message.success('已退出登录');
+    }
+  } catch (error) {
+    console.error('Logout error:', error);
+    if (typeof $message !== 'undefined') {
+      $message.error('登出失败，请重试');
+    }
+  }
+};
+
+// 点击外部关闭用户菜单
+const handleClickOutside = (e) => {
+  if (showUserMenu.value && !e.target.closest('.user-menu')) {
+    showUserMenu.value = false;
+  }
+};
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside);
+});
+
+onBeforeUnmount(() => {
+  document.removeEventListener('click', handleClickOutside);
+});
 </script>
 
 <style lang="scss" scoped>
@@ -621,6 +694,125 @@ const { site, theme, frontmatter, page } = useData();
         color: var(--main-card-background);
       }
     }
+  }
+
+  // 用户菜单
+  .user-menu {
+    position: relative;
+    margin-left: 0.5rem;
+
+    .user-avatar {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 0.8rem;
+      background-color: rgba(var(--main-color), 0.1);
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+
+      .iconfont {
+        font-size: 18px;
+        color: var(--main-color);
+      }
+
+      .username {
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: var(--main-font-color);
+        max-width: 100px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+        @media (max-width: 768px) {
+          display: none;
+        }
+      }
+
+      &:hover {
+        background-color: var(--main-color);
+
+        .iconfont,
+        .username {
+          color: var(--main-card-background);
+        }
+      }
+    }
+
+    .user-dropdown {
+      position: absolute;
+      top: calc(100% + 0.5rem);
+      right: 0;
+      min-width: 200px;
+      background-color: var(--main-card-background);
+      border: 1px solid var(--main-card-border);
+      border-radius: 12px;
+      box-shadow: 0 8px 16px -4px var(--main-border-shadow);
+      padding: 0.5rem;
+      z-index: 1000;
+
+      .user-info {
+        padding: 0.75rem;
+
+        .user-name {
+          font-size: 1rem;
+          font-weight: 600;
+          color: var(--main-font-color);
+          margin-bottom: 0.25rem;
+        }
+
+        .user-email {
+          font-size: 0.85rem;
+          color: var(--main-font-second-color);
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+      }
+
+      .dropdown-divider {
+        height: 1px;
+        background-color: var(--main-card-border);
+        margin: 0.5rem 0;
+      }
+
+      .dropdown-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        width: 100%;
+        padding: 0.75rem;
+        background: none;
+        border: none;
+        border-radius: 8px;
+        color: var(--main-font-color);
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+
+        .iconfont {
+          font-size: 18px;
+        }
+
+        &:hover {
+          background-color: var(--main-color-bg);
+          color: var(--main-color);
+        }
+      }
+    }
+  }
+
+  // 下拉菜单动画
+  .fade-scale-enter-active,
+  .fade-scale-leave-active {
+    transition: all 0.2s ease;
+  }
+
+  .fade-scale-enter-from,
+  .fade-scale-leave-to {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
   }
 }
 </style>

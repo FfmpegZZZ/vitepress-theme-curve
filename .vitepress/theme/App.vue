@@ -40,7 +40,7 @@
 
 <script setup>
 import { storeToRefs } from "pinia";
-import { mainStore } from "@/store";
+import { mainStore, useAuthStore } from "@/store";
 import { calculateScroll, specialDayGray } from "@/utils/helper";
 
 const route = useRoute();
@@ -176,6 +176,9 @@ watch(
 
 onMounted(() => {
   console.log(frontmatter.value, page.value, theme.value);
+  // 初始化认证状态
+  const authStore = useAuthStore();
+  authStore.init();
   // 全站置灰
   specialDayGray();
   // 更改主题类别

@@ -32,6 +32,9 @@ importers:
       pinia-plugin-persistedstate:
         specifier: ^3.2.3
         version: 3.2.3(pinia@2.3.1(typescript@4.9.5)(vue@3.5.13(typescript@4.9.5)))
+      three:
+        specifier: ^0.182.0
+        version: 0.182.0
       vue:
         specifier: ^3.5.13
         version: 3.5.13(typescript@4.9.5)
@@ -3625,6 +3628,9 @@ packages:
 
   text-table@0.2.0:
     resolution: {integrity: sha512-N+8UisAXDGk8PFXP4HAzVR9nbfmVJ3zYLAWiTIoqC5v5isinhr+r5uaO8+7r3BMfuNIufIsA7RdpVgacC2cSpw==}
+
+  three@0.182.0:
+    resolution: {integrity: sha512-GbHabT+Irv+ihI1/f5kIIsZ+Ef9Sl5A1Y7imvS5RQjWgtTPfPnZ43JmlYI7NtCRDK9zir20lQpfg8/9Yd02OvQ==}
 
   time-span@4.0.0:
     resolution: {integrity: sha512-MyqZCTGLDZ77u4k+jqg4UlrzPTPZ49NDlaekU6uuFaJLzPIN1woaRXCbGeqOfxwc3Y37ZROGAJ614Rdv7Olt+g==}
@@ -7989,6 +7995,8 @@ snapshots:
       source-map-support: 0.5.21
 
   text-table@0.2.0: {}
+
+  three@0.182.0: {}
 
   time-span@4.0.0:
     dependencies:
