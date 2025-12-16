@@ -38,6 +38,37 @@
         <span v-if="errors.email" class="error-message">{{ errors.email }}</span>
       </div>
 
+      <!-- 邮箱验证码 -->
+      <div class="form-group">
+        <label for="verificationCode">
+          <svg class="icon-svg" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          验证码
+        </label>
+        <div class="code-input-group">
+          <input
+            id="verificationCode"
+            v-model="formData.verificationCode"
+            type="text"
+            placeholder="请输入6位验证码"
+            maxlength="6"
+            :disabled="loading"
+            @blur="validateCodeOnBlur"
+          />
+          <button
+            type="button"
+            class="send-code-btn"
+            :disabled="!canSendCode || codeSending || countdown > 0"
+            @click="sendCode"
+          >
+            <span v-if="codeSending">发送中...</span>
+            <span v-else-if="countdown > 0">{{ countdown }}s 后重试</span>
+            <span v-else>发送验证码</span>
+          </button>
+        </div>
+        <span v-if="errors.verificationCode" class="error-message">{{ errors.verificationCode }}</span>
+        <span v-if="codeHint" class="info-message">{{ codeHint }}</span>
+      </div>
+
       <!-- 密码 -->
       <div class="form-group">
         <label for="password">
@@ -119,6 +150,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue';
 import { useAuthStore } from '../../store';
+import { sendVerificationCode } from '../../api/auth';
 import TurnstileWidget from './TurnstileWidget.vue';
 
 const emit = defineEmits(['success', 'switch-mode']);
@@ -130,6 +162,7 @@ const turnstileRef = ref(null);
 const formData = ref({
   username: '',
   email: '',
+  verificationCode: '', // 新增验证码字段
   password: '',
   confirmPassword: '',
   turnstile_token: '',
@@ -139,6 +172,7 @@ const formData = ref({
 const errors = ref({
   username: '',
   email: '',
+  verificationCode: '', // 新增验证码错误
   password: '',
   confirmPassword: '',
 });
@@ -148,6 +182,18 @@ const loading = ref(false);
 const errorMessage = ref('');
 const showPassword = ref(false);
 const showConfirmPassword = ref(false);
+
+// 验证码相关状态
+const codeSending = ref(false); // 是否正在发送验证码
+const countdown = ref(0); // 倒计时秒数
+const codeHint = ref(''); // 验证码提示信息
+let countdownTimer = null;
+
+// 是否可以发送验证码
+const canSendCode = computed(() => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return formData.value.email && emailRegex.test(formData.value.email) && !errors.value.email;
+});
 
 // 当前主题
 const currentTheme = computed(() => {
@@ -218,6 +264,80 @@ const validateEmail = () => {
   errors.value.email = '';
   return true;
 };
+
+// 发送验证码
+const sendCode = async () => {
+  if (!canSendCode.value) return;
+  
+  codeSending.value = true;
+  codeHint.value = '';
+  errors.value.verificationCode = '';
+  
+  try {
+    const result = await sendVerificationCode({
+      email: formData.value.email,
+      type: 'register'
+    });
+    
+    // 开始倒计时
+    countdown.value = 60;
+    codeHint.value = `验证码已发送至 ${formData.value.email}，${result.expires_in / 60} 分钟内有效`;
+    
+    countdownTimer = setInterval(() => {
+      countdown.value--;
+      if (countdown.value <= 0) {
+        clearInterval(countdownTimer);
+        countdownTimer = null;
+      }
+    }, 1000);
+    
+  } catch (error) {
+    console.error('Send code error:', error);
+    
+    if (error.code === 'ERR_TOO_FREQUENT' || error.code === 'ERR_429') {
+      errors.value.verificationCode = '发送过于频繁，请稍后再试';
+    } else if (error.code === 'ERR_TOO_MANY_REQUESTS') {
+      errors.value.verificationCode = '今日发送次数已达上限，请明天再试';
+    } else {
+      errors.value.verificationCode = error.message || '发送验证码失败，请重试';
+    }
+  } finally {
+    codeSending.value = false;
+  }
+};
+
+// 验证码校验（@blur 时调用，只验证格式）
+const validateCodeOnBlur = () => {
+  if (!formData.value.verificationCode) {
+    errors.value.verificationCode = '';
+    return;
+  }
+  
+  const codeRegex = /^\d{6}$/;
+  if (!codeRegex.test(formData.value.verificationCode)) {
+    errors.value.verificationCode = '验证码必须是6位数字';
+  } else {
+    errors.value.verificationCode = '';
+  }
+};
+
+// 验证码校验（提交时调用，验证必填+格式）
+const validateCode = () => {
+  if (!formData.value.verificationCode) {
+    errors.value.verificationCode = '请输入验证码';
+    return false;
+  }
+  
+  const codeRegex = /^\d{6}$/;
+  if (!codeRegex.test(formData.value.verificationCode)) {
+    errors.value.verificationCode = '验证码必须是6位数字';
+    return false;
+  }
+  
+  errors.value.verificationCode = '';
+  return true;
+};
+
 
 // 验证密码（@blur 时调用，只验证格式）
 const validatePasswordOnBlur = () => {
@@ -291,11 +411,13 @@ const canSubmit = computed(() => {
   return (
     formData.value.username &&
     formData.value.email &&
+    formData.value.verificationCode &&
     formData.value.password &&
     formData.value.confirmPassword &&
     formData.value.turnstile_token &&
     !errors.value.username &&
     !errors.value.email &&
+    !errors.value.verificationCode &&
     !errors.value.password &&
     !errors.value.confirmPassword
   );
@@ -311,10 +433,11 @@ const handleSubmit = async () => {
   // 验证表单
   const usernameValid = validateUsername();
   const emailValid = validateEmail();
+  const codeValid = validateCode(); // 新增：验证验证码
   const passwordValid = validatePassword();
   const confirmPasswordValid = validateConfirmPassword();
 
-  if (!usernameValid || !emailValid || !passwordValid || !confirmPasswordValid) {
+  if (!usernameValid || !emailValid || !codeValid || !passwordValid || !confirmPasswordValid) {
     return;
   }
 
@@ -331,6 +454,7 @@ const handleSubmit = async () => {
       username: formData.value.username,
       email: formData.value.email,
       password: formData.value.password,
+      verification_code: formData.value.verificationCode, // 新增：包含验证码
       turnstile_token: formData.value.turnstile_token,
     });
 
@@ -343,9 +467,18 @@ const handleSubmit = async () => {
     console.error('Register error:', error);
     
     // 显示错误消息
-    if (error.code === 'ERR_CONFLICT') {
+    if (error.code === 'ERR_CONFLICT' || error.code === 'ERR_409') {
       errorMessage.value = '用户名或邮箱已被使用';
-    } else if (error.code === 'ERR_VALIDATION') {
+    } else if (error.code === 'ERR_INVALID_CODE') {
+      errorMessage.value = '验证码错误';
+      errors.value.verificationCode = '验证码错误，请重新输入';
+    } else if (error.code === 'ERR_CODE_EXPIRED') {
+      errorMessage.value = '验证码已过期，请重新获取';
+      errors.value.verificationCode = '验证码已过期';
+    } else if (error.code === 'ERR_CODE_USED') {
+      errorMessage.value = '验证码已使用，请重新获取';
+      errors.value.verificationCode = '验证码已使用';
+    } else if (error.code === 'ERR_VALIDATION' || error.code === 'ERR_400') {
       errorMessage.value = error.message || '输入信息有误，请检查';
     } else if (error.code === 'ERR_TURNSTILE') {
       errorMessage.value = '人机验证失败，请重试';

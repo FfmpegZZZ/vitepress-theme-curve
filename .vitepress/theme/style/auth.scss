@@ -179,6 +179,54 @@
             color: var(--auth-error-text);
             animation: shake 0.3s cubic-bezier(0.36, 0.07, 0.19, 0.97);
         }
+
+        .info-message {
+            display: block;
+            margin-top: 6px;
+            font-size: 13px;
+            color: var(--auth-blue);
+            line-height: 1.4;
+        }
+
+        /* 验证码输入组 */
+        .code-input-group {
+            display: flex;
+            gap: 8px;
+            align-items: stretch;
+
+            input {
+                flex: 1;
+            }
+
+            .send-code-btn {
+                flex-shrink: 0;
+                height: 44px;
+                padding: 0 16px;
+                background: var(--auth-blue);
+                color: white;
+                border: none;
+                border-radius: 10px;
+                font-size: 14px;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                white-space: nowrap;
+
+                &:hover:not(:disabled) {
+                    background: var(--auth-blue-hover);
+                }
+
+                &:disabled {
+                    background: var(--auth-input-bg);
+                    color: var(--auth-text-tertiary);
+                    cursor: not-allowed;
+                }
+
+                &:active:not(:disabled) {
+                    transform: scale(0.98);
+                }
+            }
+        }
     }
 
     .form-error {

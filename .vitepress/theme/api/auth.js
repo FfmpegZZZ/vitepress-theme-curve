@@ -180,6 +180,44 @@ export const updateUserInfo = async (data) => {
 };
 
 /**
+ * 发送邮箱验证码
+ * @param {Object} data - 验证码发送数据
+ * @param {string} data.email - 接收验证码的邮箱
+ * @param {string} [data.type='register'] - 验证码类型：register(默认)、login、reset_password、change_email
+ */
+export const sendVerificationCode = async (data) => {
+    const result = await request('/verification/send-code', {
+        method: 'POST',
+        body: JSON.stringify({
+            email: data.email,
+            type: data.type || 'register',
+        }),
+        skipAuth: true, // 发送验证码无需认证
+    });
+
+    return result.data;
+};
+
+/**
+ * 验证邮箱
+ * @param {Object} data - 验证数据
+ * @param {string} data.email - 待验证的邮箱
+ * @param {string} data.code - 6位数字验证码
+ */
+export const verifyEmail = async (data) => {
+    const result = await request('/verification/verify-email', {
+        method: 'POST',
+        body: JSON.stringify({
+            email: data.email,
+            code: data.code,
+        }),
+        skipAuth: true, // 验证邮箱无需认证（注册流程可能还未登录）
+    });
+
+    return result.data;
+};
+
+/**
  * 导出工具方法
  */
 export { getAccessToken, setAccessToken };
