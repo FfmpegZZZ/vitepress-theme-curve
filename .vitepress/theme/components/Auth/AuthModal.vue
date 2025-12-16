@@ -1,12 +1,12 @@
 <template>
   <Teleport to="body">
     <Transition name="modal-fade">
-      <div v-if="show" class="auth-modal" @click.self="handleClose">
+      <div v-if="show" class="auth-modal">
         <!-- Three.js 背景 -->
         <AuthBackground />
         
         <!-- 模态框内容 -->
-        <div class="modal-content" @click.stop>
+        <div class="modal-content">
           <!-- 关闭按钮 -->
           <button class="close-btn" @click="handleClose" title="关闭">
             <i class="iconfont icon-close"></i>
