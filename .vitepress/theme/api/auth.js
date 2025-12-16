@@ -184,6 +184,7 @@ export const updateUserInfo = async (data) => {
  * @param {Object} data - 验证码发送数据
  * @param {string} data.email - 接收验证码的邮箱
  * @param {string} [data.type='register'] - 验证码类型：register(默认)、login、reset_password、change_email
+ * @param {string} data.turnstile_token - Cloudflare Turnstile 人机验证令牌
  */
 export const sendVerificationCode = async (data) => {
     const result = await request('/verification/send-code', {
@@ -191,8 +192,9 @@ export const sendVerificationCode = async (data) => {
         body: JSON.stringify({
             email: data.email,
             type: data.type || 'register',
+            turnstile_token: data.turnstile_token, // 必需：人机验证
         }),
-        skipAuth: true, // 发送验证码无需认证
+        skipAuth: true,
     });
 
     return result.data;

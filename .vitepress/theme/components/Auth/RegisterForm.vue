@@ -269,6 +269,12 @@ const validateEmail = () => {
 const sendCode = async () => {
   if (!canSendCode.value) return;
   
+  // 验证 Turnstile token 是否存在
+  if (!formData.value.turnstile_token) {
+    errors.value.verificationCode = '请先完成人机验证';
+    return;
+  }
+  
   codeSending.value = true;
   codeHint.value = '';
   errors.value.verificationCode = '';
@@ -276,7 +282,8 @@ const sendCode = async () => {
   try {
     const result = await sendVerificationCode({
       email: formData.value.email,
-      type: 'register'
+      type: 'register',
+      turnstile_token: formData.value.turnstile_token // 必需：人机验证
     });
     
     // 开始倒计时
@@ -294,7 +301,10 @@ const sendCode = async () => {
   } catch (error) {
     console.error('Send code error:', error);
     
-    if (error.code === 'ERR_TOO_FREQUENT' || error.code === 'ERR_429') {
+    if (error.code === 'ERR_TURNSTILE') {
+      errors.value.verificationCode = '人机验证失败，请重试';
+      turnstileRef.value?.reset();
+    } else if (error.code === 'ERR_TOO_FREQUENT' || error.code === 'ERR_429') {
       errors.value.verificationCode = '发送过于频繁，请稍后再试';
     } else if (error.code === 'ERR_TOO_MANY_REQUESTS') {
       errors.value.verificationCode = '今日发送次数已达上限，请明天再试';
@@ -414,7 +424,7 @@ const canSubmit = computed(() => {
     formData.value.verificationCode &&
     formData.value.password &&
     formData.value.confirmPassword &&
-    formData.value.turnstile_token &&
+    // 不再需要 turnstile_token（发送验证码时已验证）
     !errors.value.username &&
     !errors.value.email &&
     !errors.value.verificationCode &&
@@ -433,16 +443,11 @@ const handleSubmit = async () => {
   // 验证表单
   const usernameValid = validateUsername();
   const emailValid = validateEmail();
-  const codeValid = validateCode(); // 新增：验证验证码
+  const codeValid = validateCode();
   const passwordValid = validatePassword();
   const confirmPasswordValid = validateConfirmPassword();
 
   if (!usernameValid || !emailValid || !codeValid || !passwordValid || !confirmPasswordValid) {
-    return;
-  }
-
-  if (!formData.value.turnstile_token) {
-    errorMessage.value = '请完成人机验证';
     return;
   }
 
@@ -454,8 +459,8 @@ const handleSubmit = async () => {
       username: formData.value.username,
       email: formData.value.email,
       password: formData.value.password,
-      verification_code: formData.value.verificationCode, // 新增：包含验证码
-      turnstile_token: formData.value.turnstile_token,
+      email_code: formData.value.verificationCode, // 字段名改为 email_code
+      // 注意：不再需要 turnstile_token（发送验证码时已验证）
     });
 
     // 注册成功
@@ -469,6 +474,12 @@ const handleSubmit = async () => {
     // 显示错误消息
     if (error.code === 'ERR_CONFLICT' || error.code === 'ERR_409') {
       errorMessage.value = '用户名或邮箱已被使用';
+    } else if (error.code === 'ERR_EMAIL_CODE_REQUIRED') {
+      errorMessage.value = '请先获取邮箱验证码';
+      errors.value.verificationCode = '请先获取验证码';
+    } else if (error.code === 'ERR_EMAIL_CODE') {
+      errorMessage.value = '邮箱验证码错误或已过期';
+      errors.value.verificationCode = '验证码错误或已过期';
     } else if (error.code === 'ERR_INVALID_CODE') {
       errorMessage.value = '验证码错误';
       errors.value.verificationCode = '验证码错误，请重新输入';
