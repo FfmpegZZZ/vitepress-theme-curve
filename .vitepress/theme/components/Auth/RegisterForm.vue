@@ -16,7 +16,7 @@
           type="text"
           placeholder="3-32个字符"
           :disabled="loading"
-          @blur="validateUsername"
+          @blur="validateUsernameOnBlur"
         />
         <span v-if="errors.username" class="error-message">{{ errors.username }}</span>
       </div>
@@ -33,7 +33,7 @@
           type="email"
           placeholder="请输入邮箱地址"
           :disabled="loading"
-          @blur="validateEmail"
+          @blur="validateEmailOnBlur"
         />
         <span v-if="errors.email" class="error-message">{{ errors.email }}</span>
       </div>
@@ -51,7 +51,7 @@
             :type="showPassword ? 'text' : 'password'"
             placeholder="至少8个字符"
             :disabled="loading"
-            @blur="validatePassword"
+            @blur="validatePasswordOnBlur"
           />
           <div class="toggle-password" @click="showPassword = !showPassword">
             <svg v-if="showPassword" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
@@ -74,7 +74,7 @@
             :type="showConfirmPassword ? 'text' : 'password'"
             placeholder="再次输入密码"
             :disabled="loading"
-            @blur="validateConfirmPassword"
+            @blur="validateConfirmPasswordOnBlur"
           />
           <div class="toggle-password" @click="showConfirmPassword = !showConfirmPassword">
             <svg v-if="showConfirmPassword" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
@@ -160,6 +160,22 @@ const currentTheme = computed(() => {
 });
 
 // 验证用户名
+
+// 验证用户名（@blur 时调用，只验证格式）
+const validateUsernameOnBlur = () => {
+  if (!formData.value.username) {
+    errors.value.username = '';
+    return;
+  }
+  
+  if (formData.value.username.length < 3 || formData.value.username.length > 32) {
+    errors.value.username = '用户名长度应为3-32个字符';
+  } else {
+    errors.value.username = '';
+  }
+};
+
+// 验证用户名（提交时调用，验证必填+格式）
 const validateUsername = () => {
   if (!formData.value.username) {
     errors.value.username = '请输入用户名';
@@ -173,7 +189,22 @@ const validateUsername = () => {
   return true;
 };
 
-// 验证邮箱
+// 验证邮箱（@blur 时调用，只验证格式）
+const validateEmailOnBlur = () => {
+  if (!formData.value.email) {
+    errors.value.email = '';
+    return;
+  }
+  
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(formData.value.email)) {
+    errors.value.email = '请输入有效的邮箱地址';
+  } else {
+    errors.value.email = '';
+  }
+};
+
+// 验证邮箱（提交时调用，验证必填+格式）
 const validateEmail = () => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!formData.value.email) {
@@ -188,7 +219,25 @@ const validateEmail = () => {
   return true;
 };
 
-// 验证密码
+// 验证密码（@blur 时调用，只验证格式）
+const validatePasswordOnBlur = () => {
+  if (!formData.value.password) {
+    errors.value.password = '';
+    return;
+  }
+  
+  if (formData.value.password.length < 8) {
+    errors.value.password = '密码至少需要8个字符';
+  } else {
+    errors.value.password = '';
+    // 如果确认密码已填写，重新验证
+    if (formData.value.confirmPassword) {
+      validateConfirmPasswordOnBlur();
+    }
+  }
+};
+
+// 验证密码（提交时调用，验证必填+格式）
 const validatePassword = () => {
   if (!formData.value.password) {
     errors.value.password = '请输入密码';
@@ -208,7 +257,21 @@ const validatePassword = () => {
   return true;
 };
 
-// 验证确认密码
+// 验证确认密码（@blur 时调用，只验证格式）
+const validateConfirmPasswordOnBlur = () => {
+  if (!formData.value.confirmPassword) {
+    errors.value.confirmPassword = '';
+    return;
+  }
+  
+  if (formData.value.password !== formData.value.confirmPassword) {
+    errors.value.confirmPassword = '两次输入的密码不一致';
+  } else {
+    errors.value.confirmPassword = '';
+  }
+};
+
+// 验证确认密码（提交时调用，验证必填+格式）
 const validateConfirmPassword = () => {
   if (!formData.value.confirmPassword) {
     errors.value.confirmPassword = '请再次输入密码';
@@ -221,6 +284,7 @@ const validateConfirmPassword = () => {
   errors.value.confirmPassword = '';
   return true;
 };
+
 
 // 是否可以提交
 const canSubmit = computed(() => {

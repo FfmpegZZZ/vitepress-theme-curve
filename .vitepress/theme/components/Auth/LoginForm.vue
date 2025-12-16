@@ -16,7 +16,7 @@
           type="email"
           placeholder="请输入邮箱地址"
           :disabled="loading"
-          @blur="validateEmail"
+          @blur="validateEmailOnBlur"
         />
         <span v-if="errors.email" class="error-message">{{ errors.email }}</span>
       </div>
@@ -34,7 +34,7 @@
             :type="showPassword ? 'text' : 'password'"
             placeholder="请输入密码"
             :disabled="loading"
-            @blur="validatePassword"
+            @blur="validatePasswordOnBlur"
           />
           <div class="toggle-password" @click="showPassword = !showPassword">
             <svg v-if="showPassword" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
@@ -115,6 +115,23 @@ const currentTheme = computed(() => {
 });
 
 // 验证邮箱
+// 验证邮箱（@blur 时调用，只验证格式）
+const validateEmailOnBlur = () => {
+  // 如果为空，不显示错误（留到提交时验证）
+  if (!formData.value.email) {
+    errors.value.email = '';
+    return;
+  }
+  
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(formData.value.email)) {
+    errors.value.email = '请输入有效的邮箱地址';
+  } else {
+    errors.value.email = '';
+  }
+};
+
+// 验证邮箱（提交时调用，验证必填+格式）
 const validateEmail = () => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!formData.value.email) {
@@ -129,7 +146,22 @@ const validateEmail = () => {
   return true;
 };
 
-// 验证密码
+// 验证密码（@blur 时调用，只验证格式）
+const validatePasswordOnBlur = () => {
+  // 如果为空，不显示错误（留到提交时验证）
+  if (!formData.value.password) {
+    errors.value.password = '';
+    return;
+  }
+  
+  if (formData.value.password.length < 8) {
+    errors.value.password = '密码至少需要8个字符';
+  } else {
+    errors.value.password = '';
+  }
+};
+
+// 验证密码（提交时调用，验证必填+格式）
 const validatePassword = () => {
   if (!formData.value.password) {
     errors.value.password = '请输入密码';

@@ -12,21 +12,29 @@
             <i class="iconfont icon-close"></i>
           </button>
 
-          <!-- 表单切换 -->
-          <Transition :name="transitionName" mode="out-in">
-            <LoginForm
-              v-if="mode === 'login'"
-              key="login"
-              @success="handleSuccess"
-              @switch-mode="switchMode"
-            />
-            <RegisterForm
-              v-else
-              key="register"
-              @success="handleSuccess"
-              @switch-mode="switchMode"
-            />
-          </Transition>
+          <!-- 表单切换区域 -->
+          <div class="form-wrapper" ref="formWrapper" :style="{ height: wrapperHeight }">
+            <Transition 
+              :name="transitionName" 
+              @before-enter="onBeforeEnter"
+              @enter="onEnter"
+              @after-enter="onAfterEnter"
+              @before-leave="onBeforeLeave"
+            >
+              <LoginForm
+                v-if="mode === 'login'"
+                class="auth-form-component"
+                @success="handleSuccess"
+                @switch-mode="switchMode"
+              />
+              <RegisterForm
+                v-else
+                class="auth-form-component"
+                @success="handleSuccess"
+                @switch-mode="switchMode"
+              />
+            </Transition>
+          </div>
         </div>
       </div>
     </Transition>
@@ -34,7 +42,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch, nextTick } from 'vue';
 import AuthBackground from './AuthBackground.vue';
 import LoginForm from './LoginForm.vue';
 import RegisterForm from './RegisterForm.vue';
@@ -54,11 +62,49 @@ const emit = defineEmits(['update:show', 'success']);
 
 const mode = ref(props.defaultMode);
 const transitionName = ref('slide-left');
+const formWrapper = ref(null);
+const wrapperHeight = ref('auto');
 
 // 切换模式
 const switchMode = (newMode) => {
   transitionName.value = newMode === 'register' ? 'slide-left' : 'slide-right';
   mode.value = newMode;
+};
+
+// 动画钩子 - 处理高度平滑过渡
+const onBeforeLeave = (el) => {
+  if (formWrapper.value) {
+    // 锁定当前高度，防止塌陷
+    wrapperHeight.value = `${formWrapper.value.offsetHeight}px`;
+  }
+};
+
+const onBeforeEnter = (el) => {
+  // 确保进入的元素先不可见或透明? 
+  // 实际上 CSS 已经处理了淡入
+};
+
+const onEnter = (el, done) => {
+  // 在下一帧获取新元素的高度
+  nextTick(() => {
+    // 这里 el 是新插入的组件根元素
+    // 我们需要将其高度应用到 wrapper 上
+    // 如果 wrapperHeight 变化，CSS transition 会处理动画
+    wrapperHeight.value = `${el.offsetHeight}px`;
+    
+    // 等待过渡完成
+    // 注意：这里的 done 回调其实不是必须的，除非我们需要精确控制
+    done();
+  });
+};
+
+const onAfterEnter = (el) => {
+  // 动画结束后，恢复 auto 高度以便适应如错误提示等内容变化
+  // 为了防止 transitionend 事件还没触发就设为 auto 导致跳变，加个小延时或者监听 transitionend
+  // 简单起见，利用 CSS transition 时间
+  setTimeout(() => {
+    wrapperHeight.value = 'auto';
+  }, 300); // 必须与 CSS transition-duration 一致
 };
 
 // 关闭模态框
@@ -82,16 +128,13 @@ const handleKeydown = (e) => {
 // 监听 show 变化
 watch(() => props.show, (newVal) => {
   if (newVal) {
-    // 打开时重置为默认模式
     mode.value = props.defaultMode;
-    // 阻止背景滚动
     document.body.style.overflow = 'hidden';
-    // 监听 ESC 键
     window.addEventListener('keydown', handleKeydown);
+    // 重置高度
+    wrapperHeight.value = 'auto';
   } else {
-    // 恢复滚动
     document.body.style.overflow = '';
-    // 移除监听
     window.removeEventListener('keydown', handleKeydown);
   }
 });
@@ -119,7 +162,7 @@ watch(() => props.show, (newVal) => {
   max-height: 90vh;
   overflow-y: auto;
   
-  /* Apple Glass Effect - 自适应深浅色 */
+  /* Apple Glass Effect */
   background: var(--auth-modal-bg);
   backdrop-filter: blur(25px) saturate(180%);
   -webkit-backdrop-filter: blur(25px) saturate(180%);
@@ -131,13 +174,29 @@ watch(() => props.show, (newVal) => {
     0 0 0 1px var(--auth-border-color) inset;
     
   padding: 3rem 2.5rem;
+  /* 移除 modal-scale-in 动画到这里，还是保留？保留整个模态框的入场动画 */
   animation: modal-scale-in 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  /* 隐藏滚动条，因为内容在 wrapper 里滚动? 不，content 本身滚动 */
+  scrollbar-width: none; 
 
   @media (max-width: 768px) {
     padding: 2rem 1.5rem;
     max-width: 92%;
     border-radius: 16px;
   }
+}
+
+/* 高度动画容器 */
+.form-wrapper {
+  position: relative;
+  transition: height 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* 平滑的缓动曲线 */
+  overflow: hidden; /* 裁剪溢出内容 */
+  will-change: height;
+}
+
+.auth-form-component {
+  width: 100%;
+  /* 确保组件撑满容器 */
 }
 
 .close-btn {
@@ -186,66 +245,54 @@ watch(() => props.show, (newVal) => {
   opacity: 0;
 }
 
-// 表单切换动画 - 向左滑动
+// 表单切换动画 - 通用
 .slide-left-enter-active,
-.slide-left-leave-active {
-  transition: all 0.3s ease;
-}
-
-.slide-left-enter-from {
-  opacity: 0;
-  transform: translateX(30px);
-}
-
-.slide-left-leave-to {
-  opacity: 0;
-  transform: translateX(-30px);
-}
-
-// 表单切换动画 - 向右滑动
+.slide-left-leave-active,
 .slide-right-enter-active,
 .slide-right-leave-active {
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
+// 离开的元素必须绝对定位，以免占据空间导致布局跳动，
+// 但因为我们锁定了 wrapper 高度，所以这很重要。
+.slide-left-leave-active,
+.slide-right-leave-active {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
+// Slide Left (Register -> Login) ?? No.
+// Switch to Register (Right -> Left motion)
+.slide-left-enter-from {
+  opacity: 0;
+  transform: translateX(20px);
+}
+.slide-left-leave-to {
+  opacity: 0;
+  transform: translateX(-20px);
+}
+
+// Switch to Login (Left -> Right motion)
 .slide-right-enter-from {
   opacity: 0;
-  transform: translateX(-30px);
+  transform: translateX(-20px);
 }
-
 .slide-right-leave-to {
   opacity: 0;
-  transform: translateX(30px);
+  transform: translateX(20px);
 }
 
 // 模态框缩放动画
 @keyframes modal-scale-in {
   from {
     opacity: 0;
-    transform: scale(0.9);
+    transform: scale(0.95);
   }
   to {
     opacity: 1;
     transform: scale(1);
-  }
-}
-
-// 滚动条样式 - 自适应主题
-.modal-content::-webkit-scrollbar {
-  width: 6px;
-}
-
-.modal-content::-webkit-scrollbar-track {
-  background: var(--auth-input-bg);
-  border-radius: 3px;
-}
-
-.modal-content::-webkit-scrollbar-thumb {
-  background: var(--auth-text-tertiary);
-  border-radius: 3px;
-
-  &:hover {
-    background: var(--auth-text-secondary);
   }
 }
 </style>
