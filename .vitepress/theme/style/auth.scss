@@ -1,24 +1,74 @@
 /**
- * 认证系统样式 - Apple Style (Dark Mode)
+ * 认证系统样式 - Apple Style (自适应深浅色模式)
  */
+
+// ============================================
+// CSS 变量定义
+// ============================================
+
+:root {
+    /* 浅色模式 */
+    --auth-text-primary: rgba(0, 0, 0, 0.85);
+    --auth-text-secondary: rgba(60, 60, 67, 0.6);
+    --auth-text-tertiary: rgba(60, 60, 67, 0.3);
+    --auth-bg-primary: rgba(255, 255, 255, 0.9);
+    --auth-bg-secondary: rgba(242, 242, 247, 1);
+    --auth-input-bg: rgba(0, 0, 0, 0.05);
+    --auth-input-bg-focus: rgba(0, 0, 0, 0.08);
+    --auth-input-border: rgba(0, 0, 0, 0.1);
+    --auth-border-color: rgba(0, 0, 0, 0.1);
+    --auth-error-bg: rgba(255, 59, 48, 0.1);
+    --auth-error-border: rgba(255, 59, 48, 0.3);
+    --auth-error-text: #FF3B30;
+    --auth-blue: #007AFF;
+    --auth-blue-hover: #0051D5;
+    --auth-modal-bg: rgba(255, 255, 255, 0.8);
+    --auth-modal-border: rgba(0, 0, 0, 0.12);
+    --auth-overlay-bg: rgba(0, 0, 0, 0.4);
+}
+
+.dark {
+    /* 深色模式 */
+    --auth-text-primary: rgba(255, 255, 255, 1);
+    --auth-text-secondary: rgba(235, 235, 245, 0.6);
+    --auth-text-tertiary: rgba(235, 235, 245, 0.3);
+    --auth-bg-primary: rgba(30, 30, 30, 0.85);
+    --auth-bg-secondary: rgba(44, 44, 46, 1);
+    --auth-input-bg: rgba(118, 118, 128, 0.12);
+    --auth-input-bg-focus: rgba(118, 118, 128, 0.24);
+    --auth-input-border: transparent;
+    --auth-border-color: rgba(255, 255, 255, 0.12);
+    --auth-error-bg: rgba(255, 69, 58, 0.1);
+    --auth-error-border: rgba(255, 69, 58, 0.2);
+    --auth-error-text: #FF453A;
+    --auth-blue: #0A84FF;
+    --auth-blue-hover: #0062CC;
+    --auth-modal-bg: rgba(30, 30, 30, 0.65);
+    --auth-modal-border: rgba(255, 255, 255, 0.12);
+    --auth-overlay-bg: rgba(0, 0, 0, 0.5);
+}
+
+// ============================================
+// 表单样式
+// ============================================
 
 .auth-form {
     width: 100%;
-    color: #fff;
+    color: var(--auth-text-primary);
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
 
     .form-title {
         font-size: 28px;
         font-weight: 700;
         margin: 0 0 8px 0;
-        color: #fff;
+        color: var(--auth-text-primary);
         text-align: center;
         letter-spacing: -0.5px;
     }
 
     .form-subtitle {
         font-size: 15px;
-        color: rgba(235, 235, 245, 0.6);
+        color: var(--auth-text-secondary);
         margin: 0 0 32px 0;
         text-align: center;
         line-height: 1.4;
@@ -33,6 +83,7 @@
         display: inline-block;
         vertical-align: middle;
         fill: none;
+        color: var(--auth-text-secondary);
     }
 
     .form-group {
@@ -43,7 +94,7 @@
             align-items: center;
             font-size: 13px;
             font-weight: 500;
-            color: rgba(235, 235, 245, 0.6);
+            color: var(--auth-text-secondary);
             margin-bottom: 8px;
             letter-spacing: -0.2px;
 
@@ -51,7 +102,6 @@
                 margin-right: 6px;
                 width: 14px;
                 height: 14px;
-                color: rgba(235, 235, 245, 0.6);
             }
 
             /* 兼容 iconfont */
@@ -64,31 +114,25 @@
         input {
             width: 100%;
             height: 44px;
-            /* 标准触摸高度 */
             padding: 0 16px;
 
-            /* Apple Dark Input */
-            background: rgba(118, 118, 128, 0.12);
-            /* 经典的深色输入框底色 */
-            border: 1px solid transparent;
+            background: var(--auth-input-bg);
+            border: 1px solid var(--auth-input-border);
             border-radius: 10px;
 
-            color: #fff;
+            color: var(--auth-text-primary);
             font-size: 17px;
-            /* 默认正文字号 */
             transition: all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
             outline: none;
 
             &::placeholder {
-                color: rgba(235, 235, 245, 0.3);
+                color: var(--auth-text-tertiary);
             }
 
             &:focus {
-                background: rgba(118, 118, 128, 0.24);
-                border-color: #0A84FF;
-                /* Apple Blue (Dark Mode) */
+                background: var(--auth-input-bg-focus);
+                border-color: var(--auth-blue);
                 box-shadow: 0 0 0 4px rgba(10, 132, 255, 0.15);
-                /* 聚焦光晕 */
             }
 
             &:disabled {
@@ -114,11 +158,11 @@
                 align-items: center;
                 justify-content: center;
                 cursor: pointer;
-                color: rgba(235, 235, 245, 0.6);
+                color: var(--auth-text-secondary);
                 transition: color 0.2s ease;
 
                 &:hover {
-                    color: #fff;
+                    color: var(--auth-text-primary);
                 }
 
                 svg {
@@ -132,8 +176,7 @@
             display: block;
             margin-top: 6px;
             font-size: 13px;
-            color: #FF453A;
-            /* Apple Red (Dark Mode) */
+            color: var(--auth-error-text);
             animation: shake 0.3s cubic-bezier(0.36, 0.07, 0.19, 0.97);
         }
     }
@@ -142,10 +185,10 @@
         display: flex;
         align-items: center;
         padding: 12px 16px;
-        background: rgba(255, 69, 58, 0.1);
-        border: 1px solid rgba(255, 69, 58, 0.2);
+        background: var(--auth-error-bg);
+        border: 1px solid var(--auth-error-border);
         border-radius: 10px;
-        color: #FF453A;
+        color: var(--auth-error-text);
         font-size: 14px;
         margin-bottom: 24px;
         animation: shake 0.3s cubic-bezier(0.36, 0.07, 0.19, 0.97);
@@ -169,7 +212,7 @@
         margin-top: 8px;
 
         /* Apple Blue Button */
-        background: #007AFF;
+        background: var(--auth-blue);
         border: none;
         border-radius: 12px;
 
@@ -180,13 +223,10 @@
 
         cursor: pointer;
         transition: all 0.2s ease;
-
-        /* 去除阴影，依靠色彩和层级 */
         box-shadow: none;
 
         &:hover:not(:disabled) {
-            background: #0062CC;
-            /* 稍微深一点的蓝色 */
+            background: var(--auth-blue-hover);
         }
 
         &:active:not(:disabled) {
@@ -194,8 +234,8 @@
         }
 
         &:disabled {
-            background: rgba(118, 118, 128, 0.24);
-            color: rgba(255, 255, 255, 0.3);
+            background: var(--auth-input-bg);
+            color: var(--auth-text-tertiary);
             cursor: not-allowed;
             transform: none;
         }
@@ -223,11 +263,10 @@
         margin-top: 24px;
         text-align: center;
         font-size: 14px;
-        color: rgba(235, 235, 245, 0.6);
+        color: var(--auth-text-secondary);
 
         a {
-            color: #0A84FF;
-            /* Apple Blue (Dark Mode) */
+            color: var(--auth-blue);
             font-weight: 500;
             cursor: pointer;
             margin-left: 6px;
@@ -246,7 +285,10 @@
     }
 }
 
+// ============================================
 // 动画
+// ============================================
+
 @keyframes shake {
 
     10%,
@@ -281,7 +323,10 @@
     }
 }
 
+// ============================================
 // 响应式
+// ============================================
+
 @media (max-width: 768px) {
     .auth-form {
         .form-title {
@@ -295,7 +340,6 @@
 
         .submit-btn {
             height: 48px;
-            /* 保持大点击区域 */
         }
     }
 }

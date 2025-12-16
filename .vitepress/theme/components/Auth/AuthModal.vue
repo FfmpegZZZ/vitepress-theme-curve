@@ -109,29 +109,29 @@ watch(() => props.show, (newVal) => {
   align-items: center;
   justify-content: center;
   backdrop-filter: blur(10px);
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: var(--auth-overlay-bg);
 }
 
 .modal-content {
   position: relative;
   width: 90%;
-  max-width: 440px; /* 稍微调窄一点，更像手机弹窗 */
+  max-width: 440px;
   max-height: 90vh;
   overflow-y: auto;
   
-  /* Apple Dark Glass */
-  background: rgba(30, 30, 30, 0.65);
-  backdrop-filter: blur(25px) saturate(180%); /* 经典的 iOS 模糊配方 */
+  /* Apple Glass Effect - 自适应深浅色 */
+  background: var(--auth-modal-bg);
+  backdrop-filter: blur(25px) saturate(180%);
   -webkit-backdrop-filter: blur(25px) saturate(180%);
   
-  border-radius: 20px; /* 更大的圆角 */
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  border: 1px solid var(--auth-modal-border);
   box-shadow: 
-    0 20px 40px rgba(0, 0, 0, 0.4),
-    0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+    0 20px 40px rgba(0, 0, 0, 0.2),
+    0 0 0 1px var(--auth-border-color) inset;
     
   padding: 3rem 2.5rem;
-  animation: modal-scale-in 0.35s cubic-bezier(0.16, 1, 0.3, 1); /* iOS 弹簧动画曲线 */
+  animation: modal-scale-in 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 
   @media (max-width: 768px) {
     padding: 2rem 1.5rem;
@@ -147,7 +147,7 @@ watch(() => props.show, (newVal) => {
   width: 30px;
   height: 30px;
   border: none;
-  background: rgba(120, 120, 128, 0.18); /* Apple 风格的灰色按钮背景 */
+  background: var(--auth-input-bg);
   border-radius: 50%;
   cursor: pointer;
   display: flex;
@@ -158,15 +158,15 @@ watch(() => props.show, (newVal) => {
 
   .iconfont {
     font-size: 14px;
-    color: rgba(235, 235, 245, 0.6);
+    color: var(--auth-text-secondary);
     font-weight: bold;
     transition: color 0.2s ease;
   }
 
   &:hover {
-    background: rgba(120, 120, 128, 0.32);
+    background: var(--auth-input-bg-focus);
     .iconfont {
-      color: #fff;
+      color: var(--auth-text-primary);
     }
   }
 
@@ -230,22 +230,22 @@ watch(() => props.show, (newVal) => {
   }
 }
 
-// 滚动条样式
+// 滚动条样式 - 自适应主题
 .modal-content::-webkit-scrollbar {
   width: 6px;
 }
 
 .modal-content::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--auth-input-bg);
   border-radius: 3px;
 }
 
 .modal-content::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--auth-text-tertiary);
   border-radius: 3px;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.3);
+    background: var(--auth-text-secondary);
   }
 }
 </style>
