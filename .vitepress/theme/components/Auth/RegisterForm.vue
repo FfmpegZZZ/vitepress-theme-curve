@@ -15,10 +15,12 @@
           v-model="formData.username"
           type="text"
           placeholder="3-32个字符"
-          :disabled="loading"
+          :disabled="loading || usernameChecking"
           @blur="validateUsernameOnBlur"
         />
         <span v-if="errors.username" class="error-message">{{ errors.username }}</span>
+        <span v-else-if="usernameHint && usernameAvailable" class="success-message">{{ usernameHint }}</span>
+        <span v-else-if="usernameChecking" class="info-message">正在检查用户名...</span>
       </div>
 
       <!-- 邮箱 -->
@@ -150,7 +152,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue';
 import { useAuthStore } from '../../store';
-import { sendVerificationCode } from '../../api/auth';
+import { sendVerificationCode, checkUsername } from '../../api/auth';
 import TurnstileWidget from './TurnstileWidget.vue';
 
 const emit = defineEmits(['success', 'switch-mode']);
@@ -183,6 +185,11 @@ const errorMessage = ref('');
 const showPassword = ref(false);
 const showConfirmPassword = ref(false);
 
+// 用户名检查状态
+const usernameChecking = ref(false); // 是否正在检查用户名
+const usernameHint = ref(''); // 用户名提示信息
+const usernameAvailable = ref(null); // 用户名是否可用（null=未检查，true=可用，false=不可用）
+
 // 验证码相关状态
 const codeSending = ref(false); // 是否正在发送验证码
 const countdown = ref(0); // 倒计时秒数
@@ -207,17 +214,44 @@ const currentTheme = computed(() => {
 
 // 验证用户名
 
-// 验证用户名（@blur 时调用，只验证格式）
-const validateUsernameOnBlur = () => {
+// 验证用户名（@blur 时调用，只验证格式并检查可用性）
+const validateUsernameOnBlur = async () => {
+  usernameHint.value = '';
+  usernameAvailable.value = null;
+  
   if (!formData.value.username) {
     errors.value.username = '';
     return;
   }
   
+  // 格式验证
   if (formData.value.username.length < 3 || formData.value.username.length > 32) {
     errors.value.username = '用户名长度应为3-32个字符';
-  } else {
-    errors.value.username = '';
+    usernameAvailable.value = false;
+    return;
+  }
+  
+  // 格式正确，清除错误并检查可用性
+  errors.value.username = '';
+  usernameChecking.value = true;
+  
+  try {
+    const result = await checkUsername(formData.value.username);
+    
+    usernameAvailable.value = result.available;
+    
+    if (result.available) {
+      usernameHint.value = '✓ 用户名可用';
+    } else {
+      usernameHint.value = result.message || '用户名已被使用';
+      errors.value.username = result.message || '用户名已被使用';
+    }
+  } catch (error) {
+    console.error('Check username error:', error);
+    // 检查失败不影响用户继续填写，静默处理
+    usernameAvailable.value = null;
+  } finally {
+    usernameChecking.value = false;
   }
 };
 

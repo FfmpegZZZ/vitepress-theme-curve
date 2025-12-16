@@ -188,6 +188,15 @@
             line-height: 1.4;
         }
 
+        .success-message {
+            display: block;
+            margin-top: 6px;
+            font-size: 13px;
+            color: #34C759;
+            /* Apple Green (Success) */
+            line-height: 1.4;
+        }
+
         /* 验证码输入组 */
         .code-input-group {
             display: flex;

@@ -180,6 +180,20 @@ export const updateUserInfo = async (data) => {
 };
 
 /**
+ * 检查用户名是否可用
+ * @param {string} username - 待检查的用户名
+ */
+export const checkUsername = async (username) => {
+    const result = await request('/auth/check-username', {
+        method: 'POST',
+        body: JSON.stringify({ username }),
+        skipAuth: true,
+    });
+
+    return result.data;
+};
+
+/**
  * 发送邮箱验证码
  * @param {Object} data - 验证码发送数据
  * @param {string} data.email - 接收验证码的邮箱
