@@ -234,6 +234,27 @@ export const verifyEmail = async (data) => {
 };
 
 /**
+ * 重置密码
+ * @param {Object} data - 重置密码数据
+ * @param {string} data.email - 注册邮箱
+ * @param {string} data.email_code - 6位验证码
+ * @param {string} data.new_password - 新密码（至少8个字符）
+ */
+export const resetPassword = async (data) => {
+    const result = await request('/auth/reset-password', {
+        method: 'POST',
+        body: JSON.stringify({
+            email: data.email,
+            email_code: data.email_code,
+            new_password: data.new_password,
+        }),
+        skipAuth: true,
+    });
+
+    return result.data;
+};
+
+/**
  * 导出工具方法
  */
 export { getAccessToken, setAccessToken };

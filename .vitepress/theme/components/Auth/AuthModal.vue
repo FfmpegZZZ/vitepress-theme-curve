@@ -28,9 +28,15 @@
                 @switch-mode="switchMode"
               />
               <RegisterForm
-                v-else
+                v-else-if="mode === 'register'"
                 class="auth-form-component"
                 @success="handleSuccess"
+                @switch-mode="switchMode"
+              />
+              <ResetPasswordForm
+                v-else-if="mode === 'reset'"
+                class="auth-form-component"
+                @success="handleResetSuccess"
                 @switch-mode="switchMode"
               />
             </Transition>
@@ -46,6 +52,7 @@ import { ref, watch, nextTick } from 'vue';
 import AuthBackground from './AuthBackground.vue';
 import LoginForm from './LoginForm.vue';
 import RegisterForm from './RegisterForm.vue';
+import ResetPasswordForm from './ResetPasswordForm.vue';
 
 const props = defineProps({
   show: {
@@ -116,6 +123,11 @@ const handleClose = () => {
 const handleSuccess = () => {
   emit('success');
   handleClose();
+};
+
+// 密码重置成功（切换到登录页）
+const handleResetSuccess = () => {
+  mode.value = 'login';
 };
 
 // ESC 键关闭

@@ -68,10 +68,15 @@
       </button>
     </form>
 
-    <!-- 切换到注册 -->
+    <!-- 底部链接 -->
     <div class="form-footer">
-      <span>还没有账户?</span>
-      <a @click="$emit('switch-mode', 'register')">立即注册</a>
+      <div style="margin-bottom: 12px;">
+        <a @click="$emit('switch-mode', 'reset')" style="font-size: 14px;">忘记密码？</a>
+      </div>
+      <div>
+        <span>还没有账户?</span>
+        <a @click="$emit('switch-mode', 'register')">立即注册</a>
+      </div>
     </div>
   </div>
 </template>
