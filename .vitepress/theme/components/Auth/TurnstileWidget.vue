@@ -58,6 +58,7 @@ const renderTurnstile = async () => {
     widgetId = window.turnstile.render(turnstileRef.value, {
       sitekey: authConfig.turnstileSiteKey,
       theme: props.theme,
+      size: 'invisible', // 隐藏模式 - 不可见、无需用户交互
       callback: (token) => {
         emit('update:modelValue', token);
       },
@@ -121,7 +122,7 @@ onBeforeUnmount(() => {
 .turnstile-widget {
   display: flex;
   justify-content: center;
-  margin: 1rem 0;
-  min-height: 65px;
+  margin: 0;
+  /* 隐藏模式不需要预留高度 */
 }
 </style>
