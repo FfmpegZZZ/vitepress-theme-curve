@@ -343,6 +343,12 @@ const validateDepositAmount = () => {
     depositError.value = '充值金额不能小于1元';
     return;
   }
+  // 检查小数位数不超过2位
+  const decimalPart = depositAmount.value.toString().split('.')[1];
+  if (decimalPart && decimalPart.length > 2) {
+    depositError.value = '金额最多只能有两位小数';
+    return;
+  }
   depositError.value = '';
 };
 
@@ -357,8 +363,11 @@ const handleDeposit = async () => {
   depositLoading.value = true;
   try {
     const idempotencyKey = crypto.randomUUID();
+    // 格式化金额为保留两位小数的字符串
+    const formattedAmount = parseFloat(depositAmount.value).toFixed(2);
+    
     const result = await createDepositOrder({
-      amount: depositAmount.value,
+      amount: formattedAmount,
       payment_method: paymentMethod.value,
     }, idempotencyKey);
 
