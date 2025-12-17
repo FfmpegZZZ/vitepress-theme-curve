@@ -137,11 +137,14 @@ export const cancelOrder = async (orderId) => {
 
 /**
  * 同步订单状态（主动查询支付宝）
- * @param {string} orderId - 订单ID
+ * @param {string} orderNo - 商户订单号 (out_trade_no)
  */
-export const syncOrderStatus = async (orderId) => {
-    const result = await request(`/payment/orders/${orderId}/sync`, {
+export const syncOrderStatus = async (orderNo) => {
+    const result = await request('/payment/orders/sync', {
         method: 'POST',
+        body: JSON.stringify({
+            order_no: orderNo
+        })
     });
-    return result.data;
+    return result; // 注意：直接返回 result，因为通常通用请求 wrap 了 data，或者我们要看后端返回结构。user said response is json object. checking request wrapper...
 };
