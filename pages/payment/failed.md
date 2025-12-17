@@ -4,7 +4,7 @@ layout: page
 ---
 
 <script setup>
-import PaymentFailed from '../.vitepress/theme/components/Payment/PaymentFailed.vue';
+import PaymentFailed from '../../.vitepress/theme/components/Payment/PaymentFailed.vue';
 </script>
 
 <ClientOnly>
