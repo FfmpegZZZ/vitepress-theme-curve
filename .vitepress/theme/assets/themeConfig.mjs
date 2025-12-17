@@ -125,7 +125,7 @@ export const themeConfig = {
       ],
     },
     {
-      text: "我的",
+      text: "无度",
       items: [
         { text: "隐私政策", link: "/pages/privacy", icon: "privacy" },
         { text: "版权协议", link: "/pages/cc", icon: "accessible" },

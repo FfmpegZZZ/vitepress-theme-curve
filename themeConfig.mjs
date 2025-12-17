@@ -143,7 +143,7 @@ export const themeConfig = {
       ],
     },
     {
-      text: "我的",
+      text: "无度",
       items: [
         { text: "社交平台", link: "/pages/social", icon: "link" },
         { text: "QQ群组", link: "/pages/qqgroup", icon: "qq" },
