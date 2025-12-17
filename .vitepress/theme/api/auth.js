@@ -255,6 +255,24 @@ export const resetPassword = async (data) => {
 };
 
 /**
+ * 修改邮箱
+ * @param {Object} data - 修改邮箱数据
+ * @param {string} data.new_email - 新邮箱
+ * @param {string} data.email_code - 6位验证码
+ */
+export const changeEmail = async (data) => {
+    const result = await request('/me/change-email', {
+        method: 'POST',
+        body: JSON.stringify({
+            new_email: data.new_email,
+            email_code: data.email_code,
+        }),
+    });
+
+    return result.data;
+};
+
+/**
  * 导出工具方法
  */
 export { getAccessToken, setAccessToken };

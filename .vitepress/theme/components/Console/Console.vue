@@ -246,6 +246,7 @@
         <h2 class="section-title">账户设置</h2>
 
         <div class="settings-form">
+          <!-- 用户名修改 -->
           <div class="form-group">
             <label>用户名</label>
             <input 
@@ -265,10 +266,68 @@
             :disabled="!canUpdateUsername || settingsLoading"
             @click="updateUsername"
           >
-            <span v-if="!settingsLoading">保存更改</span>
+            <span v-if="!settingsLoading">保存用户名</span>
             <span v-else class="loading-spinner">
               <div class="spinner"></div>
               保存中...
+            </span>
+          </button>
+
+          <div class="divider"></div>
+
+          <!-- 邮箱修改 -->
+          <div class="form-group">
+            <label>当前邮箱</label>
+            <input 
+              type="text" 
+              :value="authStore.email"
+              disabled
+              class="disabled-input"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>新邮箱</label>
+            <input 
+              v-model="newEmail" 
+              type="email" 
+              placeholder="请输入新邮箱地址"
+              :disabled="emailLoading"
+              @input="validateEmail"
+            />
+            <span v-if="emailError" class="error-message">{{ emailError }}</span>
+          </div>
+
+          <div class="form-group">
+            <label>验证码</label>
+            <div class="code-input-group">
+              <input 
+                v-model="emailCode" 
+                type="text" 
+                placeholder="请输入验证码"
+                maxlength="6"
+                :disabled="emailLoading"
+              />
+              <button 
+                class="send-code-btn"
+                :disabled="!canSendEmailCode || emailCodeCountdown > 0 || emailLoading"
+                @click="sendEmailVerificationCode"
+              >
+                {{ emailCodeCountdown > 0 ? `${emailCodeCountdown}秒后重试` : '发送验证码' }}
+              </button>
+            </div>
+            <span v-if="emailCodeSent" class="success-message">验证码已发送到 {{ newEmail }}</span>
+          </div>
+
+          <button 
+            class="submit-btn" 
+            :disabled="!canChangeEmail || emailLoading"
+            @click="handleChangeEmail"
+          >
+            <span v-if="!emailLoading">修改邮箱</span>
+            <span v-else class="loading-spinner">
+              <div class="spinner"></div>
+              处理中...
             </span>
           </button>
         </div>
@@ -284,6 +343,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useAuthStore } from '../../store';
 import { getWalletBalance, getTransactions, createDepositOrder, getPaymentOrders, cancelOrder } from '../../api/wallet';
+import { sendVerificationCode, changeEmail } from '../../api/auth';
 import AuthModal from '../Auth/AuthModal.vue';
 
 const authStore = useAuthStore();
@@ -572,6 +632,105 @@ const updateUsername = async () => {
     settingsLoading.value = false;
   }
 };
+
+// 邮箱修改相关
+const newEmail = ref('');
+const emailCode = ref('');
+const emailError = ref('');
+const emailLoading = ref(false);
+const emailCodeSent = ref(false);
+const emailCodeCountdown = ref(0);
+
+const validateEmail = () => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!newEmail.value) {
+    emailError.value = '';
+    return;
+  }
+  if (!emailRegex.test(newEmail.value)) {
+    emailError.value = '请输入有效的邮箱地址';
+    return;
+  }
+  if (newEmail.value === authStore.email) {
+    emailError.value = '新邮箱与当前邮箱相同';
+    return;
+  }
+  emailError.value = '';
+};
+
+const canSendEmailCode = computed(() => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(newEmail.value) && newEmail.value !== authStore.email && !emailError.value;
+});
+
+const canChangeEmail = computed(() => {
+  return canSendEmailCode.value && emailCode.value.length === 6;
+});
+
+const sendEmailVerificationCode = async () => {
+  if (!canSendEmailCode.value) return;
+
+  emailLoading.value = true;
+  try {
+    await sendVerificationCode({
+      email: newEmail.value,
+      type: 'change_email',
+      turnstile_token: '', // 如果需要turnstile验证，需要添加
+    });
+    
+    emailCodeSent.value = true;
+    emailCodeCountdown.value = 60;
+    
+    // 倒计时
+    const timer = setInterval(() => {
+      emailCodeCountdown.value--;
+      if (emailCodeCountdown.value <= 0) {
+        clearInterval(timer);
+      }
+    }, 1000);
+    
+    if (typeof $message !== 'undefined') {
+      $message.success('验证码已发送');
+    }
+  } catch (error) {
+    if (typeof $message !== 'undefined') {
+      $message.error(error.message || '发送验证码失败');
+    }
+  } finally {
+    emailLoading.value = false;
+  }
+};
+
+const handleChangeEmail = async () => {
+  if (!canChangeEmail.value) return;
+
+  emailLoading.value = true;
+  try {
+    await changeEmail({
+      new_email: newEmail.value,
+      email_code: emailCode.value,
+    });
+
+    if (typeof $message !== 'undefined') {
+      $message.success('邮箱修改成功');
+    }
+
+    // 清空表单
+    newEmail.value = '';
+    emailCode.value = '';
+    emailCodeSent.value = false;
+
+    // 重新获取用户信息
+    await authStore.fetchUser();
+  } catch (error) {
+    if (typeof $message !== 'undefined') {
+      $message.error(error.message || '修改邮箱失败');
+    }
+  } finally {
+    emailLoading.value = false;
+  }
+};
+
 
 // ========== 工具函数 ==========
 const formatDate = (dateString) => {
@@ -1250,5 +1409,62 @@ const handleLoginSuccess = () => {
 // ========== 设置表单 ==========
 .settings-form {
   max-width: 500px;
+
+  .divider {
+    height: 1px;
+    background: var(--auth-border-color);
+    margin: 2rem 0;
+  }
+
+  .disabled-input {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .code-input-group {
+    display: flex;
+    gap: 0.5rem;
+
+    input {
+      flex: 1;
+    }
+
+    .send-code-btn {
+      flex-shrink: 0;
+      height: 44px;
+      padding: 0 16px;
+      background: var(--auth-blue);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+
+      &:hover:not(:disabled) {
+        background: var(--auth-blue-hover);
+      }
+
+      &:disabled {
+        background: var(--auth-input-bg);
+        color: var(--auth-text-tertiary);
+        cursor: not-allowed;
+      }
+
+      &:active:not(:disabled) {
+        transform: scale(0.98);
+      }
+    }
+  }
+
+  .success-message {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 13px;
+    color: #34C759;
+    line-height: 1.4;
+  }
 }
 </style>
