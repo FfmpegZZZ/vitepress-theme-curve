@@ -60,7 +60,37 @@ const request = async (endpoint, options = {}) => {
         const data = await response.json();
 
         if (!response.ok) {
-            // 处理错误响应
+            // 处理401未授权错误 - 尝试刷新token
+            if (response.status === 401 && !options._retry && !options.skipAuth) {
+                console.log('Token expired, attempting to refresh...');
+
+                try {
+                    // 尝试刷新token
+                    const refreshResult = await refreshToken();
+
+                    // 刷新成功，重试原始请求
+                    const retryOptions = {
+                        ...options,
+                        _retry: true,
+                        headers: {
+                            ...options.headers,
+                            Authorization: `Bearer ${refreshResult.access_token}`,
+                        },
+                    };
+
+                    return await request(endpoint, retryOptions);
+                } catch (refreshError) {
+                    console.error('Token refresh failed:', refreshError);
+                    setAccessToken(null);
+
+                    const error = new Error('认证已过期，请重新登录');
+                    error.code = 'ERR_UNAUTHORIZED';
+                    error.status = 401;
+                    throw error;
+                }
+            }
+
+            // 其他错误响应
             const error = new Error(data.error?.message || 'Request failed');
             error.code = data.error?.code;
             error.status = response.status;

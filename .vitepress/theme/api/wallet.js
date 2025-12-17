@@ -134,3 +134,14 @@ export const cancelOrder = async (orderId) => {
     });
     return result.data;
 };
+
+/**
+ * 同步订单状态（主动查询支付宝）
+ * @param {string} orderId - 订单ID
+ */
+export const syncOrderStatus = async (orderId) => {
+    const result = await request(`/payment/orders/${orderId}/sync`, {
+        method: 'POST',
+    });
+    return result.data;
+};
