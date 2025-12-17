@@ -72,8 +72,8 @@
                 </div>
                 <div class="dropdown-divider"></div>
                 <button class="dropdown-item" disabled>
-                  <svg class="icon-svg" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
-                  控制台
+                  <svg class="icon-svg" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M12 1v6m0 6v6m5.196-15.804l-4.243 4.243m0 6.363l-4.243 4.243m15.804-5.196l-6 0m-6 0l-6 0m15.804 5.196l-4.243-4.243m0-6.363l-4.243-4.243"></path></svg>
+                  个人中心
                 </button>
                 <button class="dropdown-item" @click="handleLogout">
                   <svg class="icon-svg" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
@@ -754,7 +754,8 @@ onBeforeUnmount(() => {
       border-radius: 12px;
       box-shadow: 0 8px 16px -4px var(--main-border-shadow);
       padding: 0.5rem;
-      z-index: 1000;
+      z-index: 10000; // 提高z-index确保在所有元素之上
+      pointer-events: auto; // 确保可以点击
 
       .user-info {
         padding: 0.75rem;
