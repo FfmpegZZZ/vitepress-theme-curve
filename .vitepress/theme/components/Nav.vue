@@ -710,7 +710,7 @@ onBeforeUnmount(() => {
       align-items: center;
       gap: 0.5rem;
       padding: 0.4rem 0.8rem;
-      background-color: rgba(var(--main-color), 0.1);
+      background-color: var(--main-color-bg);
       border-radius: 50px;
       cursor: pointer;
       transition: all 0.3s ease;
