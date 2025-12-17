@@ -61,7 +61,12 @@ export const useAuthStore = defineStore('auth', {
         async logout() {
             try {
                 await authApi.logout();
+            } catch (error) {
+                // 即使服务器登出失败，也不抛出错误
+                // 因为本地清理是最重要的（在 finally 块中）
+                console.warn('Server logout failed, but local cleanup will continue:', error);
             } finally {
+                // 无论如何都清除本地状态
                 this.user = null;
                 this.isAuthenticated = false;
                 this.stopTokenRefresh();
