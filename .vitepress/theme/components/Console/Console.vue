@@ -815,6 +815,8 @@ const handleLoginSuccess = () => {
   @media (max-width: 968px) {
     width: 100%;
     position: static;
+    padding: 1.25rem;
+    border-radius: 16px;
   }
 }
 
@@ -823,6 +825,15 @@ const handleLoginSuccess = () => {
   padding-bottom: 2rem;
   border-bottom: 1px solid var(--auth-border-color);
   margin-bottom: 1.5rem;
+
+  @media (max-width: 968px) {
+    display: flex;
+    align-items: center;
+    text-align: left;
+    padding-bottom: 1.25rem;
+    margin-bottom: 1.25rem;
+    gap: 1rem;
+  }
 }
 
 .user-avatar-large {
@@ -835,20 +846,48 @@ const handleLoginSuccess = () => {
   align-items: center;
   justify-content: center;
   color: white;
+  flex-shrink: 0;
+
+  @media (max-width: 968px) {
+    width: 56px;
+    height: 56px;
+    margin: 0;
+
+    svg {
+      width: 36px;
+      height: 36px;
+    }
+  }
 }
 
 .user-info-sidebar {
+  @media (max-width: 968px) {
+    flex: 1;
+    min-width: 0;
+  }
+
   .user-name {
     font-size: 18px;
     font-weight: 600;
     color: var(--auth-text-primary);
     margin-bottom: 0.25rem;
+
+    @media (max-width: 968px) {
+      font-size: 16px;
+    }
   }
 
   .user-email {
     font-size: 13px;
     color: var(--auth-text-secondary);
     word-break: break-all;
+
+    @media (max-width: 968px) {
+      font-size: 12px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
   }
 }
 
@@ -856,6 +895,20 @@ const handleLoginSuccess = () => {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+
+  @media (max-width: 968px) {
+    flex-direction: row;
+    overflow-x: auto;
+    margin: 0 -1.25rem;
+    padding: 0 1.25rem;
+    gap: 0.5rem;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
 }
 
 .nav-item {
@@ -872,14 +925,33 @@ const handleLoginSuccess = () => {
   cursor: pointer;
   transition: all 0.2s ease;
   text-align: left;
+  white-space: nowrap;
+
+  @media (max-width: 968px) {
+    flex-shrink: 0;
+    padding: 0.625rem 1rem;
+    font-size: 14px;
+    gap: 0.5rem;
+    border-radius: 20px;
+    background: var(--auth-input-bg);
+  }
 
   svg {
     flex-shrink: 0;
+
+    @media (max-width: 968px) {
+      width: 18px;
+      height: 18px;
+    }
   }
 
   &:hover {
     background: var(--auth-input-bg);
     color: var(--auth-text-primary);
+
+    @media (max-width: 968px) {
+      background: var(--auth-input-bg-focus);
+    }
   }
 
   &.active {
@@ -902,7 +974,8 @@ const handleLoginSuccess = () => {
   padding: 2rem;
 
   @media (max-width: 768px) {
-    padding: 1.5rem;
+    padding: 1.25rem;
+    border-radius: 16px;
   }
 }
 
@@ -912,6 +985,11 @@ const handleLoginSuccess = () => {
   color: var(--auth-text-primary);
   margin: 0 0 1.5rem 0;
   letter-spacing: -0.5px;
+
+  @media (max-width: 768px) {
+    font-size: 20px;
+    margin-bottom: 1.25rem;
+  }
 }
 
 // ========== 余额卡片 ==========
@@ -919,6 +997,11 @@ const handleLoginSuccess = () => {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 1rem;
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
 }
 
 .balance-card {
@@ -926,6 +1009,11 @@ const handleLoginSuccess = () => {
   border-radius: 16px;
   padding: 1.5rem;
   transition: transform 0.2s ease;
+
+  @media (max-width: 480px) {
+    padding: 1rem;
+    border-radius: 12px;
+  }
 
   &:hover {
     transform: translateY(-2px);
@@ -937,12 +1025,20 @@ const handleLoginSuccess = () => {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 1rem;
+
+  @media (max-width: 480px) {
+    margin-bottom: 0.75rem;
+  }
 }
 
 .currency-name {
   font-size: 14px;
   color: var(--auth-text-secondary);
   font-weight: 500;
+
+  @media (max-width: 480px) {
+    font-size: 12px;
+  }
 }
 
 .currency-tag {
@@ -952,6 +1048,11 @@ const handleLoginSuccess = () => {
   color: white;
   border-radius: 6px;
   font-weight: 600;
+
+  @media (max-width: 480px) {
+    font-size: 10px;
+    padding: 0.2rem 0.4rem;
+  }
 }
 
 .balance-amount {
@@ -959,11 +1060,19 @@ const handleLoginSuccess = () => {
   font-weight: 700;
   color: var(--auth-text-primary);
   margin-bottom: 0.5rem;
+
+  @media (max-width: 480px) {
+    font-size: 22px;
+  }
 }
 
 .balance-frozen {
   font-size: 13px;
   color: var(--auth-text-tertiary);
+
+  @media (max-width: 480px) {
+    font-size: 11px;
+  }
 }
 
 .deposit-card {
@@ -991,6 +1100,10 @@ const handleLoginSuccess = () => {
 // ========== 充值表单 ==========
 .deposit-form {
   max-width: 500px;
+
+  @media (max-width: 768px) {
+    max-width: 100%;
+  }
 }
 
 .form-group {
@@ -1064,6 +1177,10 @@ const handleLoginSuccess = () => {
   display: flex;
   gap: 0.5rem;
   margin-bottom: 1.5rem;
+
+  @media (max-width: 480px) {
+    flex-wrap: wrap;
+  }
 }
 
 .quick-amount-btn {
@@ -1077,6 +1194,12 @@ const handleLoginSuccess = () => {
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
+  min-width: 0;
+
+  @media (max-width: 480px) {
+    flex: 0 0 calc(50% - 0.25rem);
+    height: 40px;
+  }
 
   &:hover {
     background: var(--auth-input-bg-focus);
@@ -1104,6 +1227,11 @@ const handleLoginSuccess = () => {
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
+
+  @media (max-width: 480px) {
+    height: 44px;
+    font-size: 14px;
+  }
 
   &:hover {
     background: var(--auth-input-bg-focus);
@@ -1167,6 +1295,11 @@ const handleLoginSuccess = () => {
   border-radius: 12px;
   transition: background 0.2s ease;
 
+  @media (max-width: 480px) {
+    gap: 0.75rem;
+    padding: 0.875rem;
+  }
+
   &:hover {
     background: var(--auth-input-bg-focus);
   }
@@ -1182,6 +1315,14 @@ const handleLoginSuccess = () => {
   font-size: 20px;
   background: var(--auth-blue);
   color: white;
+  flex-shrink: 0;
+
+  @media (max-width: 480px) {
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+    border-radius: 8px;
+  }
 
   &.deposit {
     background: #34C759;
@@ -1210,17 +1351,33 @@ const handleLoginSuccess = () => {
   font-weight: 500;
   color: var(--auth-text-primary);
   margin-bottom: 0.25rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  @media (max-width: 480px) {
+    font-size: 14px;
+  }
 }
 
 .transaction-time {
   font-size: 13px;
   color: var(--auth-text-secondary);
+
+  @media (max-width: 480px) {
+    font-size: 12px;
+  }
 }
 
 .transaction-amount {
   font-size: 17px;
   font-weight: 600;
   color: #34C759;
+  flex-shrink: 0;
+
+  @media (max-width: 480px) {
+    font-size: 15px;
+  }
 
   &.negative {
     color: var(--auth-error-text);
@@ -1231,6 +1388,10 @@ const handleLoginSuccess = () => {
   background: var(--auth-input-bg);
   border-radius: 12px;
   padding: 1.25rem;
+
+  @media (max-width: 480px) {
+    padding: 1rem;
+  }
 }
 
 .order-header {
@@ -1240,12 +1401,26 @@ const handleLoginSuccess = () => {
   margin-bottom: 1rem;
   padding-bottom: 0.75rem;
   border-bottom: 1px solid var(--auth-border-color);
+  gap: 0.5rem;
+
+  @media (max-width: 480px) {
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.625rem;
+  }
 }
 
 .order-no {
   font-size: 14px;
   font-weight: 600;
   color: var(--auth-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+
+  @media (max-width: 480px) {
+    font-size: 13px;
+  }
 }
 
 .order-status {
@@ -1286,6 +1461,10 @@ const handleLoginSuccess = () => {
   margin-bottom: 0.5rem;
   font-size: 14px;
 
+  @media (max-width: 480px) {
+    font-size: 13px;
+  }
+
   span:first-child {
     color: var(--auth-text-secondary);
   }
@@ -1319,6 +1498,11 @@ const handleLoginSuccess = () => {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
+
+  @media (max-width: 480px) {
+    height: 38px;
+    font-size: 13px;
+  }
 
   &.primary {
     background: var(--auth-blue);
@@ -1422,10 +1606,18 @@ const handleLoginSuccess = () => {
 .settings-form {
   max-width: 500px;
 
+  @media (max-width: 768px) {
+    max-width: 100%;
+  }
+
   .divider {
     height: 1px;
     background: var(--auth-border-color);
     margin: 2rem 0;
+
+    @media (max-width: 768px) {
+      margin: 1.5rem 0;
+    }
   }
 
   .disabled-input {
@@ -1436,6 +1628,10 @@ const handleLoginSuccess = () => {
   .code-input-group {
     display: flex;
     gap: 0.5rem;
+
+    @media (max-width: 480px) {
+      flex-direction: column;
+    }
 
     input {
       flex: 1;
@@ -1454,6 +1650,11 @@ const handleLoginSuccess = () => {
       cursor: pointer;
       transition: all 0.2s ease;
       white-space: nowrap;
+
+      @media (max-width: 480px) {
+        width: 100%;
+        height: 44px;
+      }
 
       &:hover:not(:disabled) {
         background: var(--auth-blue-hover);
