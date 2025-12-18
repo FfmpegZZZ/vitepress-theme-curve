@@ -83,6 +83,7 @@ export const getTransactions = async (params = {}) => {
  * @param {Object} data - 充值数据
  * @param {string} data.amount - 充值金额
  * @param {string} data.payment_method - 支付方式 (alipay/wechat)
+ * @param {string} [data.device] - 设备类型 (pc/mobile)，可选，默认为 pc
  * @param {string} idempotencyKey - 幂等性键
  */
 export const createDepositOrder = async (data, idempotencyKey) => {

@@ -423,6 +423,17 @@ const canDeposit = computed(() => {
   return amount >= 1 && !depositError.value && paymentMethod.value;
 });
 
+/**
+ * 检测设备类型
+ * @returns {'pc' | 'mobile'} 设备类型
+ */
+const getDeviceType = () => {
+  const ua = navigator.userAgent;
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua) 
+    ? 'mobile' 
+    : 'pc';
+};
+
 const handleDeposit = async () => {
   if (!canDeposit.value) return;
 
@@ -435,6 +446,7 @@ const handleDeposit = async () => {
     const result = await createDepositOrder({
       amount: formattedAmount,
       payment_method: paymentMethod.value,
+      device: getDeviceType(), // 自动检测设备类型，支持 PC 和手机端支付
     }, idempotencyKey);
 
     // 跳转到支付页面
