@@ -130,6 +130,15 @@ export const themeConfig = {
           "data-host-url": "https://analytics.wudu.hk"
         }
       ],
+      // Google AdSense
+      [
+        "script",
+        {
+          async: "",
+          src: "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2248121212653776",
+          crossorigin: "anonymous"
+        }
+      ],
     ],
   },
   // 导航栏菜单
