@@ -3,6 +3,7 @@ import { createPinia } from "pinia";
 import { routeChange } from "@/utils/initTools.mjs";
 import { enhanceAppWithTabs } from "vitepress-plugin-tabs/client";
 import LazyLoader from "@/components/LazyLoader.vue";
+import GameContainer from "@/components/GameContainer.vue";
 import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
 
 // 根组件
@@ -24,6 +25,7 @@ const Theme = {
     // 挂载
     app.use(pinia);
     app.component("LazyLoader", LazyLoader);
+    app.component("GameContainer", GameContainer);
     // 插件
     enhanceAppWithTabs(app);
     // 路由守卫

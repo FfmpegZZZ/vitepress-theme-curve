@@ -303,6 +303,18 @@ export const changeEmail = async (data) => {
 };
 
 /**
+ * 启动游戏
+ * @param {string} gameId - 游戏ID
+ */
+export const launchGame = async (gameId) => {
+    const result = await request(`/games/${gameId}/launch`, {
+        method: 'GET',
+    });
+
+    return result.data;
+};
+
+/**
  * 导出工具方法
  */
 export { getAccessToken, setAccessToken };
