@@ -55,6 +55,7 @@
     "lodash-es": "^4.17.21",
     "pinia": "^2.3.0",
     "pinia-plugin-persistedstate": "^3.2.3",
+    "qrcode": "^1.5.4",
     "three": "^0.182.0",
     "vue": "^3.5.13",
     "vue-slider-component": "4.1.0-beta.7"

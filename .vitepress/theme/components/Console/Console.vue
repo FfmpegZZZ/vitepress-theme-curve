@@ -336,15 +336,52 @@
     
     <!-- 登录模态框 -->
     <AuthModal v-model:show="showAuthModal" @success="handleLoginSuccess" />
+
+    <!-- 支付二维码弹窗 -->
+    <Teleport to="body">
+      <Transition name="modal">
+        <div v-if="showQRCodeModal" class="qrcode-modal-overlay" @click="closeQRCodeModal">
+          <div class="qrcode-modal-content" @click.stop>
+            <button class="qrcode-modal-close" @click="closeQRCodeModal">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+
+            <h3 class="qrcode-modal-title">扫码支付</h3>
+
+            <div class="qrcode-modal-info">
+              <span class="qrcode-amount">¥{{ qrcodeData.amount }}</span>
+              <span class="qrcode-method">{{ qrcodeData.paymentMethod === 'wechat' ? '微信支付' : '支付宝' }}</span>
+            </div>
+
+            <div class="qrcode-container" ref="qrcodeContainer">
+              <canvas id="qrcode-canvas"></canvas>
+            </div>
+
+            <p class="qrcode-tip">请使用{{ qrcodeData.paymentMethod === 'wechat' ? '微信' : '支付宝' }}扫描二维码完成支付</p>
+
+            <div class="qrcode-order-no">订单号: {{ qrcodeData.orderNo }}</div>
+
+            <div class="qrcode-modal-footer">
+              <button class="qrcode-check-btn" @click="manualCheckStatus">刷新状态</button>
+              <button class="qrcode-close-btn" @click="closeQRCodeModal">关闭</button>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch, nextTick, onUnmounted } from 'vue';
 import { useAuthStore } from '../../store';
-import { getWalletBalance, getTransactions, createDepositOrder, getPaymentOrders, cancelOrder } from '../../api/wallet';
+import { getWalletBalance, getTransactions, createDepositOrder, getPaymentOrders, cancelOrder, syncOrderStatus } from '../../api/wallet';
 import { sendVerificationCode, changeEmail } from '../../api/auth';
 import AuthModal from '../Auth/AuthModal.vue';
+import QRCode from 'qrcode';
 
 const authStore = useAuthStore();
 
@@ -434,6 +471,18 @@ const getDeviceType = () => {
     : 'pc';
 };
 
+// 支付二维码弹窗状态
+const showQRCodeModal = ref(false);
+const qrcodeData = ref({
+  codeUrl: '',
+  orderNo: '',
+  amount: '',
+  paymentMethod: ''
+});
+
+// 轮询订单状态
+let qrcodeCheckTimer = null;
+
 const handleDeposit = async () => {
   if (!canDeposit.value) return;
 
@@ -442,15 +491,27 @@ const handleDeposit = async () => {
     const idempotencyKey = crypto.randomUUID();
     // 格式化金额为保留两位小数的字符串
     const formattedAmount = parseFloat(depositAmount.value).toFixed(2);
-    
+
     const result = await createDepositOrder({
       amount: formattedAmount,
       payment_method: paymentMethod.value,
       device: getDeviceType(), // 自动检测设备类型，支持 PC 和手机端支付
     }, idempotencyKey);
 
-    // 跳转到支付页面
-    if (result.payment_url) {
+    // 根据 payment_type 处理
+    if (result.payment_type === 'qrcode') {
+      // 显示二维码扫码支付
+      qrcodeData.value = {
+        codeUrl: result.payment_url,
+        orderNo: result.order_no,
+        amount: formattedAmount,
+        paymentMethod: paymentMethod.value
+      };
+      showQRCodeModal.value = true;
+      // 开始轮询订单状态
+      startQrcodeCheck();
+    } else if (result.payment_url) {
+      // 跳转到支付页面
       window.location.href = result.payment_url;
     }
   } catch (error) {
@@ -460,6 +521,61 @@ const handleDeposit = async () => {
   } finally {
     depositLoading.value = false;
   }
+};
+
+// 开始轮询检查二维码支付状态
+const startQrcodeCheck = () => {
+  if (qrcodeCheckTimer) {
+    clearInterval(qrcodeCheckTimer);
+  }
+
+  let checkCount = 0;
+  const maxChecks = 60; // 最多检查 60 次（2 分钟）
+
+  qrcodeCheckTimer = setInterval(async () => {
+    checkCount++;
+    if (checkCount > maxChecks) {
+      stopQrcodeCheck();
+      return;
+    }
+
+    try {
+      const result = await syncOrderStatus(qrcodeData.value.orderNo);
+      if (result.status === 'PAID') {
+        stopQrcodeCheck();
+        showQRCodeModal.value = false;
+        if (typeof $message !== 'undefined') {
+          $message.success('支付成功！');
+        }
+        // 刷新余额和订单
+        fetchBalance();
+        fetchOrders();
+        depositAmount.value = '';
+      } else if (result.status === 'CANCELLED' || result.status === 'EXPIRED') {
+        stopQrcodeCheck();
+        showQRCodeModal.value = false;
+        if (typeof $message !== 'undefined') {
+          $message.warning('订单已关闭或已过期');
+        }
+      }
+    } catch (error) {
+      console.error('检查支付状态失败:', error);
+    }
+  }, 2000); // 每 2 秒检查一次
+};
+
+// 停止轮询
+const stopQrcodeCheck = () => {
+  if (qrcodeCheckTimer) {
+    clearInterval(qrcodeCheckTimer);
+    qrcodeCheckTimer = null;
+  }
+};
+
+// 关闭二维码弹窗
+const closeQRCodeModal = () => {
+  stopQrcodeCheck();
+  showQRCodeModal.value = false;
 };
 
 // ========== 交易记录相关 ==========
@@ -770,6 +886,69 @@ onMounted(() => {
   fetchTransactions();
   fetchOrders();
 });
+
+// 组件卸载时清理定时器
+onUnmounted(() => {
+  stopQrcodeCheck();
+});
+
+// 监听二维码弹窗显示状态，生成二维码
+watch(showQRCodeModal, async (isVisible) => {
+  if (isVisible && qrcodeData.value.codeUrl) {
+    await nextTick();
+    generateQRCode(qrcodeData.value.codeUrl);
+  }
+});
+
+// 生成二维码
+const generateQRCode = async (text) => {
+  const canvas = document.getElementById('qrcode-canvas');
+  if (!canvas) return;
+
+  try {
+    await QRCode.toCanvas(canvas, text, {
+      width: 200,
+      margin: 2,
+      color: {
+        dark: '#000000',
+        light: '#FFFFFF'
+      }
+    });
+  } catch (error) {
+    console.error('生成二维码失败:', error);
+  }
+};
+
+// 手动刷新状态
+const manualCheckStatus = async () => {
+  try {
+    const result = await syncOrderStatus(qrcodeData.value.orderNo);
+    if (result.status === 'PAID') {
+      stopQrcodeCheck();
+      showQRCodeModal.value = false;
+      if (typeof $message !== 'undefined') {
+        $message.success('支付成功！');
+      }
+      fetchBalance();
+      fetchOrders();
+      depositAmount.value = '';
+    } else if (result.status === 'PENDING') {
+      if (typeof $message !== 'undefined') {
+        $message.info('订单待支付中...');
+      }
+    } else {
+      stopQrcodeCheck();
+      showQRCodeModal.value = false;
+      if (typeof $message !== 'undefined') {
+        $message.warning('订单状态: ' + result.status);
+      }
+    }
+  } catch (error) {
+    if (typeof $message !== 'undefined') {
+      $message.error(error.message || '查询订单状态失败');
+    }
+  }
+};
 
 // 登录成功处理
 const handleLoginSuccess = () => {
@@ -1678,6 +1857,196 @@ const handleLoginSuccess = () => {
     font-size: 13px;
     color: #34C759;
     line-height: 1.4;
+  }
+}
+
+// ========== 支付二维码弹窗 ==========
+.qrcode-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 1rem;
+}
+
+.qrcode-modal-content {
+  background: var(--auth-modal-bg);
+  backdrop-filter: blur(25px) saturate(180%);
+  border-radius: 20px;
+  border: 1px solid var(--auth-modal-border);
+  padding: 2rem;
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+  position: relative;
+  animation: modalSlideIn 0.3s ease;
+
+  @media (max-width: 480px) {
+    padding: 1.5rem;
+    margin: 0 1rem;
+  }
+}
+
+.qrcode-modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--auth-text-secondary);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: var(--auth-input-bg);
+    color: var(--auth-text-primary);
+  }
+}
+
+.qrcode-modal-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--auth-text-primary);
+  margin: 0 0 1rem;
+}
+
+.qrcode-modal-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.qrcode-amount {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--auth-blue);
+}
+
+.qrcode-method {
+  font-size: 14px;
+  padding: 4px 12px;
+  background: var(--auth-input-bg);
+  border-radius: 12px;
+  color: var(--auth-text-secondary);
+}
+
+.qrcode-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: white;
+  border-radius: 16px;
+  margin: 0 auto 1rem;
+  width: 220px;
+  height: 220px;
+}
+
+#qrcode-canvas {
+  max-width: 100%;
+  height: auto;
+}
+
+.qrcode-tip {
+  font-size: 14px;
+  color: var(--auth-text-secondary);
+  margin: 0 0 0.75rem;
+  line-height: 1.5;
+}
+
+.qrcode-order-no {
+  font-size: 12px;
+  color: var(--auth-text-tertiary);
+  margin-bottom: 1.5rem;
+  word-break: break-all;
+}
+
+.qrcode-modal-footer {
+  display: flex;
+  gap: 1rem;
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+  }
+}
+
+.qrcode-check-btn,
+.qrcode-close-btn {
+  flex: 1;
+  height: 44px;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.qrcode-check-btn {
+  background: var(--auth-blue);
+  color: white;
+
+  &:hover {
+    background: var(--auth-blue-hover);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.qrcode-close-btn {
+  background: var(--auth-input-bg);
+  color: var(--auth-text-primary);
+
+  &:hover {
+    background: var(--auth-input-bg-focus);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+// 模态框过渡动画
+.modal-enter-active,
+.modal-leave-active {
+  transition: all 0.3s ease;
+}
+
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
+}
+
+.modal-enter-from .qrcode-modal-content,
+.modal-leave-to .qrcode-modal-content {
+  transform: scale(0.9) translateY(-20px);
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
   }
 }
 </style>
