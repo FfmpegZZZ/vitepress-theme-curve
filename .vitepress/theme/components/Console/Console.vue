@@ -466,9 +466,9 @@ const canDeposit = computed(() => {
  */
 const getDeviceType = () => {
   const ua = navigator.userAgent;
-  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua) 
-    ? 'mobile' 
-    : 'pc';
+  const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
+  const isSmallScreen = window.innerWidth <= 768;
+  return (isMobileUA || isSmallScreen) ? 'mobile' : 'pc';
 };
 
 // 支付二维码弹窗状态
@@ -498,12 +498,8 @@ const handleDeposit = async () => {
       device: getDeviceType(),
     }, idempotencyKey);
 
-    // 根据 payment_type 和设备类型处理
-    if (result.payment_type === 'qrcode' && getDeviceType() === 'mobile') {
-      // 手机端：直接拉起微信支付
-      window.location.href = result.payment_url;
-    } else if (result.payment_type === 'qrcode') {
-      // PC端：显示二维码扫码支付
+    if (result.payment_type === 'qrcode') {
+      // 显示二维码扫码支付
       qrcodeData.value = {
         codeUrl: result.payment_url,
         orderNo: result.order_no,
@@ -511,10 +507,8 @@ const handleDeposit = async () => {
         paymentMethod: paymentMethod.value
       };
       showQRCodeModal.value = true;
-      // 开始轮询订单状态
       startQrcodeCheck();
     } else if (result.payment_url) {
-      // 其他支付方式（支付宝等）：跳转到支付页面
       window.location.href = result.payment_url;
     }
   } catch (error) {
