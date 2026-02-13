@@ -495,12 +495,15 @@ const handleDeposit = async () => {
     const result = await createDepositOrder({
       amount: formattedAmount,
       payment_method: paymentMethod.value,
-      device: getDeviceType(), // 自动检测设备类型，支持 PC 和手机端支付
+      device: getDeviceType(),
     }, idempotencyKey);
 
-    // 根据 payment_type 处理
-    if (result.payment_type === 'qrcode') {
-      // 显示二维码扫码支付
+    // 根据 payment_type 和设备类型处理
+    if (result.payment_type === 'qrcode' && getDeviceType() === 'mobile') {
+      // 手机端：直接拉起微信支付
+      window.location.href = result.payment_url;
+    } else if (result.payment_type === 'qrcode') {
+      // PC端：显示二维码扫码支付
       qrcodeData.value = {
         codeUrl: result.payment_url,
         orderNo: result.order_no,
@@ -511,7 +514,7 @@ const handleDeposit = async () => {
       // 开始轮询订单状态
       startQrcodeCheck();
     } else if (result.payment_url) {
-      // 跳转到支付页面
+      // 其他支付方式（支付宝等）：跳转到支付页面
       window.location.href = result.payment_url;
     }
   } catch (error) {
