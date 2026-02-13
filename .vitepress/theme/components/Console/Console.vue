@@ -694,7 +694,19 @@ const getPaymentMethodText = (method) => {
 };
 
 const continuePayment = (order) => {
-  if (order.payment_url) {
+  if (!order.payment_url) return;
+
+  // 微信 Native 支付的 code_url 以 weixin:// 开头，需要展示二维码
+  if (order.payment_url.startsWith('weixin://')) {
+    qrcodeData.value = {
+      codeUrl: order.payment_url,
+      orderNo: order.order_no,
+      amount: order.amount,
+      paymentMethod: order.payment_method || 'wechat'
+    };
+    showQRCodeModal.value = true;
+    startQrcodeCheck();
+  } else {
     window.location.href = order.payment_url;
   }
 };
