@@ -541,7 +541,8 @@ const startQrcodeCheck = () => {
 
     try {
       const result = await syncOrderStatus(qrcodeData.value.orderNo);
-      if (result.status === 'PAID') {
+      const status = result.data?.status;
+      if (status === 'paid') {
         stopQrcodeCheck();
         showQRCodeModal.value = false;
         if (typeof $message !== 'undefined') {
@@ -551,7 +552,7 @@ const startQrcodeCheck = () => {
         fetchBalance();
         fetchOrders();
         depositAmount.value = '';
-      } else if (result.status === 'CANCELLED' || result.status === 'EXPIRED') {
+      } else if (status === 'cancelled' || status === 'expired') {
         stopQrcodeCheck();
         showQRCodeModal.value = false;
         if (typeof $message !== 'undefined') {
