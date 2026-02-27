@@ -143,7 +143,12 @@ const validateInput = () => {
 
 // 跳转页面
 const jumpPage = (url, page) => {
-  router.go(url);
+  // 使用 query 参数时强制页面刷新，因为 VitePress router 不会触发重渲染
+  if (props.useParams) {
+    window.location.href = url;
+  } else {
+    router.go(url);
+  }
 };
 
 // 快速跳转
@@ -165,6 +170,15 @@ const checkCurrentPage = () => {
 onMounted(() => {
   checkCurrentPage();
 });
+
+// 监听 props.page 变化同步 currentPage
+watch(
+  () => props.page,
+  (newPage) => {
+    currentPage.value = newPage;
+  },
+  { immediate: true }
+);
 </script>
 
 <style lang="scss" scoped>

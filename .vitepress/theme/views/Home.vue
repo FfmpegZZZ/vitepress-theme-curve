@@ -11,7 +11,7 @@
         <!-- 分页 -->
         <Pagination
           :total="allListTotal"
-          :page="Number(page)"
+          :page="currentPageNum"
           :limit="postSize"
           :useParams="showCategories || showTags ? true : false"
           :routePath="
@@ -22,6 +22,7 @@
                 : ''
           "
         />
+
       </div>
       <!-- 侧边栏 -->
       <Aside />
@@ -33,6 +34,8 @@
 import { mainStore } from "@/store";
 
 const { theme } = useData();
+const route = useRoute();
+const router = useRouter();
 const store = mainStore();
 const props = defineProps({
   // 显示首页头部
@@ -70,23 +73,54 @@ const allListTotal = computed(() => {
   // 返回数量
   return data ? data.length : 0;
 });
+// 从 URL 获取页码参数
+const urlPageNum = ref(1);
 
-// 获得当前页数
-const getCurrentPage = () => {
-  if (props.showCategories || props.showTags) {
-    if (typeof window === "undefined") return 0;
-    const params = new URLSearchParams(window.location.search);
-    const page = params.get("page");
-    if (!page) return 0;
-    const currentPage = Number(page);
-    return currentPage ? currentPage - 1 : 0;
-  }
-  return props.page ? props.page - 1 : 0;
+// 更新页码
+const updateUrlPageNum = () => {
+  if (typeof window === "undefined") return;
+  const params = new URLSearchParams(window.location.search);
+  const page = params.get("page");
+  urlPageNum.value = page ? Number(page) : 1;
 };
 
+// 当前页码（用于分页组件显示）
+const currentPageNum = computed(() => {
+  if (props.showCategories || props.showTags) {
+    return urlPageNum.value;
+  }
+  return props.page || 1;
+});
+
+// 获得当前页数（返回 0-indexed 页码）
+const currentPageIndex = computed(() => {
+  if (props.showCategories || props.showTags) {
+    return urlPageNum.value > 0 ? urlPageNum.value - 1 : 0;
+  }
+  return props.page ? props.page - 1 : 0;
+});
+
+// 监听路由变化更新页码
+watch(
+  () => route.path,
+  () => {
+    nextTick(() => updateUrlPageNum());
+  },
+  { immediate: true }
+);
+
+// 监听 popstate 事件（浏览器前进/后退）
+onMounted(() => {
+  updateUrlPageNum();
+  window.addEventListener("popstate", updateUrlPageNum);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener("popstate", updateUrlPageNum);
+});
 // 根据页数计算列表数据
 const postData = computed(() => {
-  const page = getCurrentPage();
+  const page = currentPageIndex.value;
   console.log("当前页数：", page);
   let data = null;
   // 分类数据
