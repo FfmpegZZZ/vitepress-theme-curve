@@ -95,6 +95,7 @@
 <script setup>
 import { mainStore } from "@/store";
 import { getHitokoto } from "@/api";
+import { searchPosts } from "@/utils/searchUtils.mjs";
 
 const store = mainStore();
 const router = useRouter();
@@ -155,58 +156,21 @@ const getHitokotoData = async () => {
   }
 };
 
-// 搜索功能
+// 搜索功能（共用 searchUtils：覆盖 gameInfo + 拼音 + 首字母）
 const performSearch = () => {
-  const query = searchQuery.value.trim().toLowerCase();
+  const query = searchQuery.value.trim();
   if (!query) {
     searchResults.value = [];
     return;
   }
-
   const postData = theme.value.postData || [];
-  const results = [];
-
-  postData.forEach((post) => {
-    let score = 0;
-
-    // 标题匹配
-    if (post.title && post.title.toLowerCase().includes(query)) {
-      score += 10;
-    }
-
-    // 分类匹配
-    if (post.categories) {
-      const categories = Array.isArray(post.categories) 
-        ? post.categories.join(',') 
-        : post.categories;
-      if (categories.toLowerCase().includes(query)) {
-        score += 5;
-      }
-    }
-
-    // 标签匹配
-    if (post.tags) {
-      const tags = Array.isArray(post.tags) 
-        ? post.tags.join(',') 
-        : post.tags;
-      if (tags.toLowerCase().includes(query)) {
-        score += 5;
-      }
-    }
-
-    // 描述匹配
-    if (post.description && post.description.toLowerCase().includes(query)) {
-      score += 3;
-    }
-
-    if (score > 0) {
-      results.push({ ...post, score });
-    }
-  });
-
-  // 按得分排序
-  results.sort((a, b) => b.score - a.score);
-  searchResults.value = results;
+  const scored = searchPosts(postData, query);
+  // 保持原结构：返回的 item 直接附带 post 字段供模板使用
+  searchResults.value = scored.map(({ post, matchedField, excerpt }) => ({
+    ...post,
+    matchedField,
+    matchedExcerpt: excerpt,
+  }));
 };
 
 // 处理搜索

@@ -57,6 +57,37 @@
             </span>
           </div>
         </template>
+
+        <!-- AI 语义搜索开关 -->
+        <div class="ai-toggle">
+          <div class="ai-toggle-row">
+            <span class="ai-label">
+              🧠 AI 语义搜索
+              <span v-if="vectorReady" class="ai-status ready">已启用</span>
+              <span v-else-if="vectorLoading" class="ai-status loading">{{ progressLabel }}</span>
+              <span v-else class="ai-status">未启用</span>
+            </span>
+            <button
+              v-if="!vectorReady && !vectorLoading"
+              class="ai-btn"
+              @click="enableVectorAsync"
+            >
+              启用（~23MB）
+            </button>
+            <button
+              v-else-if="vectorReady"
+              class="ai-btn off"
+              @click="disableVector"
+            >
+              关闭
+            </button>
+          </div>
+          <div v-if="vectorLoading" class="ai-progress">
+            <div class="ai-progress-bar" :style="{ width: vectorProgress.percent + '%' }" />
+          </div>
+          <p v-if="vectorError" class="ai-error">❌ {{ vectorError }}</p>
+          <p class="ai-hint">启用后可搜「黑暗剧情」「推塔」等概念，自动找出相似游戏。模型只下载一次，后续走浏览器缓存。</p>
+        </div>
       </div>
 
       <!-- 搜索结果 -->
@@ -126,7 +157,8 @@
 <script setup>
 import { mainStore } from "@/store";
 import { useDebounceFn } from "@vueuse/core";
-import { ref, computed, watch, nextTick } from "vue";
+import { searchPosts, expandQuery } from "@/utils/searchUtils.mjs";
+import { ref, computed, watch, nextTick, onMounted } from "vue";
 
 const store = mainStore();
 const router = useRouter();
@@ -134,6 +166,75 @@ const { theme } = useData();
 
 const isDev = import.meta.env.DEV;
 const engineLabel = isDev ? "本地搜索（开发模式）" : "Pagefind";
+
+// --- 向量搜索状态 ---
+const VECTOR_PREF_KEY = "wudu_vector_search_enabled";
+const vectorEnabled = ref(false); // 用户已勾选启用
+const vectorReady = ref(false); // 模型 + 索引已加载完毕
+const vectorLoading = ref(false);
+const vectorProgress = ref({ stage: "", percent: 0 });
+const vectorError = ref(null);
+let vectorModule = null;
+
+onMounted(() => {
+  try {
+    if (localStorage.getItem(VECTOR_PREF_KEY) === "1") {
+      // 用户上次启用过，后台静默加载
+      void enableVectorAsync();
+    }
+  } catch (_e) {
+    // localStorage 不可用就跳过
+  }
+});
+
+const enableVectorAsync = async () => {
+  if (vectorReady.value || vectorLoading.value) return;
+  vectorLoading.value = true;
+  vectorError.value = null;
+  try {
+    if (!vectorModule) {
+      vectorModule = await import("@/utils/searchVector.mjs");
+    }
+    await vectorModule.enableVectorSearch((p) => {
+      vectorProgress.value = p;
+    });
+    vectorReady.value = true;
+    vectorEnabled.value = true;
+    try {
+      localStorage.setItem(VECTOR_PREF_KEY, "1");
+    } catch (_e) {
+      /* ignore */
+    }
+    // 如果当前已有 query，重跑一次让向量结果加入
+    if (searchQuery.value.trim()) runSearch();
+  } catch (err) {
+    vectorError.value = err?.message || "加载失败";
+    console.error("[vector] 启用失败：", err);
+  } finally {
+    vectorLoading.value = false;
+  }
+};
+
+const disableVector = () => {
+  vectorEnabled.value = false;
+  try {
+    localStorage.removeItem(VECTOR_PREF_KEY);
+  } catch (_e) {
+    /* ignore */
+  }
+  // 重跑一次清除向量分组
+  if (searchQuery.value.trim()) runSearch();
+};
+
+const progressLabel = computed(() => {
+  const stages = {
+    "downloading-runtime": "加载 AI 运行时...",
+    "downloading-model": "下载语义模型（~23MB）...",
+    "downloading-index": "加载文章索引...",
+    ready: "就绪",
+  };
+  return stages[vectorProgress.value.stage] || "准备中...";
+});
 
 const searchQuery = ref("");
 const groupedResults = ref([]);
@@ -161,6 +262,7 @@ const groupConfig = {
   tag: { label: "标签", icon: "icon-hashtag", order: 2 },
   category: { label: "分类", icon: "icon-folder", order: 3 },
   page: { label: "页面", icon: "icon-link", order: 4 },
+  semantic: { label: "🧠 语义相关", icon: "icon-search", order: 5 },
 };
 
 const classifyUrl = (url) => {
@@ -210,46 +312,24 @@ const groupResults = (items) => {
     .sort((a, b) => a.order - b.order);
 };
 
-// --- Dev 回退：子串匹配 postData 元数据 ---
+// --- Dev 回退：基于共享的 searchUtils ---
 const searchLocalFallback = (query) => {
-  const q = query.toLowerCase();
-  const items = [];
+  const rawQ = query.trim();
+  if (!rawQ) return [];
   const postData = theme.value.postData || [];
-
-  for (const post of postData) {
-    let score = 0;
-    let excerpt = null;
-    if (post.title?.toLowerCase().includes(q)) score += 10;
-    const cats = Array.isArray(post.categories) ? post.categories.join(",") : post.categories || "";
-    const tags = Array.isArray(post.tags) ? post.tags.join(",") : post.tags || "";
-    if (cats.toLowerCase().includes(q)) score += 5;
-    if (tags.toLowerCase().includes(q)) score += 5;
-    if (post.description?.toLowerCase().includes(q)) {
-      score += 3;
-      const idx = post.description.toLowerCase().indexOf(q);
-      const start = Math.max(0, idx - 40);
-      const end = Math.min(post.description.length, idx + q.length + 40);
-      let s = post.description.substring(start, end);
-      if (start > 0) s = "..." + s;
-      if (end < post.description.length) s = s + "...";
-      excerpt = highlightText(s, query);
-    }
-    if (score > 0) {
-      items.push({
-        url: post.regularPath?.replace(/\.html$/, "") || "/",
-        title: highlightText(post.title || "未命名文章", query),
-        excerpt,
-        meta: {
-          category: Array.isArray(post.categories) ? post.categories.join(", ") : post.categories,
-          tags: Array.isArray(post.tags) ? post.tags.join(", ") : post.tags,
-        },
-        score,
-      });
-    }
-  }
-
-  items.sort((a, b) => b.score - a.score);
-  return items;
+  return searchPosts(postData, rawQ).map(({ post, matchedField, excerpt }) => ({
+    url: post.regularPath?.replace(/\.html$/, "") || "/",
+    title: highlightText(post.title || "未命名文章", rawQ),
+    excerpt:
+      (excerpt && highlightText(excerpt, rawQ)) ||
+      (matchedField === "pinyin" || matchedField === "pinyin-init"
+        ? `<i>拼音匹配：${rawQ}</i>`
+        : null),
+    meta: {
+      category: Array.isArray(post.categories) ? post.categories.join(", ") : post.categories,
+      tags: Array.isArray(post.tags) ? post.tags.join(", ") : post.tags,
+    },
+  }));
 };
 
 // --- 生产：Pagefind ---
@@ -274,29 +354,73 @@ const ensurePagefind = async () => {
 const searchPagefind = async (query) => {
   const pf = await ensurePagefind();
   if (!pf) return [];
-  const { results } = await pf.search(query);
-  const items = [];
-  // 取前 30 条详情，避免请求过多
-  const limited = results.slice(0, 30);
+
+  // 同义词扩展：原词 + 同义词都跑一遍，结果按 URL 去重并按 Pagefind 自身得分排序
+  const queries = expandQuery(query);
+  const merged = new Map(); // url -> item
   await Promise.all(
-    limited.map(async (r) => {
+    queries.map(async (q) => {
+      const isOriginal = q === query.trim().toLowerCase();
       try {
-        const data = await r.data();
-        items.push({
-          url: data.url.replace(/\.html$/, ""),
-          title: data.meta?.title ? highlightText(data.meta.title, query) : highlightText(data.url, query),
-          excerpt: data.excerpt,
-          meta: {
-            category: data.meta?.category || data.filters?.category?.[0],
-            tags: data.filters?.tags?.join(", "),
-          },
-        });
+        const { results } = await pf.search(q);
+        // 每个 query 取前 20 条详情，控制请求量
+        await Promise.all(
+          results.slice(0, 20).map(async (r) => {
+            try {
+              const data = await r.data();
+              const url = data.url.replace(/\.html$/, "");
+              if (merged.has(url)) return; // 优先保留首个命中（通常是原词）
+              merged.set(url, {
+                url,
+                title: data.meta?.title
+                  ? highlightText(data.meta.title, query)
+                  : highlightText(data.url, query),
+                excerpt: isOriginal ? data.excerpt : `${data.excerpt}<br><i>同义词命中：${q}</i>`,
+                meta: {
+                  category: data.meta?.category || data.filters?.category?.[0],
+                  tags: data.filters?.tags?.join(", "),
+                },
+              });
+            } catch (_e) {
+              /* skip */
+            }
+          }),
+        );
       } catch (e) {
-        console.warn("Pagefind 结果解析失败", e);
+        console.warn(`Pagefind 查询失败 (${q})：`, e);
       }
     }),
   );
-  return items;
+  return Array.from(merged.values());
+};
+
+// 用 URL 做去重 key（同一篇文章可能既被精确命中又被向量命中）
+const dedupeByUrl = (items) => {
+  const seen = new Set();
+  const result = [];
+  for (const it of items) {
+    if (seen.has(it.url)) continue;
+    seen.add(it.url);
+    result.push(it);
+  }
+  return result;
+};
+
+const runSemanticSearch = async (q) => {
+  if (!vectorReady.value || !vectorModule) return [];
+  try {
+    const hits = await vectorModule.vectorSearch(q, { topK: 8, threshold: 0.55 });
+    return hits.map((h) => ({
+      url: h.url,
+      title: highlightText(h.title || "未命名文章", ""),
+      excerpt: `<i>语义相似度：${(h.similarity * 100).toFixed(1)}%</i>`,
+      meta: null,
+      _semantic: true,
+    }));
+  } catch (err) {
+    console.error("[vector] 搜索失败：", err);
+    return [];
+  }
 };
 
 // 执行搜索（防抖 150ms）
@@ -309,8 +433,30 @@ const runSearch = useDebounceFn(async () => {
   }
   isSearching.value = true;
   const t0 = performance.now();
-  const items = isDev ? searchLocalFallback(q) : await searchPagefind(q);
-  groupedResults.value = groupResults(items);
+
+  // 普通搜索 + 向量搜索并行
+  const [primaryItems, semanticItems] = await Promise.all([
+    isDev ? Promise.resolve(searchLocalFallback(q)) : searchPagefind(q),
+    vectorReady.value ? runSemanticSearch(q) : Promise.resolve([]),
+  ]);
+
+  // 普通结果先分组
+  const primaryGroups = groupResults(dedupeByUrl(primaryItems));
+  // 向量结果剔除已出现的 URL
+  const primaryUrls = new Set(primaryItems.map((i) => i.url));
+  const semanticOnly = semanticItems.filter((i) => !primaryUrls.has(i.url));
+  // 向量结果手动加成 semantic 分组（不走 classifyUrl）
+  const finalGroups = [...primaryGroups];
+  if (semanticOnly.length > 0) {
+    finalGroups.push({
+      type: "semantic",
+      label: groupConfig.semantic.label,
+      icon: groupConfig.semantic.icon,
+      order: groupConfig.semantic.order,
+      items: semanticOnly,
+    });
+  }
+  groupedResults.value = finalGroups;
   searchTime.value = Math.round(performance.now() - t0);
   selectedIndex.value = 0;
   isSearching.value = false;
@@ -523,6 +669,96 @@ onBeforeUnmount(() => {
           }
         }
       }
+    }
+  }
+
+  .ai-toggle {
+    margin-top: 16px;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px dashed var(--main-card-border);
+    background-color: var(--main-card-second-background);
+
+    .ai-toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .ai-label {
+      font-size: 14px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .ai-status {
+      font-size: 12px;
+      font-weight: normal;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background-color: var(--main-card-border);
+      color: var(--main-font-second-color);
+
+      &.ready {
+        background-color: var(--main-success-color-gray);
+        color: var(--main-success-color);
+      }
+
+      &.loading {
+        background-color: var(--main-info-color-gray);
+        color: var(--main-info-color);
+      }
+    }
+
+    .ai-btn {
+      padding: 5px 12px;
+      font-size: 13px;
+      border-radius: 6px;
+      border: 1px solid var(--main-color);
+      background-color: var(--main-color);
+      color: white;
+      cursor: pointer;
+      transition: opacity 0.2s;
+
+      &:hover {
+        opacity: 0.85;
+      }
+
+      &.off {
+        background-color: transparent;
+        color: var(--main-font-second-color);
+        border-color: var(--main-card-border);
+      }
+    }
+
+    .ai-progress {
+      margin-top: 10px;
+      height: 4px;
+      border-radius: 2px;
+      background-color: var(--main-card-border);
+      overflow: hidden;
+
+      .ai-progress-bar {
+        height: 100%;
+        background-color: var(--main-color);
+        transition: width 0.3s;
+      }
+    }
+
+    .ai-error {
+      margin: 8px 0 0;
+      font-size: 12px;
+      color: var(--main-error-color);
+    }
+
+    .ai-hint {
+      margin: 8px 0 0;
+      font-size: 12px;
+      color: var(--main-font-second-color);
+      line-height: 1.5;
     }
   }
 

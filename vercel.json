@@ -8,6 +8,8 @@
     { "source": "/api/download-list", "destination": "/api/download-list" },
     { "source": "/api/download", "destination": "/api/download" },
     { "source": "/pagefind/(.*)", "destination": "/pagefind/$1" },
+    { "source": "/models/(.*)", "destination": "/models/$1" },
+    { "source": "/embeddings.json", "destination": "/embeddings.json" },
     { "source": "/:path*", "destination": "/index.html" }
   ]
 }

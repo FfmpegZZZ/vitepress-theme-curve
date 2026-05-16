@@ -269,15 +269,40 @@ export default withPwa(
               },
             },
           },
+          // 向量模型权重：长期缓存，避免重复下载
+          {
+            urlPattern: /^\/models\/.*\.(onnx|json|wasm)$/,
+            handler: "CacheFirst",
+            options: {
+              cacheName: "vector-model-cache",
+              expiration: {
+                maxEntries: 20,
+                maxAgeSeconds: 60 * 60 * 24 * 30,
+              },
+            },
+          },
+          // embeddings.json：每次部署可能更新，stale-while-revalidate
+          {
+            urlPattern: /^\/embeddings\.json$/,
+            handler: "StaleWhileRevalidate",
+            options: { cacheName: "vector-index-cache" },
+          },
         ],
-        // 缓存文件（排除 pagefind 索引，避免跨部署缓存错位）
-        globPatterns: ["**/*.{js,css,html,ico,png,jpg,jpeg,gif,svg,woff2,ttf}", "!pagefind/**"],
+        // 缓存文件（排除 pagefind / models / embeddings，避免 SW 把大文件吃进 precache）
+        globPatterns: [
+          "**/*.{js,css,html,ico,png,jpg,jpeg,gif,svg,woff2,ttf}",
+          "!pagefind/**",
+          "!models/**",
+          "!embeddings.json",
+        ],
         // 排除路径
         navigateFallbackDenylist: [
           /^\/sitemap.xml$/,
           /^\/rss.xml$/,
           /^\/robots.txt$/,
           /^\/pagefind\//,
+          /^\/models\//,
+          /^\/embeddings\.json$/,
         ],
       },
       manifest: {

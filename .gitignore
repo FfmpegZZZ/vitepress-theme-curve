@@ -35,3 +35,8 @@ dist
 
 .vercel
 posts/2025/test.md
+
+# 向量搜索模型文件 + embeddings（构建期重新生成）
+public/models/
+public/embeddings.json
+.cache/transformers
