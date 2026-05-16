@@ -4,47 +4,100 @@
     :show="store.searchShow"
     title="全局搜索"
     titleIcon="search"
-    @mask-click="store.changeShowStatus('searchShow')"
-    @modal-close="store.changeShowStatus('searchShow')"
+    @mask-click="closeModal"
+    @modal-close="closeModal"
   >
-    <div class="local-search">
+    <div class="local-search" @keydown="onKeydown">
       <!-- 搜索框 -->
       <div class="search-box">
         <input
+          ref="inputRef"
           v-model="searchQuery"
           type="search"
           class="search-input"
           placeholder="想要搜点什么"
           autofocus
-          @input="handleSearch"
         />
+        <kbd class="kbd-hint">Ctrl K</kbd>
+      </div>
+
+      <!-- 空状态：搜索历史 + 热门标签 -->
+      <div v-if="!hasQuery" class="search-empty-state">
+        <template v-if="store.searchHistory.length">
+          <div class="section-header">
+            <span class="title">搜索历史</span>
+            <button class="clear-btn" @click="store.clearSearchHistory()">清空</button>
+          </div>
+          <div class="chip-list">
+            <span
+              v-for="item in store.searchHistory"
+              :key="`h-${item}`"
+              class="chip history"
+              @click="useHistory(item)"
+            >
+              <i class="iconfont icon-time" />
+              <span class="text">{{ item }}</span>
+              <i class="iconfont icon-close remove" @click.stop="store.removeSearchHistoryItem(item)" />
+            </span>
+          </div>
+        </template>
+        <template v-if="hotTags.length">
+          <div class="section-header">
+            <span class="title">热门标签</span>
+          </div>
+          <div class="chip-list">
+            <span
+              v-for="tag in hotTags"
+              :key="`t-${tag}`"
+              class="chip"
+              @click="useHistory(tag)"
+            >
+              <i class="iconfont icon-hashtag" />
+              <span class="text">{{ tag }}</span>
+            </span>
+          </div>
+        </template>
       </div>
 
       <!-- 搜索结果 -->
-      <div v-if="searchQuery" class="search-results">
+      <div v-else class="search-results">
         <Transition name="fade" mode="out-in">
-          <div v-if="searchResults.length > 0" class="search-list">
+          <div v-if="isSearching" class="searching">
+            <i class="iconfont icon-loading rotating" />
+            <span class="text">搜索中...</span>
+          </div>
+          <div v-else-if="groupedResults.length > 0" class="search-list">
             <div
-              v-for="(item, index) in paginatedResults"
-              :key="index"
-              class="search-item s-card hover"
-              @click="jumpSearch(item.regularPath, item.anchor)"
+              v-for="group in groupedResults"
+              :key="group.type"
+              class="group"
             >
-              <p class="title" v-html="highlightText(item.title, searchQuery)" />
-              <div v-if="item.categories || item.tags" class="meta">
-                <span v-if="item.categories" class="category">
-                  <i class="iconfont icon-folder" />
-                  {{ Array.isArray(item.categories) ? item.categories.join(', ') : item.categories }}
-                </span>
-                <span v-if="item.tags" class="tags">
-                  <i class="iconfont icon-hashtag" />
-                  {{ Array.isArray(item.tags) ? item.tags.join(', ') : item.tags }}
-                </span>
+              <div class="group-header">
+                <i class="iconfont" :class="group.icon" />
+                <span class="title">{{ group.label }}</span>
+                <span class="count">{{ group.items.length }}</span>
               </div>
-              <p v-if="item.description" class="description">
-                {{ item.description }}
-              </p>
-              <p v-if="item.matchedContent" class="content s-card" v-html="item.matchedContent" />
+              <div
+                v-for="(item, index) in group.items"
+                :key="`${group.type}-${index}`"
+                :class="['search-item', 's-card', 'hover', { active: flatIndex(group.type, index) === selectedIndex }]"
+                :data-flat-index="flatIndex(group.type, index)"
+                @click="jumpSearch(item.url)"
+                @mouseenter="selectedIndex = flatIndex(group.type, index)"
+              >
+                <p class="title" v-html="item.title" />
+                <div v-if="item.meta" class="meta">
+                  <span v-if="item.meta.category" class="category">
+                    <i class="iconfont icon-folder" />
+                    {{ item.meta.category }}
+                  </span>
+                  <span v-if="item.meta.tags" class="tags">
+                    <i class="iconfont icon-hashtag" />
+                    {{ item.meta.tags }}
+                  </span>
+                </div>
+                <p v-if="item.excerpt" class="content s-card" v-html="item.excerpt" />
+              </div>
             </div>
           </div>
           <div v-else class="no-result">
@@ -53,35 +106,16 @@
           </div>
         </Transition>
 
-        <!-- 分页 -->
-        <div v-if="totalPages > 1" class="pagination">
-          <button
-            class="page-btn"
-            :disabled="currentPage === 1"
-            @click="currentPage--"
-          >
-            上一页
-          </button>
-          <span class="page-info">{{ currentPage }} / {{ totalPages }}</span>
-          <button
-            class="page-btn"
-            :disabled="currentPage === totalPages"
-            @click="currentPage++"
-          >
-            下一页
-          </button>
-        </div>
-
         <!-- 统计信息 -->
-        <div class="search-stats">
+        <div v-if="!isSearching" class="search-stats">
           <div class="information">
             <span class="text">
-              找到 {{ searchResults.length }} 条结果，用时 {{ searchTime }} 毫秒
+              找到 {{ totalResults }} 条结果，用时 {{ searchTime }} 毫秒
             </span>
           </div>
           <div class="power">
             <i class="iconfont icon-local" />
-            <span class="name">本地搜索</span>
+            <span class="name">{{ engineLabel }}</span>
           </div>
         </div>
       </div>
@@ -91,139 +125,271 @@
 
 <script setup>
 import { mainStore } from "@/store";
-import { ref, computed, watch } from "vue";
+import { useDebounceFn } from "@vueuse/core";
+import { ref, computed, watch, nextTick } from "vue";
 
 const store = mainStore();
 const router = useRouter();
 const { theme } = useData();
 
-// 搜索相关状态
+const isDev = import.meta.env.DEV;
+const engineLabel = isDev ? "本地搜索（开发模式）" : "Pagefind";
+
 const searchQuery = ref("");
-const searchResults = ref([]);
+const groupedResults = ref([]);
 const searchTime = ref(0);
-const currentPage = ref(1);
-const resultsPerPage = 8;
+const selectedIndex = ref(0);
+const isSearching = ref(false);
+const inputRef = ref(null);
 
-// 分页计算
-const totalPages = computed(() => {
-  return Math.ceil(searchResults.value.length / resultsPerPage);
+let pagefindInstance = null;
+
+const hasQuery = computed(() => searchQuery.value.trim().length > 0);
+const totalResults = computed(() => groupedResults.value.reduce((sum, g) => sum + g.items.length, 0));
+
+// 热门标签：取 tagsData 前 8 个
+const hotTags = computed(() => {
+  const tagsData = theme.value.tagsData || {};
+  return Object.keys(tagsData)
+    .sort((a, b) => (tagsData[b].count || 0) - (tagsData[a].count || 0))
+    .slice(0, 8);
 });
 
-const paginatedResults = computed(() => {
-  const start = (currentPage.value - 1) * resultsPerPage;
-  const end = start + resultsPerPage;
-  return searchResults.value.slice(start, end);
-});
+// 分组配置
+const groupConfig = {
+  post: { label: "游戏 / 文章", icon: "icon-folder", order: 1 },
+  tag: { label: "标签", icon: "icon-hashtag", order: 2 },
+  category: { label: "分类", icon: "icon-folder", order: 3 },
+  page: { label: "页面", icon: "icon-link", order: 4 },
+};
 
-// 重置分页
-watch(searchQuery, () => {
-  currentPage.value = 1;
-});
+const classifyUrl = (url) => {
+  if (!url) return "page";
+  if (url.includes("/posts/")) return "post";
+  if (url.includes("/pages/tags/")) return "tag";
+  if (url.includes("/pages/categories/")) return "category";
+  return "page";
+};
 
-/**
- * 处理搜索
- */
-const handleSearch = () => {
-  const startTime = performance.now();
-  const query = searchQuery.value.trim().toLowerCase();
+const escapeHtml = (s) =>
+  String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
-  if (!query) {
-    searchResults.value = [];
-    return;
+const highlightText = (text, query) => {
+  const t = escapeHtml(text);
+  const q = String(query || "").trim();
+  if (!t || !q) return t;
+  const escaped = q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return t.replace(new RegExp(`(${escaped})`, "gi"), "<mark>$1</mark>");
+};
+
+// 扁平索引：将所有 group 拍平用于 ↑↓ 选中
+const flatIndex = (groupType, indexInGroup) => {
+  let offset = 0;
+  for (const g of groupedResults.value) {
+    if (g.type === groupType) return offset + indexInGroup;
+    offset += g.items.length;
   }
+  return offset + indexInGroup;
+};
 
-  const results = [];
+const groupResults = (items) => {
+  const buckets = {};
+  for (const item of items) {
+    const type = classifyUrl(item.url);
+    if (!buckets[type]) buckets[type] = [];
+    buckets[type].push(item);
+  }
+  return Object.keys(buckets)
+    .map((type) => ({
+      type,
+      label: groupConfig[type].label,
+      icon: groupConfig[type].icon,
+      order: groupConfig[type].order,
+      items: buckets[type],
+    }))
+    .sort((a, b) => a.order - b.order);
+};
+
+// --- Dev 回退：子串匹配 postData 元数据 ---
+const searchLocalFallback = (query) => {
+  const q = query.toLowerCase();
+  const items = [];
   const postData = theme.value.postData || [];
 
-  // 搜索文章
-  postData.forEach((post) => {
+  for (const post of postData) {
     let score = 0;
-    const matchedData = {
-      ...post,
-      matchedContent: null,
-      anchor: null,
-    };
-
-    // 标题匹配 (权重最高)
-    if (post.title && post.title.toLowerCase().includes(query)) {
-      score += 10;
-    }
-
-    // 分类匹配
-    if (post.categories) {
-      const categories = Array.isArray(post.categories) 
-        ? post.categories.join(',') 
-        : post.categories;
-      if (categories.toLowerCase().includes(query)) {
-        score += 5;
-      }
-    }
-
-    // 标签匹配
-    if (post.tags) {
-      const tags = Array.isArray(post.tags) 
-        ? post.tags.join(',') 
-        : post.tags;
-      if (tags.toLowerCase().includes(query)) {
-        score += 5;
-      }
-    }
-
-    // 描述匹配
-    if (post.description && post.description.toLowerCase().includes(query)) {
+    let excerpt = null;
+    if (post.title?.toLowerCase().includes(q)) score += 10;
+    const cats = Array.isArray(post.categories) ? post.categories.join(",") : post.categories || "";
+    const tags = Array.isArray(post.tags) ? post.tags.join(",") : post.tags || "";
+    if (cats.toLowerCase().includes(q)) score += 5;
+    if (tags.toLowerCase().includes(q)) score += 5;
+    if (post.description?.toLowerCase().includes(q)) {
       score += 3;
-      const index = post.description.toLowerCase().indexOf(query);
-      const start = Math.max(0, index - 50);
-      const end = Math.min(post.description.length, index + query.length + 50);
-      let snippet = post.description.substring(start, end);
-      if (start > 0) snippet = '...' + snippet;
-      if (end < post.description.length) snippet = snippet + '...';
-      matchedData.matchedContent = highlightText(snippet, query);
+      const idx = post.description.toLowerCase().indexOf(q);
+      const start = Math.max(0, idx - 40);
+      const end = Math.min(post.description.length, idx + q.length + 40);
+      let s = post.description.substring(start, end);
+      if (start > 0) s = "..." + s;
+      if (end < post.description.length) s = s + "...";
+      excerpt = highlightText(s, query);
     }
-
     if (score > 0) {
-      matchedData.score = score;
-      results.push(matchedData);
+      items.push({
+        url: post.regularPath?.replace(/\.html$/, "") || "/",
+        title: highlightText(post.title || "未命名文章", query),
+        excerpt,
+        meta: {
+          category: Array.isArray(post.categories) ? post.categories.join(", ") : post.categories,
+          tags: Array.isArray(post.tags) ? post.tags.join(", ") : post.tags,
+        },
+        score,
+      });
     }
-  });
+  }
 
-  // 按得分排序
-  results.sort((a, b) => b.score - a.score);
-  searchResults.value = results;
-
-  const endTime = performance.now();
-  searchTime.value = Math.round(endTime - startTime);
+  items.sort((a, b) => b.score - a.score);
+  return items;
 };
 
-/**
- * 高亮匹配的文本
- */
-const highlightText = (text, query) => {
-  if (!text || !query) return text;
-  const regex = new RegExp(`(${escapeRegex(query)})`, 'gi');
-  return text.replace(regex, '<mark>$1</mark>');
+// --- 生产：Pagefind ---
+const ensurePagefind = async () => {
+  if (pagefindInstance) return pagefindInstance;
+  try {
+    // 用变量绕过 Rollup 静态分析（/pagefind/* 在构建期不存在，由 buildEnd 钩子生成）
+    const pagefindUrl = "/pagefind/pagefind.js";
+    pagefindInstance = await import(/* @vite-ignore */ pagefindUrl);
+    await pagefindInstance.options({
+      excerptLength: 30,
+    });
+    await pagefindInstance.init();
+    return pagefindInstance;
+  } catch (err) {
+    console.error("Pagefind 加载失败：", err);
+    pagefindInstance = null;
+    return null;
+  }
 };
 
-/**
- * 转义正则表达式特殊字符
- */
-const escapeRegex = (str) => {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const searchPagefind = async (query) => {
+  const pf = await ensurePagefind();
+  if (!pf) return [];
+  const { results } = await pf.search(query);
+  const items = [];
+  // 取前 30 条详情，避免请求过多
+  const limited = results.slice(0, 30);
+  await Promise.all(
+    limited.map(async (r) => {
+      try {
+        const data = await r.data();
+        items.push({
+          url: data.url.replace(/\.html$/, ""),
+          title: data.meta?.title ? highlightText(data.meta.title, query) : highlightText(data.url, query),
+          excerpt: data.excerpt,
+          meta: {
+            category: data.meta?.category || data.filters?.category?.[0],
+            tags: data.filters?.tags?.join(", "),
+          },
+        });
+      } catch (e) {
+        console.warn("Pagefind 结果解析失败", e);
+      }
+    }),
+  );
+  return items;
 };
 
-/**
- * 跳转到搜索结果
- */
-const jumpSearch = (url, anchor) => {
+// 执行搜索（防抖 150ms）
+const runSearch = useDebounceFn(async () => {
+  const q = searchQuery.value.trim();
+  if (!q) {
+    groupedResults.value = [];
+    isSearching.value = false;
+    return;
+  }
+  isSearching.value = true;
+  const t0 = performance.now();
+  const items = isDev ? searchLocalFallback(q) : await searchPagefind(q);
+  groupedResults.value = groupResults(items);
+  searchTime.value = Math.round(performance.now() - t0);
+  selectedIndex.value = 0;
+  isSearching.value = false;
+}, 150);
+
+watch(searchQuery, () => {
+  if (!searchQuery.value.trim()) {
+    groupedResults.value = [];
+    isSearching.value = false;
+    return;
+  }
+  runSearch();
+});
+
+const useHistory = (q) => {
+  searchQuery.value = q;
+  nextTick(() => inputRef.value?.focus());
+};
+
+const closeModal = () => {
   store.changeShowStatus("searchShow");
-  const fullUrl = anchor ? `${url}#${anchor}` : url;
-  router.go(fullUrl);
 };
 
-// 组件卸载时清理
+const jumpSearch = (url) => {
+  const q = searchQuery.value.trim();
+  if (q) store.addSearchHistory(q);
+  store.changeShowStatus("searchShow");
+  // 兼容 cleanUrls：去掉 .html 后缀
+  router.go(url.replace(/\.html$/, ""));
+};
+
+// 键盘导航
+const flatItems = computed(() => groupedResults.value.flatMap((g) => g.items));
+
+const onKeydown = (e) => {
+  if (!hasQuery.value || flatItems.value.length === 0) {
+    if (e.key === "Escape") closeModal();
+    return;
+  }
+  if (e.key === "ArrowDown") {
+    e.preventDefault();
+    selectedIndex.value = (selectedIndex.value + 1) % flatItems.value.length;
+    scrollSelectedIntoView();
+  } else if (e.key === "ArrowUp") {
+    e.preventDefault();
+    selectedIndex.value = (selectedIndex.value - 1 + flatItems.value.length) % flatItems.value.length;
+    scrollSelectedIntoView();
+  } else if (e.key === "Enter") {
+    e.preventDefault();
+    const item = flatItems.value[selectedIndex.value];
+    if (item) jumpSearch(item.url);
+  } else if (e.key === "Escape") {
+    closeModal();
+  }
+};
+
+const scrollSelectedIntoView = () => {
+  nextTick(() => {
+    const el = document.querySelector(`[data-flat-index="${selectedIndex.value}"]`);
+    el?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  });
+};
+
+// 模态框打开时预加载 Pagefind
+watch(
+  () => store.searchShow,
+  (open) => {
+    if (open && !isDev) ensurePagefind();
+    if (!open) {
+      searchQuery.value = "";
+      groupedResults.value = [];
+      selectedIndex.value = 0;
+    }
+  },
+);
+
 onBeforeUnmount(() => {
   searchQuery.value = "";
-  searchResults.value = [];
+  groupedResults.value = [];
 });
 </script>
 
@@ -234,6 +400,7 @@ onBeforeUnmount(() => {
   flex-direction: column;
 
   .search-box {
+    position: relative;
     height: 40px;
     width: 100%;
     margin-bottom: 20px;
@@ -244,7 +411,7 @@ onBeforeUnmount(() => {
       outline: none;
       border-radius: 8px;
       font-size: 16px;
-      padding: 0.6rem 1rem;
+      padding: 0.6rem 3rem 0.6rem 1rem;
       color: var(--main-font-color);
       font-family: var(--main-font-family);
       border: 1px solid var(--main-card-border);
@@ -262,6 +429,101 @@ onBeforeUnmount(() => {
         display: none;
       }
     }
+
+    .kbd-hint {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 12px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid var(--main-card-border);
+      background-color: var(--main-card-background);
+      color: var(--main-font-second-color);
+      pointer-events: none;
+    }
+  }
+
+  .search-empty-state {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 200px;
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 8px;
+
+      .title {
+        font-size: 14px;
+        font-weight: bold;
+        color: var(--main-font-second-color);
+      }
+
+      .clear-btn {
+        font-size: 12px;
+        padding: 2px 8px;
+        border-radius: 6px;
+        border: none;
+        background: transparent;
+        color: var(--main-font-second-color);
+        cursor: pointer;
+
+        &:hover {
+          color: var(--main-color);
+        }
+      }
+    }
+
+    .chip-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 5px 10px;
+        font-size: 13px;
+        border-radius: 999px;
+        border: 1px solid var(--main-card-border);
+        background-color: var(--main-card-second-background);
+        cursor: pointer;
+        transition: all 0.2s;
+
+        .iconfont {
+          font-size: 12px;
+          opacity: 0.7;
+        }
+
+        .text {
+          line-height: 1;
+        }
+
+        .remove {
+          margin-left: 4px;
+          opacity: 0.4;
+
+          &:hover {
+            opacity: 1;
+            color: var(--main-error-color);
+          }
+        }
+
+        &:hover {
+          border-color: var(--main-color);
+          color: var(--main-color);
+
+          .iconfont {
+            opacity: 1;
+          }
+        }
+      }
+    }
   }
 
   .search-results {
@@ -269,6 +531,19 @@ onBeforeUnmount(() => {
     display: flex;
     flex-direction: column;
     min-height: 300px;
+
+    .searching {
+      height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      opacity: 0.6;
+
+      .rotating {
+        animation: spin 1s linear infinite;
+      }
+    }
 
     .no-result {
       height: 300px;
@@ -291,107 +566,91 @@ onBeforeUnmount(() => {
     .search-list {
       flex: 1;
 
-      .search-item {
-        margin-bottom: 12px;
-        cursor: pointer;
+      .group {
+        margin-bottom: 14px;
 
-        .title {
-          display: inline;
-          font-size: 16px;
-          font-weight: bold;
-          margin-bottom: 6px;
-
-          :deep(mark) {
-            background-color: transparent;
-            color: var(--main-color);
-            font-weight: bold;
-          }
-        }
-
-        .meta {
+        .group-header {
           display: flex;
-          flex-wrap: wrap;
-          gap: 12px;
-          margin-top: 8px;
+          align-items: center;
+          gap: 6px;
+          margin-bottom: 8px;
+          padding: 0 4px;
           font-size: 13px;
           color: var(--main-font-second-color);
 
-          .category,
-          .tags {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-
-            .iconfont {
-              font-size: 14px;
-            }
-          }
-        }
-
-        .description {
-          color: var(--main-font-second-color);
-          margin-top: 8px;
-          font-size: 14px;
-          line-height: 1.6;
-        }
-
-        .content {
-          color: var(--main-font-second-color);
-          margin-top: 0.8rem;
-          font-size: 12px;
-          padding: 8px;
-          border-radius: 8px;
-          line-height: 1.6;
-
-          :deep(mark) {
-            background-color: transparent;
-            color: var(--main-color);
+          .title {
             font-weight: bold;
           }
+
+          .count {
+            margin-left: auto;
+            font-size: 12px;
+            opacity: 0.6;
+          }
         }
 
-        p {
-          margin: 0;
+        .search-item {
+          margin-bottom: 8px;
+          cursor: pointer;
+          transition: all 0.2s;
+
+          &.active {
+            border-color: var(--main-color);
+            box-shadow: 0 4px 12px -2px var(--main-color-bg);
+          }
+
+          .title {
+            display: inline;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 6px;
+
+            :deep(mark) {
+              background-color: transparent;
+              color: var(--main-color);
+              font-weight: bold;
+            }
+          }
+
+          .meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 8px;
+            font-size: 13px;
+            color: var(--main-font-second-color);
+
+            .category,
+            .tags {
+              display: flex;
+              align-items: center;
+              gap: 4px;
+
+              .iconfont {
+                font-size: 14px;
+              }
+            }
+          }
+
+          .content {
+            color: var(--main-font-second-color);
+            margin-top: 0.8rem;
+            font-size: 12px;
+            padding: 8px;
+            border-radius: 8px;
+            line-height: 1.6;
+
+            :deep(mark) {
+              background-color: transparent;
+              color: var(--main-color);
+              font-weight: bold;
+            }
+          }
+
+          p {
+            margin: 0;
+          }
         }
-
-        &:last-child {
-          margin-bottom: 0;
-        }
-      }
-    }
-
-    .pagination {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      margin-top: 20px;
-      padding: 12px 0;
-
-      .page-btn {
-        padding: 6px 16px;
-        border-radius: 8px;
-        border: 1px solid var(--main-card-border);
-        background-color: var(--main-card-second-background);
-        color: var(--main-font-color);
-        cursor: pointer;
-        transition: all 0.3s;
-
-        &:hover:not(:disabled) {
-          background-color: var(--main-color);
-          color: var(--main-card-border);
-          border-color: var(--main-color);
-        }
-
-        &:disabled {
-          opacity: 0.5;
-          cursor: not-allowed;
-        }
-      }
-
-      .page-info {
-        font-size: 14px;
-        color: var(--main-font-second-color);
       }
     }
 
@@ -399,7 +658,7 @@ onBeforeUnmount(() => {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-top: 20px;
+      margin-top: 12px;
       padding-top: 12px;
       border-top: 1px solid var(--main-card-border);
       opacity: 0.8;
@@ -407,31 +666,17 @@ onBeforeUnmount(() => {
 
       .power {
         display: flex;
-        flex-direction: row;
         align-items: center;
         font-size: 16px;
         opacity: 0.6;
-        transition:
-          color 0.3s,
-          opacity 0.3s;
 
         .iconfont {
           margin-right: 4px;
           font-size: 20px;
-          transition: color 0.3s;
         }
 
         .name {
           font-weight: bold;
-        }
-
-        &:hover {
-          opacity: 1;
-          color: var(--main-color);
-
-          .iconfont {
-            color: var(--main-color);
-          }
         }
       }
 
@@ -443,6 +688,12 @@ onBeforeUnmount(() => {
         }
       }
     }
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
 }
 </style>

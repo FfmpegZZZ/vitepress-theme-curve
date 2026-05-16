@@ -7,6 +7,7 @@
     { "source": "/feed.xml", "destination": "/feed.xml" },
     { "source": "/api/download-list", "destination": "/api/download-list" },
     { "source": "/api/download", "destination": "/api/download" },
+    { "source": "/pagefind/(.*)", "destination": "/pagefind/$1" },
     { "source": "/:path*", "destination": "/index.html" }
   ]
 }

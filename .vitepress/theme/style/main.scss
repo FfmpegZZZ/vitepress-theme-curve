@@ -288,3 +288,16 @@ a {
     color: inherit;
   }
 }
+
+// Pagefind 拼音别名（构建期注入，仅供索引，前端不可见）
+.pagefind-pinyin-alias {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

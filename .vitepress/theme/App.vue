@@ -110,6 +110,14 @@ const openRightMenu = (e) => {
   rightMenuRef.value?.openRightMenu(e);
 };
 
+// Ctrl/Cmd+K 唤起搜索
+const handleSearchShortcut = (e) => {
+  if ((e.ctrlKey || e.metaKey) && e.key && e.key.toLowerCase() === "k") {
+    e.preventDefault();
+    store.changeShowStatus("searchShow");
+  }
+};
+
 // 复制时触发
 const copyTip = () => {
   const copiedText = window.getSelection().toString();
@@ -191,6 +199,8 @@ onMounted(() => {
   window.addEventListener("contextmenu", openRightMenu);
   // 复制监听
   window.addEventListener("copy", copyTip);
+  // 搜索快捷键
+  window.addEventListener("keydown", handleSearchShortcut);
   // 监听系统颜色
   window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", changeSiteThemeType);
 });
@@ -198,6 +208,7 @@ onMounted(() => {
 onBeforeUnmount(() => {
   window.removeEventListener("scroll", calculateScroll);
   window.removeEventListener("contextmenu", openRightMenu);
+  window.removeEventListener("keydown", handleSearchShortcut);
 });
 </script>
 

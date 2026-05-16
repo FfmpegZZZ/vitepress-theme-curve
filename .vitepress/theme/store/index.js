@@ -28,6 +28,8 @@ export const mainStore = defineStore("main", {
       controlShow: false,
       // 搜索框显示
       searchShow: false,
+      // 搜索历史（最近 5 条，最近在前）
+      searchHistory: [],
       // 个性化配置显示
       showSeetings: false,
       // 播放器数据
@@ -84,6 +86,20 @@ export const mainStore = defineStore("main", {
       const htmlElement = document.documentElement;
       htmlElement.style.fontSize = this.fontSize + "px";
     },
+    // 添加一条搜索历史（去重 + 限制 5 条）
+    addSearchHistory(query) {
+      const q = (query || "").trim();
+      if (!q) return;
+      this.searchHistory = [q, ...this.searchHistory.filter((item) => item !== q)].slice(0, 5);
+    },
+    // 删除一条历史
+    removeSearchHistoryItem(query) {
+      this.searchHistory = this.searchHistory.filter((item) => item !== query);
+    },
+    // 清空全部历史
+    clearSearchHistory() {
+      this.searchHistory = [];
+    },
     // 切换明暗模式
     changeThemeType() {
       // 禁止壁纸模式切换
@@ -128,6 +144,7 @@ export const mainStore = defineStore("main", {
         "fontSize",
         "infoPosition",
         "backgroundUrl",
+        "searchHistory",
       ],
     },
   ],

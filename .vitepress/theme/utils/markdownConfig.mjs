@@ -1,6 +1,29 @@
 import { tabsMarkdownPlugin } from "vitepress-plugin-tabs";
 import markdownItAttrs from "markdown-it-attrs";
 import container from "markdown-it-container";
+import { pinyin } from "pinyin-pro";
+
+const CJK_RE = /[一-龥]/;
+
+const computePinyinAliases = (frontmatter) => {
+  if (!frontmatter) return "";
+  const sources = [];
+  if (typeof frontmatter.title === "string") sources.push(frontmatter.title);
+  if (typeof frontmatter.gameInfo?.name === "string") sources.push(frontmatter.gameInfo.name);
+  const aliases = new Set();
+  for (const src of sources) {
+    if (!CJK_RE.test(src)) continue;
+    try {
+      const full = pinyin(src, { toneType: "none", type: "string" }).replace(/\s+/g, "");
+      const first = pinyin(src, { pattern: "first", toneType: "none", type: "string" }).replace(/\s+/g, "");
+      if (full) aliases.add(full);
+      if (first) aliases.add(first);
+    } catch (_e) {
+      // 转换失败跳过
+    }
+  }
+  return Array.from(aliases).join(" ");
+};
 
 // markdown-it
 const markdownConfig = (md, themeConfig) => {
@@ -290,6 +313,15 @@ const markdownConfig = (md, themeConfig) => {
     }
     return fence(...args);
   };
+
+  // Pagefind 拼音别名注入：作为 core ruler，在 parse 阶段为页面前插入隐藏 HTML 块 token
+  md.core.ruler.push("pagefind_pinyin_alias", (state) => {
+    const aliases = computePinyinAliases(state.env?.frontmatter);
+    if (!aliases) return;
+    const token = new state.Token("html_block", "", 0);
+    token.content = `<div class="pagefind-pinyin-alias" aria-hidden="true">${aliases}</div>\n`;
+    state.tokens.unshift(token);
+  });
 
   // spoiler
   md.inline.ruler.push('spoiler', (state, silent) => {

@@ -102,7 +102,7 @@ export const getAllPosts = async () => {
           const { birthtimeMs, mtimeMs } = stat;
           // 解析 front matter
           const { data } = matter(content);
-          const { title, date, categories, description, tags, top, cover, priority, hidden } = data;
+          const { title, date, categories, description, tags, top, cover, priority, hidden, gameInfo } = data;
           // 如果文章被标记为隐藏，则跳过
           if (hidden) {
             return null;
@@ -125,6 +125,16 @@ export const getAllPosts = async () => {
             top,
             cover,
             priority: priority || 0, // 优先级字段，默认为 0
+            // dev 模式搜索增强：暴露 gameInfo 关键字段（避免整对象进 bundle）
+            gameInfo: gameInfo
+              ? {
+                  name: gameInfo.name,
+                  system: gameInfo.system,
+                  developer: gameInfo.developer,
+                  language: gameInfo.language,
+                  genre: gameInfo.genre,
+                }
+              : undefined,
           };
         } catch (error) {
           console.error(`处理文章文件 '${item}' 时出错:`, error);

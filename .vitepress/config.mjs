@@ -65,8 +65,12 @@ export default withPwa(
       },
       config: (md) => markdownConfig(md, themeConfig),
     },
-    // 构建排除
-    srcExclude: ["**/README.md", "**/TODO.md"],
+    // 构建排除（包含隐藏文章，避免 Pagefind 索引到）
+    srcExclude: [
+      "**/README.md",
+      "**/TODO.md",
+      ...hiddenPaths.map((p) => `${p.replace(/^\//, "")}.md`),
+    ],
     // transformHead
     transformPageData: async (pageData) => {
       // canonical URL
@@ -171,6 +175,19 @@ export default withPwa(
     // buildEnd
     buildEnd: async (config) => {
       await createRssFile(config, themeConfig);
+      // 构建 Pagefind 静态全文索引
+      try {
+        const { createIndex } = await import("pagefind");
+        const { index } = await createIndex({
+          rootSelector: "[data-pagefind-body]",
+          excludeSelectors: ["[data-pagefind-ignore]"],
+        });
+        await index.addDirectory({ path: config.outDir });
+        await index.writeFiles({ outputPath: `${config.outDir}/pagefind` });
+        console.log("✅ Pagefind 索引生成完成");
+      } catch (err) {
+        console.error("⚠️ Pagefind 索引构建失败，将回退到子串匹配搜索:", err);
+      }
     },
     // vite
     vite: {
@@ -253,10 +270,15 @@ export default withPwa(
             },
           },
         ],
-        // 缓存文件
-        globPatterns: ["**/*.{js,css,html,ico,png,jpg,jpeg,gif,svg,woff2,ttf}"],
+        // 缓存文件（排除 pagefind 索引，避免跨部署缓存错位）
+        globPatterns: ["**/*.{js,css,html,ico,png,jpg,jpeg,gif,svg,woff2,ttf}", "!pagefind/**"],
         // 排除路径
-        navigateFallbackDenylist: [/^\/sitemap.xml$/, /^\/rss.xml$/, /^\/robots.txt$/],
+        navigateFallbackDenylist: [
+          /^\/sitemap.xml$/,
+          /^\/rss.xml$/,
+          /^\/robots.txt$/,
+          /^\/pagefind\//,
+        ],
       },
       manifest: {
         name: themeConfig.siteMeta.title,

@@ -51,11 +51,11 @@
       </div>
     </div>
     <div class="post-content">
-      <article class="post-article s-card">
+      <article class="post-article s-card" data-pagefind-body>
         <!-- 游戏信息 -->
         <GameInfo v-if="frontmatter.gameInfo" :gameData="frontmatter.gameInfo" />
         <!-- 过期提醒 -->
-        <div class="expired s-card" v-if="postMetaData?.expired >= 180">
+        <div class="expired s-card" v-if="postMetaData?.expired >= 180" data-pagefind-ignore>
           本文发表于 <strong>{{ postMetaData?.expired }}</strong> 天前，其中的信息可能已经事过境迁
         </div>
         <!-- AI 摘要 -->
@@ -63,11 +63,15 @@
         <!-- 文章内容 -->
         <Content id="page-content" class="markdown-main-style" />
         <!-- 参考资料 -->
-        <References />
+        <div data-pagefind-ignore>
+          <References />
+        </div>
         <!-- 版权 -->
-        <Copyright v-if="frontmatter.copyright !== false" :postData="postMetaData" />
+        <div data-pagefind-ignore>
+          <Copyright v-if="frontmatter.copyright !== false" :postData="postMetaData" />
+        </div>
         <!-- 其他信息 -->
-        <div class="other-meta">
+        <div class="other-meta" data-pagefind-ignore>
           <div class="all-tags">
             <a
               v-for="(item, index) in postMetaData.tags"
@@ -88,15 +92,17 @@
             反馈与投诉
           </a>
         </div>
-        <RewardBtn />
-        <!-- 下一篇 -->
-        <NextPost />
-        <!-- 相关文章 -->
-        <RelatedPost />
-        <!-- 评论 -->
-        <Comments ref="commentRef" />
+        <div data-pagefind-ignore>
+          <RewardBtn />
+          <!-- 下一篇 -->
+          <NextPost />
+          <!-- 相关文章 -->
+          <RelatedPost />
+          <!-- 评论 -->
+          <Comments ref="commentRef" />
+        </div>
       </article>
-      <Aside showToc />
+      <Aside showToc data-pagefind-ignore />
     </div>
   </div>
 </template>
