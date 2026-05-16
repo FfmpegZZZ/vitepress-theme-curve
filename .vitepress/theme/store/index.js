@@ -92,14 +92,14 @@ export const mainStore = defineStore("main", {
       htmlElement.style.fontSize = this.fontSize + "px";
     },
     // 确保向量模型已加载（懒加载 + 全局单例 + 进度回调）
-    // Save-Data 用户全程禁用向量搜索，不下载 24MB 模型。
+    // Save-Data 用户全程禁用向量搜索，不下载 24MB 模型，搜索静默退化为 Pagefind。
     async ensureVectorLoaded() {
       if (this.vectorReady || this.vectorLoading) return;
       if (typeof navigator !== "undefined" && navigator.connection?.saveData) {
-        if (!this.vectorError) {
+        if (!this._saveDataLogged) {
           console.info("[vector] Save-Data 模式已开启，跳过向量模型下载");
+          this._saveDataLogged = true;
         }
-        this.vectorError = "save-data";
         return;
       }
       this.vectorLoading = true;

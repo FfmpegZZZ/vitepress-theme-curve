@@ -115,12 +115,12 @@ const fetchInChunks = async (url, onProgress) => {
   });
 };
 
-// 临时替换 window.fetch，对命中 predicate 的 URL 走分片，其它走原 fetch。
-// fn 内的所有 .onnx fetch 都会被拦截；fn 结束（成功或失败）后恢复原 fetch。
-const withChunkedFetch = async (predicate, onProgress, fn) => {
-  if (typeof window === "undefined") return fn();
-  const orig = window.fetch.bind(window);
-  window.fetch = async (input, init) => {
+// 临时替换 transformers.js 的 env.fetch（它在模块加载时已经 bind 了 globalThis.fetch，
+// 所以替换 window.fetch 不会被它感知到，必须改 env.fetch 本身）。
+// 命中 predicate 的 URL 走分片，其它走原 env.fetch。fn 结束后恢复。
+const withChunkedFetch = async (env, predicate, onProgress, fn) => {
+  const orig = env.fetch;
+  env.fetch = async (input, init) => {
     const url = typeof input === "string" ? input : input?.url;
     const method = (
       init?.method
@@ -140,7 +140,7 @@ const withChunkedFetch = async (predicate, onProgress, fn) => {
   try {
     return await fn();
   } finally {
-    window.fetch = orig;
+    env.fetch = orig;
   }
 };
 
@@ -163,6 +163,7 @@ export const enableVectorSearch = async (onProgress) => {
 
     reportProgress("downloading-model", 10);
     extractor = await withChunkedFetch(
+      env,
       (u) => /\.onnx(\?|$)/.test(u),
       ({ progress }) => {
         // 分片下载占整体 10% -> 85%

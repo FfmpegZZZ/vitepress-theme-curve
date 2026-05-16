@@ -116,10 +116,9 @@ onMounted(() => {
   updateUrlPageNum();
   window.addEventListener("popstate", updateUrlPageNum);
 
-  // 主页空闲时预拉向量模型（尊重 Save-Data / 2G 用户的流量）
+  // 主页空闲时预拉向量模型（Save-Data 由 store 内部禁用；这里只跳过 2G 慢网）
   const conn = typeof navigator !== "undefined" ? navigator.connection : null;
-  const tooSlow = conn && (conn.saveData || /^(2g|slow-2g)$/i.test(conn.effectiveType || ""));
-  if (tooSlow) return;
+  if (conn && /^(2g|slow-2g)$/i.test(conn.effectiveType || "")) return;
 
   const kick = () => store.ensureVectorLoaded();
   if (typeof window.requestIdleCallback === "function") {
