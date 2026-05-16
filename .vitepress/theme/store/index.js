@@ -92,15 +92,27 @@ export const mainStore = defineStore("main", {
       htmlElement.style.fontSize = this.fontSize + "px";
     },
     // 确保向量模型已加载（懒加载 + 全局单例 + 进度回调）
-    // Save-Data 用户全程禁用向量搜索，不下载 24MB 模型，搜索静默退化为 Pagefind。
+    // Save-Data / 手机 用户全程禁用向量搜索，不下载 24MB 模型，搜索静默退化为 Pagefind。
     async ensureVectorLoaded() {
       if (this.vectorReady || this.vectorLoading) return;
-      if (typeof navigator !== "undefined" && navigator.connection?.saveData) {
-        if (!this._saveDataLogged) {
-          console.info("[vector] Save-Data 模式已开启，跳过向量模型下载");
-          this._saveDataLogged = true;
+      if (typeof navigator !== "undefined") {
+        if (navigator.connection?.saveData) {
+          if (!this._vectorSkipLogged) {
+            console.info("[vector] Save-Data 模式已开启，跳过向量模型下载");
+            this._vectorSkipLogged = true;
+          }
+          return;
         }
-        return;
+        // 手机端跳过：iPhone / iPod / Android 手机 / 主流移动浏览器（iPad/平板/桌面照常加载）
+        const isPhone = /iPhone|iPod|Android.*Mobile|webOS|BlackBerry|IEMobile|Opera Mini/i
+          .test(navigator.userAgent || "");
+        if (isPhone) {
+          if (!this._vectorSkipLogged) {
+            console.info("[vector] 手机端跳过向量模型下载");
+            this._vectorSkipLogged = true;
+          }
+          return;
+        }
       }
       this.vectorLoading = true;
       this.vectorError = null;
