@@ -110,13 +110,31 @@ watch(
 );
 
 // 监听 popstate 事件（浏览器前进/后退）
+let idleHandle = null;
+let idleFallbackTimer = null;
 onMounted(() => {
   updateUrlPageNum();
   window.addEventListener("popstate", updateUrlPageNum);
+
+  // 主页空闲时预拉向量模型（尊重 Save-Data / 2G 用户的流量）
+  const conn = typeof navigator !== "undefined" ? navigator.connection : null;
+  const tooSlow = conn && (conn.saveData || /^(2g|slow-2g)$/i.test(conn.effectiveType || ""));
+  if (tooSlow) return;
+
+  const kick = () => store.ensureVectorLoaded();
+  if (typeof window.requestIdleCallback === "function") {
+    idleHandle = window.requestIdleCallback(kick, { timeout: 8000 });
+  } else {
+    idleFallbackTimer = window.setTimeout(kick, 2500);
+  }
 });
 
 onBeforeUnmount(() => {
   window.removeEventListener("popstate", updateUrlPageNum);
+  if (idleHandle != null && typeof window.cancelIdleCallback === "function") {
+    window.cancelIdleCallback(idleHandle);
+  }
+  if (idleFallbackTimer != null) window.clearTimeout(idleFallbackTimer);
 });
 // 根据页数计算列表数据
 const postData = computed(() => {
