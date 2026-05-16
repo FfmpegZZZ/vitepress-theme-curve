@@ -74,7 +74,10 @@
       "vue-demi"
     ],
     "onlyBuiltDependencies": [
-      "@parcel/watcher"
+      "@parcel/watcher",
+      "onnxruntime-node",
+      "protobufjs",
+      "sharp"
     ]
   }
 }

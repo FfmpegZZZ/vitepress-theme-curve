@@ -130,9 +130,7 @@ const toPost = (path) => {
         height: 100%;
         object-fit: cover;
         transform-origin: center center;
-        will-change: transform, filter;
         transition: transform 0.5s ease-out, filter 0.5s ease-out;
-        backface-visibility: hidden;
       }
     }
 
