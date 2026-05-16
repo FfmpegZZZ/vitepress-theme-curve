@@ -10,7 +10,7 @@
           class="search-input"
           placeholder="搜索游戏..."
           @keyup.enter="handleSearch"
-          @focus="showSearchResults = true"
+          @focus="onSearchFocus"
         />
         <button v-if="searchQuery" class="clear-btn" @click="clearSearch">
           <i class="iconfont icon-close" />
@@ -19,8 +19,16 @@
       <!-- 搜索结果下拉框 -->
       <Transition name="fade">
         <div v-if="showSearchResults && searchQuery.trim()" class="search-results-dropdown">
+          <!-- 向量模型加载中：阻塞结果，显示动画 + 进度 + 提示 -->
+          <div v-if="vectorLoading" class="vector-loading">
+            <div class="loading-spinner" />
+            <div class="loading-label">正在加载 AI 搜索模块</div>
+            <div class="loading-progress">
+              <div class="loading-bar" :style="{ width: vectorProgress.percent + '%' }" />
+            </div>
+          </div>
           <!-- 有搜索结果 -->
-          <template v-if="searchResults.length > 0">
+          <template v-else-if="searchResults.length > 0">
             <div
               v-for="(item, index) in searchResults.slice(0, 5)"
               :key="index"
@@ -94,12 +102,20 @@
 
 <script setup>
 import { mainStore } from "@/store";
+import { storeToRefs } from "pinia";
 import { getHitokoto } from "@/api";
 import { searchPosts } from "@/utils/searchUtils.mjs";
 
 const store = mainStore();
+const { vectorLoading, vectorProgress, vectorReady } = storeToRefs(store);
 const router = useRouter();
 const { theme } = useData();
+
+// focus 搜索框时触发向量模型加载（已加载则瞬间返回）
+const onSearchFocus = () => {
+  showSearchResults.value = true;
+  store.ensureVectorLoaded();
+};
 const props = defineProps({
   // 类型
   type: {
@@ -385,6 +401,50 @@ onBeforeUnmount(() => {
       z-index: 1000;
       max-height: 400px;
       overflow-y: auto;
+
+      .vector-loading {
+        padding: 32px 24px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 14px;
+
+        .loading-spinner {
+          width: 40px;
+          height: 40px;
+          border: 3px solid var(--main-card-border);
+          border-top-color: var(--main-color);
+          border-radius: 50%;
+          animation: banner-search-spin 0.9s linear infinite;
+        }
+
+        .loading-label {
+          font-size: 15px;
+          color: var(--main-font-color);
+          font-weight: 500;
+        }
+
+        .loading-progress {
+          width: 220px;
+          max-width: 100%;
+          height: 4px;
+          border-radius: 2px;
+          background-color: var(--main-card-border);
+          overflow: hidden;
+
+          .loading-bar {
+            height: 100%;
+            background-color: var(--main-color);
+            transition: width 0.3s;
+          }
+        }
+
+        .loading-hint {
+          font-size: 12px;
+          color: var(--main-font-second-color);
+          text-align: center;
+        }
+      }
       
       .result-item {
         padding: 1rem 1.5rem;
@@ -598,5 +658,9 @@ onBeforeUnmount(() => {
       display: none;
     }
   }
+}
+
+@keyframes banner-search-spin {
+  to { transform: rotate(360deg); }
 }
 </style>

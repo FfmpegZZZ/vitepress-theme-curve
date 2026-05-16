@@ -58,42 +58,24 @@
           </div>
         </template>
 
-        <!-- AI 语义搜索开关 -->
-        <div class="ai-toggle">
-          <div class="ai-toggle-row">
-            <span class="ai-label">
-              🧠 AI 语义搜索
-              <span v-if="vectorReady" class="ai-status ready">已启用</span>
-              <span v-else-if="vectorLoading" class="ai-status loading">{{ progressLabel }}</span>
-              <span v-else class="ai-status">未启用</span>
-            </span>
-            <button
-              v-if="!vectorReady && !vectorLoading"
-              class="ai-btn"
-              @click="enableVectorAsync"
-            >
-              启用（~23MB）
-            </button>
-            <button
-              v-else-if="vectorReady"
-              class="ai-btn off"
-              @click="disableVector"
-            >
-              关闭
-            </button>
-          </div>
-          <div v-if="vectorLoading" class="ai-progress">
-            <div class="ai-progress-bar" :style="{ width: vectorProgress.percent + '%' }" />
-          </div>
-          <p v-if="vectorError" class="ai-error">❌ {{ vectorError }}</p>
-          <p class="ai-hint">启用后可搜「黑暗剧情」「推塔」等概念，自动找出相似游戏。模型只下载一次，后续走浏览器缓存。</p>
-        </div>
       </div>
 
       <!-- 搜索结果 -->
       <div v-else class="search-results">
         <Transition name="fade" mode="out-in">
-          <div v-if="isSearching" class="searching">
+          <!-- 向量模型加载中：阻塞结果，显示动画 + 进度 + 提示 -->
+          <div v-if="vectorLoading" class="vector-loading">
+            <div class="loading-spinner" />
+            <div class="loading-label">正在加载 AI 搜索模块</div>
+            <div class="loading-progress">
+              <div class="loading-bar" :style="{ width: vectorProgress.percent + '%' }" />
+            </div>
+          </div>
+          <div v-else-if="vectorError" class="no-result">
+            <i class="iconfont icon-search-empty" />
+            <span class="text">AI 加载失败：{{ vectorError }}</span>
+          </div>
+          <div v-else-if="isSearching" class="searching">
             <i class="iconfont icon-loading rotating" />
             <span class="text">搜索中...</span>
           </div>
@@ -156,84 +138,29 @@
 
 <script setup>
 import { mainStore } from "@/store";
+import { storeToRefs } from "pinia";
 import { useDebounceFn } from "@vueuse/core";
 import { searchPosts, expandQuery } from "@/utils/searchUtils.mjs";
-import { ref, computed, watch, nextTick, onMounted } from "vue";
+import { ref, computed, watch, nextTick } from "vue";
 
 const store = mainStore();
+const { vectorReady, vectorLoading, vectorProgress, vectorError } = storeToRefs(store);
 const router = useRouter();
 const { theme } = useData();
 
 const isDev = import.meta.env.DEV;
 const engineLabel = isDev ? "本地搜索（开发模式）" : "Pagefind";
 
-// --- 向量搜索状态 ---
-const VECTOR_PREF_KEY = "wudu_vector_search_enabled";
-const vectorEnabled = ref(false); // 用户已勾选启用
-const vectorReady = ref(false); // 模型 + 索引已加载完毕
-const vectorLoading = ref(false);
-const vectorProgress = ref({ stage: "", percent: 0 });
-const vectorError = ref(null);
 let vectorModule = null;
-
-onMounted(() => {
-  try {
-    if (localStorage.getItem(VECTOR_PREF_KEY) === "1") {
-      // 用户上次启用过，后台静默加载
-      void enableVectorAsync();
-    }
-  } catch (_e) {
-    // localStorage 不可用就跳过
-  }
-});
-
-const enableVectorAsync = async () => {
-  if (vectorReady.value || vectorLoading.value) return;
-  vectorLoading.value = true;
-  vectorError.value = null;
-  try {
-    if (!vectorModule) {
-      vectorModule = await import("@/utils/searchVector.mjs");
-    }
-    await vectorModule.enableVectorSearch((p) => {
-      vectorProgress.value = p;
-    });
-    vectorReady.value = true;
-    vectorEnabled.value = true;
-    try {
-      localStorage.setItem(VECTOR_PREF_KEY, "1");
-    } catch (_e) {
-      /* ignore */
-    }
-    // 如果当前已有 query，重跑一次让向量结果加入
-    if (searchQuery.value.trim()) runSearch();
-  } catch (err) {
-    vectorError.value = err?.message || "加载失败";
-    console.error("[vector] 启用失败：", err);
-  } finally {
-    vectorLoading.value = false;
-  }
-};
-
-const disableVector = () => {
-  vectorEnabled.value = false;
-  try {
-    localStorage.removeItem(VECTOR_PREF_KEY);
-  } catch (_e) {
-    /* ignore */
-  }
-  // 重跑一次清除向量分组
-  if (searchQuery.value.trim()) runSearch();
-};
 
 const progressLabel = computed(() => {
   const stages = {
-    "downloading-runtime": "加载 AI 运行时...",
-    "downloading-model": "下载语义模型（~23MB）...",
-    "downloading-index": "加载文章索引...",
-    ready: "就绪",
+    "downloading-runtime": "正在加载 AI 运行时...",
+    "downloading-model": "正在下载语义模型（~23MB）...",
+    "downloading-index": "正在加载文章索引...",
+    ready: "AI 已就绪",
   };
-  return stages[vectorProgress.value.stage] || "准备中...";
+  return stages[vectorProgress.value.stage] || "正在加载...";
 });
 
 const searchQuery = ref("");
@@ -407,8 +334,9 @@ const dedupeByUrl = (items) => {
 };
 
 const runSemanticSearch = async (q) => {
-  if (!vectorReady.value || !vectorModule) return [];
+  if (!vectorReady.value) return [];
   try {
+    if (!vectorModule) vectorModule = await import("@/utils/searchVector.mjs");
     const hits = await vectorModule.vectorSearch(q, { topK: 8, threshold: 0.55 });
     return hits.map((h) => ({
       url: h.url,
@@ -520,18 +448,26 @@ const scrollSelectedIntoView = () => {
   });
 };
 
-// 模态框打开时预加载 Pagefind
+// 模态框打开时：预加载 Pagefind + 触发向量模型加载
 watch(
   () => store.searchShow,
   (open) => {
-    if (open && !isDev) ensurePagefind();
-    if (!open) {
+    if (open) {
+      if (!isDev) ensurePagefind();
+      // 向量模型懒加载（store 内部已经做了并发去重）
+      store.ensureVectorLoaded();
+    } else {
       searchQuery.value = "";
       groupedResults.value = [];
       selectedIndex.value = 0;
     }
   },
 );
+
+// 向量加载完成后，若已有 query，重跑一次让结果包含语义分组
+watch(vectorReady, (ready) => {
+  if (ready && searchQuery.value.trim()) runSearch();
+});
 
 onBeforeUnmount(() => {
   searchQuery.value = "";
@@ -672,96 +608,6 @@ onBeforeUnmount(() => {
     }
   }
 
-  .ai-toggle {
-    margin-top: 16px;
-    padding: 12px;
-    border-radius: 10px;
-    border: 1px dashed var(--main-card-border);
-    background-color: var(--main-card-second-background);
-
-    .ai-toggle-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-
-    .ai-label {
-      font-size: 14px;
-      font-weight: bold;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .ai-status {
-      font-size: 12px;
-      font-weight: normal;
-      padding: 2px 8px;
-      border-radius: 999px;
-      background-color: var(--main-card-border);
-      color: var(--main-font-second-color);
-
-      &.ready {
-        background-color: var(--main-success-color-gray);
-        color: var(--main-success-color);
-      }
-
-      &.loading {
-        background-color: var(--main-info-color-gray);
-        color: var(--main-info-color);
-      }
-    }
-
-    .ai-btn {
-      padding: 5px 12px;
-      font-size: 13px;
-      border-radius: 6px;
-      border: 1px solid var(--main-color);
-      background-color: var(--main-color);
-      color: white;
-      cursor: pointer;
-      transition: opacity 0.2s;
-
-      &:hover {
-        opacity: 0.85;
-      }
-
-      &.off {
-        background-color: transparent;
-        color: var(--main-font-second-color);
-        border-color: var(--main-card-border);
-      }
-    }
-
-    .ai-progress {
-      margin-top: 10px;
-      height: 4px;
-      border-radius: 2px;
-      background-color: var(--main-card-border);
-      overflow: hidden;
-
-      .ai-progress-bar {
-        height: 100%;
-        background-color: var(--main-color);
-        transition: width 0.3s;
-      }
-    }
-
-    .ai-error {
-      margin: 8px 0 0;
-      font-size: 12px;
-      color: var(--main-error-color);
-    }
-
-    .ai-hint {
-      margin: 8px 0 0;
-      font-size: 12px;
-      color: var(--main-font-second-color);
-      line-height: 1.5;
-    }
-  }
-
   .search-results {
     flex: 1;
     display: flex;
@@ -778,6 +624,52 @@ onBeforeUnmount(() => {
 
       .rotating {
         animation: spin 1s linear infinite;
+      }
+    }
+
+    .vector-loading {
+      height: 280px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      padding: 0 24px;
+
+      .loading-spinner {
+        width: 44px;
+        height: 44px;
+        border: 3px solid var(--main-card-border);
+        border-top-color: var(--main-color);
+        border-radius: 50%;
+        animation: spin 0.9s linear infinite;
+      }
+
+      .loading-label {
+        font-size: 15px;
+        color: var(--main-font-color);
+        font-weight: 500;
+      }
+
+      .loading-progress {
+        width: 240px;
+        max-width: 100%;
+        height: 4px;
+        border-radius: 2px;
+        background-color: var(--main-card-border);
+        overflow: hidden;
+
+        .loading-bar {
+          height: 100%;
+          background-color: var(--main-color);
+          transition: width 0.3s;
+        }
+      }
+
+      .loading-hint {
+        font-size: 12px;
+        color: var(--main-font-second-color);
+        text-align: center;
       }
     }
 

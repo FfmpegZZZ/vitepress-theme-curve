@@ -30,6 +30,11 @@ export const mainStore = defineStore("main", {
       searchShow: false,
       // 搜索历史（最近 5 条，最近在前）
       searchHistory: [],
+      // 向量搜索模型加载状态
+      vectorReady: false,
+      vectorLoading: false,
+      vectorProgress: { stage: "", percent: 0 },
+      vectorError: null,
       // 个性化配置显示
       showSeetings: false,
       // 播放器数据
@@ -85,6 +90,24 @@ export const mainStore = defineStore("main", {
       }
       const htmlElement = document.documentElement;
       htmlElement.style.fontSize = this.fontSize + "px";
+    },
+    // 确保向量模型已加载（懒加载 + 全局单例 + 进度回调）
+    async ensureVectorLoaded() {
+      if (this.vectorReady || this.vectorLoading) return;
+      this.vectorLoading = true;
+      this.vectorError = null;
+      try {
+        const mod = await import("@/utils/searchVector.mjs");
+        await mod.enableVectorSearch((p) => {
+          this.vectorProgress = p;
+        });
+        this.vectorReady = true;
+      } catch (err) {
+        this.vectorError = err?.message || "向量模型加载失败";
+        console.error("[vector] 加载失败：", err);
+      } finally {
+        this.vectorLoading = false;
+      }
     },
     // 添加一条搜索历史（去重 + 限制 5 条）
     addSearchHistory(query) {
