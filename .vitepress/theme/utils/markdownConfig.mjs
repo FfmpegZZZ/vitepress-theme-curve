@@ -30,6 +30,56 @@ const markdownConfig = (md, themeConfig) => {
   // 插件
   md.use(markdownItAttrs);
   md.use(tabsMarkdownPlugin);
+  md.core.ruler.after("block", "sort-yunpan-blocks", (state) => {
+    const tokens = state.tokens;
+    const getOrder = (info = "") => {
+      const normalized = info.trim().slice("yunpan".length).trim();
+      const type = normalized.split(/\s+/)[0] || "";
+      if (type.includes("百度")) return 1;
+      if (type.includes("夸克")) return 2;
+      if (type.includes("UC")) return 3;
+      if (type.includes("迅雷")) return 4;
+      return 99;
+    };
+
+    for (let index = 0; index < tokens.length; index += 1) {
+      if (tokens[index].type !== "container_yunpan_open") {
+        continue;
+      }
+
+      const blocks = [];
+      let cursor = index;
+
+      while (cursor < tokens.length && tokens[cursor].type === "container_yunpan_open") {
+        let depth = 1;
+        let end = cursor + 1;
+
+        while (end < tokens.length && depth > 0) {
+          if (tokens[end].type === "container_yunpan_open") {
+            depth += 1;
+          } else if (tokens[end].type === "container_yunpan_close") {
+            depth -= 1;
+          }
+          end += 1;
+        }
+
+        blocks.push({
+          order: getOrder(tokens[cursor].info),
+          slice: tokens.slice(cursor, end),
+        });
+
+        cursor = end;
+      }
+
+      if (blocks.length > 1) {
+        blocks.sort((left, right) => left.order - right.order);
+        const replacement = blocks.flatMap((block) => block.slice);
+        tokens.splice(index, cursor - index, ...replacement);
+      }
+
+      index = cursor - 1;
+    }
+  });
   // timeline
   md.use(container, "timeline", {
     validate: (params) => params.trim().match(/^timeline\s+(.*)$/),
