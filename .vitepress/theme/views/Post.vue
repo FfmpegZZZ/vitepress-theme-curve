@@ -61,7 +61,8 @@
         <!-- AI 摘要 -->
         <ArticleGPT />
         <!-- 文章内容 -->
-        <Content id="page-content" class="markdown-main-style" />
+        <!-- key 强制按路径重建，绕开 SPA 跨页导航时 <Content /> 偶发不渲染的问题 -->
+        <Content :key="page.relativePath" id="page-content" class="markdown-main-style" />
         <!-- 参考资料 -->
         <div data-pagefind-ignore>
           <References />
