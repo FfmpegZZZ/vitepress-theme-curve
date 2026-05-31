@@ -44,6 +44,7 @@ import { mainStore, useAuthStore } from "@/store";
 import { calculateScroll, specialDayGray } from "@/utils/helper";
 
 const route = useRoute();
+const router = useRouter();
 const store = mainStore();
 const { frontmatter, page, theme } = useData();
 const { loadingStatus, footerIsShow, themeValue, themeType, backgroundType, fontFamily, fontSize } =
@@ -201,6 +202,20 @@ onMounted(() => {
       loadingStatus.value = false;
     }
   }, 1500);
+
+  // —— 简单粗暴：把所有 SPA 导航改成 full reload ——
+  // VitePress SPA 跨页时偶发 hydration/渲染失败（首页→文章→返回首页连锁失效）。
+  // 直接覆盖 router.onBeforeRouteChange，所有 router.go() 调用一律走浏览器全量刷新，
+  // 让每次导航都走静态 SSR HTML，规避所有 SPA 状态相关的 bug。代价：稍慢，但稳。
+  router.onBeforeRouteChange = (to) => {
+    if (typeof window === "undefined") return;
+    window.location.href = to;
+    return false; // 取消 SPA 导航
+  };
+  // 浏览器前进/后退也强制重载（VitePress 的 popstate 不走 onBeforeRouteChange）
+  window.addEventListener("popstate", () => {
+    window.location.reload();
+  });
   // 滚动监听
   window.addEventListener("scroll", calculateScroll);
   // 右键监听
