@@ -230,9 +230,11 @@ onBeforeUnmount(() => {
   animation: show 0.5s forwards;
   animation-duration: 0.5s;
   display: block;
-  &.loading {
-    display: none;
-  }
+  // 注意：曾经有 `&.loading { display: none }` 的写法，
+  // 一旦 loadingStatus 卡在 true（observed bug：直接访问 /posts/* 时偶发不释放），
+  // 会把整篇文章和页面所有内容隐藏掉，只剩 Loading 全屏遮罩。
+  // Loading 组件本身已是 z-index: 9999 的全屏遮罩，能盖住任何加载中的内容，
+  // 所以这里不需要再额外用 display:none 把 main 隐起来。
   @media (max-width: 768px) {
     padding: 1rem 1.5rem;
     &.is-post {
