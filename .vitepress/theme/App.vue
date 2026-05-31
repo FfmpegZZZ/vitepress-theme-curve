@@ -193,6 +193,14 @@ onMounted(() => {
   changeSiteThemeType();
   // 切换系统字体样式
   changeSiteFont();
+  // 兜底：避免 loadingStatus 卡在 true 导致整个 <main> 被 .loading 的 display:none 隐藏
+  // （observed bug: 直接访问 /posts/* 时 routeChange("after") 的 setTimeout 偶发不触发）
+  setTimeout(() => {
+    if (loadingStatus.value) {
+      console.warn("[App] loadingStatus 卡住，强制释放");
+      loadingStatus.value = false;
+    }
+  }, 1500);
   // 滚动监听
   window.addEventListener("scroll", calculateScroll);
   // 右键监听
