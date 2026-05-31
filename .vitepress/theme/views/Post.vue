@@ -118,10 +118,34 @@ const { page, theme, frontmatter } = useData();
 // 评论元素
 const commentRef = ref(null);
 
-// 获取对应文章数据
+// 获取对应文章数据。
+// 查不到时（hydration 偶发 / postData 未就绪），用 frontmatter 合成一个降级对象，
+// 避免 <div v-if="postMetaData"> 把整个文章模板（含 <Content />）从 DOM 中剔除。
 const postMetaData = computed(() => {
-  const postId = generateId(page.value.relativePath);
-  return theme.value.postData.find((item) => item.id === postId);
+  const relPath = page.value?.relativePath;
+  if (relPath) {
+    const postId = generateId(relPath);
+    const found = theme.value?.postData?.find((item) => item.id === postId);
+    if (found) return found;
+  }
+  // 降级：从 frontmatter 合成，使页面在任何状态下都能渲染
+  const fm = frontmatter.value || {};
+  const fallbackPath = relPath ? `/${relPath.replace(/\.md$/, ".html")}` : "";
+  return {
+    id: relPath ? generateId(relPath) : 0,
+    title: fm.title || "未命名文章",
+    date: fm.date ? new Date(fm.date).getTime() : (page.value?.lastUpdated || 0),
+    lastModified: page.value?.lastUpdated || 0,
+    expired: 0,
+    tags: Array.isArray(fm.tags) ? fm.tags : [],
+    categories: Array.isArray(fm.categories) ? fm.categories : [],
+    description: fm.description || "",
+    regularPath: fallbackPath,
+    top: fm.top,
+    cover: fm.cover,
+    priority: fm.priority || 0,
+    gameInfo: fm.gameInfo,
+  };
 });
 
 // 检测 <Content /> 是否实际渲染出有效内容；若为空则强制全量重载走 SSR。
