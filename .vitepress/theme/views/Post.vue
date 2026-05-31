@@ -124,8 +124,36 @@ const postMetaData = computed(() => {
   return theme.value.postData.find((item) => item.id === postId);
 });
 
+// 检测 <Content /> 是否实际渲染出有效内容；若为空则强制全量重载走 SSR。
+// 解决 SPA 跨页首次导航时 VitePress 偶发的 Content 渲染为空问题。
+const FORCE_RELOAD_KEY = "__post_force_reloaded__";
+const ensureContentRendered = () => {
+  if (typeof window === "undefined") return;
+  const el = document.getElementById("page-content");
+  if (!el) return;
+  // 把"未找到"和"实际为空"都视作渲染失败
+  const text = (el.textContent || "").trim();
+  const empty = el.children.length === 0 || text === "404 Page Not Found" || text.length < 10;
+  if (!empty) return;
+  // sessionStorage sentinel 防死循环：同一路径已强制刷新过一次就不再触发
+  let alreadyReloaded = false;
+  try {
+    alreadyReloaded = sessionStorage.getItem(FORCE_RELOAD_KEY) === location.pathname;
+    if (alreadyReloaded) {
+      sessionStorage.removeItem(FORCE_RELOAD_KEY);
+      console.warn("[Post] 二次仍为空，放弃自动重载");
+      return;
+    }
+    sessionStorage.setItem(FORCE_RELOAD_KEY, location.pathname);
+  } catch (_) { /* sessionStorage 不可用时不做 sentinel，单次重试可接受 */ }
+  console.warn("[Post] Content 渲染为空，强制重载");
+  window.location.reload();
+};
+
 onMounted(() => {
   initFancybox(theme.value);
+  // 等 loading 遮罩理论上已撤掉（~260-800ms 随机）再检查
+  setTimeout(ensureContentRendered, 1000);
 });
 </script>
 
