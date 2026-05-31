@@ -28,6 +28,8 @@ export const themeConfig = {
   since: "2025-10-16",
   // 每页文章数据
   postSize: 8,
+  // 无限滚动（滚到底部自动追加下一页；关闭后回退为传统分页 UI）
+  infiniteScroll: true,
   // inject
   inject: {
     // 头部

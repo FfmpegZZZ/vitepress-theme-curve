@@ -59,6 +59,12 @@ export const mainStore = defineStore("main", {
       infoPosition: "fixed",
       // 上次滚动位置
       lastScrollY: 0,
+      // 无限滚动：上次离开首页/标签/分类页时累积到的页索引（0-indexed）
+      // -1 表示无需恢复。不持久化，仅供 SPA 内点击文章 → 返回 时的窗口恢复
+      lastEndPageIndex: -1,
+      // 与 lastEndPageIndex 配对的列表上下文 key（如 "home" / "tag:Windows" / "cat:游戏"）
+      // 只在 key 匹配时才恢复 endPageIndex，避免跨过滤页错位
+      lastListContext: "",
       // 站点背景
       backgroundType: "patterns",
       backgroundUrl: "https://tuapi.eees.cc/api.php?category={dongman,fengjing}&type=302",

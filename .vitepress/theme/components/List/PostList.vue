@@ -3,7 +3,7 @@
   <div class="post-lists" :class="{'layout-grid': layoutType === 'twoColumns'}" :style="gridStyle">
     <div
       v-for="(item, index) in listData"
-      :key="index"
+      :key="item.regularPath || index"
       :class="['post-item', 's-card', 'hover',{ simple, cover: showCover(item),[`cover-${layoutType}`]: showCover(item) }]"
       :style="{ animationDelay: `${0.4 + index / 10}s` }"
       @click="toPost(item.regularPath)"
