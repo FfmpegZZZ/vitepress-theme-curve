@@ -1,0 +1,14 @@
+name: Trigger Tencent Pages Deploy
+
+on:
+  push:
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call deploy webhook
+        env:
+          WEBHOOK: ${{ secrets.TENCENT_PAGES_WEBHOOK }}
+        run: |
+          curl -fsS -X POST "$WEBHOOK"
