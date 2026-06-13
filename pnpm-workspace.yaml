@@ -1,0 +1,13 @@
+# pnpm 10+ no longer reads the "pnpm" field in package.json for build-script
+# approval; these settings must live here. Every dependency that pnpm reports as
+# having a build script must be listed in one of the two lists below, otherwise
+# pnpm aborts install with ERR_PNPM_IGNORED_BUILDS (as on EdgeOne Pages).
+onlyBuiltDependencies:
+  - "@parcel/watcher"
+  - esbuild
+  - onnxruntime-node
+  - protobufjs
+  - sharp
+
+ignoredBuiltDependencies:
+  - vue-demi
