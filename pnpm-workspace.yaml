@@ -1,7 +1,28 @@
-# pnpm 10+ no longer reads the "pnpm" field in package.json for build-script
-# approval; these settings must live here. Every dependency that pnpm reports as
-# having a build script must be listed in one of the two lists below, otherwise
-# pnpm aborts install with ERR_PNPM_IGNORED_BUILDS (as on EdgeOne Pages).
+# Build-script approval config.
+#
+# pnpm no longer reads the "pnpm" field in package.json; these settings must
+# live here. EdgeOne Pages builds with pnpm 11, which (a) ignores the old
+# onlyBuiltDependencies/ignoredBuiltDependencies keys, replacing them with the
+# `allowBuilds` map, and (b) defaults strictDepBuilds to true, so any dependency
+# with an un-approved build script aborts install with ERR_PNPM_IGNORED_BUILDS.
+#
+# We declare both the new (allowBuilds) and old (only/ignoredBuiltDependencies)
+# forms so the project installs cleanly on pnpm 9/10 (Vercel) and 11 (EdgeOne),
+# and set strictDepBuilds:false as a safety net so a future un-listed build
+# script downgrades to a warning instead of failing the deploy.
+
+strictDepBuilds: false
+
+# pnpm 11+
+allowBuilds:
+  "@parcel/watcher": true
+  esbuild: true
+  onnxruntime-node: true
+  protobufjs: true
+  sharp: true
+  vue-demi: false
+
+# pnpm 9/10
 onlyBuiltDependencies:
   - "@parcel/watcher"
   - esbuild
