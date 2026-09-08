@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@edgeone/pages-blob':
+        specifier: 0.0.16
+        version: 0.0.16
       '@huggingface/transformers':
         specifier: ^4.2.0
         version: 4.2.0
@@ -736,6 +739,10 @@ packages:
   '@edge-runtime/vm@3.2.0':
     resolution: {integrity: sha512-0dEVyRLM/lG4gp1R/Ik5bfPl/1wX00xFwd5KcNH602tzBa09oF7pbTKETEhR1GjZ75K6OJnYFu8II2dyMhONMw==}
     engines: {node: '>=16'}
+
+  '@edgeone/pages-blob@0.0.16':
+    resolution: {integrity: sha512-Qk3SHTSvCF7awlKsG5t45FolHd8kVH44yJKeXM21qNq8A1I1mTGUuQWa+j4shwuBdgQTvRHTFBbQxAvKqiR22A==}
+    engines: {node: '>=18.0.0'}
 
   '@emnapi/runtime@1.10.0':
     resolution: {integrity: sha512-ewvYlk86xUoGI0zQRNq/mC+16R1QeDlKQy21Ki3oSYXNgLb45GV1P6A0M+/s6nyCuNDqe5VpaY84BzXGwVbwFA==}
@@ -5317,6 +5324,8 @@ snapshots:
   '@edge-runtime/vm@3.2.0':
     dependencies:
       '@edge-runtime/primitives': 4.1.0
+
+  '@edgeone/pages-blob@0.0.16': {}
 
   '@emnapi/runtime@1.10.0':
     dependencies:

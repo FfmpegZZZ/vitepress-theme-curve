@@ -158,6 +158,12 @@ export const themeConfig = {
       items: [
         { text: "社交平台", link: "/pages/social", icon: "link" },
         { text: "QQ群组", link: "/pages/qqgroup", icon: "qq" },
+      ],
+    },
+    {
+      text: "工具",
+      items: [
+        { text: "邀请码互助池", link: "/pages/godly-love", icon: "game" },
         { text: "其他工具", link: "/pages/tool", icon: "download" },
       ],
     },
