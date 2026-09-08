@@ -24,7 +24,9 @@ const CONFIG = Object.freeze({
   voteLimit: 3,
   activeOwnCap: 20,
   uploadPerHour: 5,
-  votePerHour: 6,
+  // 短窗口配额通过 Blob onlyIfNew 原子占位，约束并发突发，不设小时反馈总额。
+  votePerMinute: 12,
+  votePerSecond: 2,
   poolCap: ACTIVE_POOL_CAP,
 });
 
@@ -229,19 +231,24 @@ const getReportCount = async (store, id) => {
   return Math.min(keys.length, CONFIG.voteLimit);
 };
 
-const currentHourBucket = (timestamp = Date.now()) => Math.floor(timestamp / HOUR_MS);
-
-const getRateStatus = async (store, kind, actorId, limit, timestamp = Date.now()) => {
-  const bucket = currentHourBucket(timestamp);
+const getRateStatus = async (
+  store,
+  kind,
+  actorId,
+  limit,
+  timestamp = Date.now(),
+  windowMs = HOUR_MS,
+) => {
+  const bucket = Math.floor(timestamp / windowMs);
   const keys = await listKeys(store, ratePrefix(kind, actorId, bucket), limit);
   return {
     left: Math.max(0, limit - keys.length),
-    resetIn: Math.max(0, (bucket + 1) * HOUR_MS - timestamp),
+    resetIn: Math.max(0, (bucket + 1) * windowMs - timestamp),
   };
 };
 
-const cleanOldRateSlots = (store, context, kind, actorId, bucket, limit) => {
-  const expiredBucket = bucket - RATE_RETENTION_HOURS;
+const cleanOldRateSlots = (store, context, kind, actorId, bucket, limit, windowMs) => {
+  const expiredBucket = bucket - Math.ceil((RATE_RETENTION_HOURS * HOUR_MS) / windowMs);
   const cleanup = Promise.all(
     Array.from({ length: limit }, (_, slot) =>
       store.delete(rateKey(kind, actorId, expiredBucket, slot)),
@@ -250,10 +257,10 @@ const cleanOldRateSlots = (store, context, kind, actorId, bucket, limit) => {
   if (typeof context.waitUntil === "function") context.waitUntil(cleanup);
 };
 
-const reserveRateSlot = async (store, context, kind, actorId, limit) => {
+const reserveRateSlot = async (store, context, kind, actorId, limit, windowMs = HOUR_MS) => {
   const timestamp = Date.now();
-  const bucket = currentHourBucket(timestamp);
-  cleanOldRateSlots(store, context, kind, actorId, bucket, limit);
+  const bucket = Math.floor(timestamp / windowMs);
+  cleanOldRateSlots(store, context, kind, actorId, bucket, limit, windowMs);
 
   for (let slot = 0; slot < limit; slot += 1) {
     try {
@@ -268,7 +275,7 @@ const reserveRateSlot = async (store, context, kind, actorId, limit) => {
     }
   }
 
-  const retryAfter = Math.max(1, Math.ceil(((bucket + 1) * HOUR_MS - timestamp) / 1000));
+  const retryAfter = Math.max(1, Math.ceil(((bucket + 1) * windowMs - timestamp) / 1000));
   if (kind === "upload") {
     throw new ApiError(429, "UPLOAD_RATE_LIMITED", "本小时上传额度已用完", {
       "Retry-After": String(retryAfter),
@@ -363,7 +370,7 @@ const createDashboard = async (store, visitorId, actorId, excludedIds = new Set(
     getBatch(store, visitorId, actorId, active.records, excludedIds),
     getMyCodes(store, visitorId),
     getRateStatus(store, "upload", actorId, CONFIG.uploadPerHour),
-    getRateStatus(store, "vote", actorId, CONFIG.votePerHour),
+    getRateStatus(store, "vote-minute", actorId, CONFIG.votePerMinute, Date.now(), 60_000),
   ]);
 
   return {
@@ -490,7 +497,9 @@ const reportUsed = async (store, context, visitorId, actorId, rawId) => {
   if (!copied) throw new ApiError(409, "COPY_REQUIRED", "请先复制并尝试填写，再反馈已用完");
   if (existingVote) throw new ApiError(409, "ALREADY_REPORTED", "你已经反馈过这个码了");
 
-  await reserveRateSlot(store, context, "vote", actorId, CONFIG.votePerHour);
+  // 先拦截瞬时并发，再占用分钟额度；不同窗口使用独立 key，旧小时额度不再读取。
+  await reserveRateSlot(store, context, "vote-second", actorId, CONFIG.votePerSecond, 1000);
+  await reserveRateSlot(store, context, "vote-minute", actorId, CONFIG.votePerMinute, 60_000);
 
   const timestamp = Date.now();
   try {
@@ -504,7 +513,14 @@ const reportUsed = async (store, context, visitorId, actorId, rawId) => {
   const retired = reports >= CONFIG.voteLimit;
   if (retired) await releaseActiveRecord(store, id);
 
-  const quota = await getRateStatus(store, "vote", actorId, CONFIG.votePerHour);
+  const quota = await getRateStatus(
+    store,
+    "vote-minute",
+    actorId,
+    CONFIG.votePerMinute,
+    Date.now(),
+    60_000,
+  );
   return { id, reports, retired, quota };
 };
 

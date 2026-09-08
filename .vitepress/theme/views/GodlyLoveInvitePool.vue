@@ -209,9 +209,7 @@
       @modal-close="closeUpload"
     >
       <form class="modal-form" @submit.prevent="submitUpload">
-        <p class="modal-description">
-          分享你的推荐码，让其他玩家找到你。
-        </p>
+        <p class="modal-description">分享你的推荐码，让其他玩家找到你。</p>
         <label class="code-label" for="upload-code">推荐码</label>
         <input
           id="upload-code"
@@ -281,7 +279,7 @@ const DEFAULT_CONFIG = {
   voteLimit: 3,
   activeOwnCap: 20,
   uploadPerHour: 5,
-  votePerHour: 6,
+  votePerMinute: 12,
 };
 
 const emptyDashboard = () => ({
@@ -292,7 +290,7 @@ const emptyDashboard = () => ({
   joined: false,
   quota: {
     upload: { left: DEFAULT_CONFIG.uploadPerHour, resetIn: 0 },
-    vote: { left: DEFAULT_CONFIG.votePerHour, resetIn: 0 },
+    vote: { left: DEFAULT_CONFIG.votePerMinute, resetIn: 0 },
   },
 });
 
@@ -339,7 +337,7 @@ const applyDashboard = (data, { resetCopied = true } = {}) => {
     mine: Array.isArray(data?.mine) ? data.mine : [],
     quota: {
       upload: data?.quota?.upload || { left: DEFAULT_CONFIG.uploadPerHour, resetIn: 0 },
-      vote: data?.quota?.vote || { left: DEFAULT_CONFIG.votePerHour, resetIn: 0 },
+      vote: data?.quota?.vote || { left: DEFAULT_CONFIG.votePerMinute, resetIn: 0 },
     },
   };
   if (resetCopied) copiedIds.value = new Set();

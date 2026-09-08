@@ -5,6 +5,45 @@ import { onRequestGet, onRequestPost } from "../edge-functions/api/godly-love.js
 const SECRET = "test-secret-that-is-longer-than-thirty-two-characters";
 const ENDPOINT = "https://www.wudu.hk/api/godly-love";
 
+test("反馈限制：瞬时并发原子拦截、分钟恢复，不再受六次小时上限影响", async () => {
+  const originalNow = Date.now;
+  let now = 1_800_000_000_000;
+  Date.now = () => now;
+  try {
+    const store = new MemoryStore();
+    const cookie = await startVisitor(store);
+    const visitorId = cookie.split("=")[1].split(".")[0];
+    const ids = Array.from({ length: 16 }, (_, i) => (i + 1).toString(16).padStart(24, "0"));
+    for (const id of ids) {
+      const record = { id, code: "TESTCODE", owner: "another-player", createdAt: now };
+      await store.setJSON(`codes/${id}.json`, record);
+      await store.setJSON(`active/${id.slice(0, 1)}/${id}.json`, record);
+      await store.setJSON(`copies/${id}/${visitorId}.json`, { createdAt: now });
+    }
+    const burst = await Promise.all(
+      ids.slice(0, 5).map((id) => post(store, cookie, { action: "vote", id })),
+    );
+    assert.equal(burst.filter((result) => result.status === 200).length, 2);
+    assert.equal(burst.filter((result) => result.status === 429).length, 3);
+    const remaining = ids.filter((id) => !store.values.has(`votes/${id}/${visitorId}.json`));
+    for (const id of remaining.slice(0, 10)) {
+      now += 1000;
+      assert.equal((await post(store, cookie, { action: "vote", id })).status, 200);
+    }
+    now += 1000;
+    const blockedId = remaining[10];
+    const blocked = await onRequestPost(
+      requestContext(store, { method: "POST", cookie, body: { action: "vote", id: blockedId } }),
+    );
+    assert.equal(blocked.status, 429);
+    assert.ok(Number(blocked.headers.get("Retry-After")) <= 60);
+    now = 1_800_000_060_000;
+    assert.equal((await post(store, cookie, { action: "vote", id: blockedId })).status, 200);
+  } finally {
+    Date.now = originalNow;
+  }
+});
+
 class MemoryStore {
   constructor() {
     this.values = new Map();
