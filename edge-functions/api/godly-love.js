@@ -159,13 +159,6 @@ const logInternalError = (error, context) => {
   });
 };
 
-const assertSameOrigin = (request) => {
-  const origin = request.headers.get("origin");
-  if (origin && origin !== new URL(request.url).origin) {
-    throw new ApiError(403, "ORIGIN_NOT_ALLOWED", "不允许从当前来源执行此操作");
-  }
-};
-
 const parseJsonBody = async (request) => {
   const contentLength = Number(request.headers.get("content-length") || 0);
   if (contentLength > MAX_BODY_BYTES) {
@@ -549,7 +542,6 @@ export async function onRequestGet(context) {
 export async function onRequestPost(context) {
   let setCookie = null;
   try {
-    assertSameOrigin(context.request);
     const session = await getSession(context);
     setCookie = session.setCookie;
     const actorId = await getAbuseActorId(context, session.visitorId);
