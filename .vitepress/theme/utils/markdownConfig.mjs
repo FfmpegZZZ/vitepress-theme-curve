@@ -268,11 +268,12 @@ const markdownConfig = (md, themeConfig) => {
       const token = tokens[idx];
       if (token.nesting === 1) {
         const info = token.info.trim().slice("offical".length).trim();
-        // 解析参数: offical 网站名称 按钮文字 https://example.com
+        // 解析参数: offical 网站名称 按钮文字 https://example.com [标签，默认官方]
         const parts = info.split(/\s+/);
         const name = parts[0] || "官方网站";
         const buttonText = parts[1] || "访问官网";
         const link = parts[2] || "";
+        const badge = md.utils.escapeHtml(parts[3] || "官方");
 
         return `<div class="offical-container">
           <div class="offical-card">
@@ -282,7 +283,7 @@ const markdownConfig = (md, themeConfig) => {
                 <path d="M488.8576 648.448a30.72 30.72 0 0 1-20.48-8.0896l-128-117.3504a30.72 30.72 0 1 1 41.5232-45.2608l101.888 93.6448 131.7376-188.3648a30.72 30.72 0 1 1 50.3296 35.2256l-151.808 217.088a30.4128 30.4128 0 0 1-21.8112 12.9024 24.9344 24.9344 0 0 1-3.3792 0.2048z" fill="#FFFFFF"></path>
               </svg>
               <span class="offical-type">${name}</span>
-              <span class="offical-badge">官方</span>
+              <span class="offical-badge">${badge}</span>
             </div>
             ${link ? `<div class="offical-link">
               <a href="${link}" target="_blank" rel="noopener noreferrer" class="offical-btn" data-umami-event="官方链接" data-umami-event-name="${name}" data-umami-event-link="${link}">
