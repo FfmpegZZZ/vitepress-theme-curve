@@ -61,7 +61,7 @@
             <span class="step-number">02</span>
             <div>
               <strong>复制别人的码</strong>
-              <p>每轮最多展示 5 个，复制后去预约页面填写。</p>
+              <p>选一个推荐码，复制后去预约页面填写。</p>
             </div>
           </div>
         </div>
@@ -104,7 +104,6 @@
           <span class="section-kicker">本轮推荐</span>
           <h2>挑一个还没试过的码</h2>
         </div>
-        <span class="quota-chip">本小时还可反馈 {{ dashboard.quota.vote.left }} 次</span>
       </div>
 
       <TransitionGroup v-if="dashboard.items.length" name="code-list" tag="div" class="code-grid">
@@ -149,16 +148,6 @@
               {{ votingId === item.id ? "提交中…" : "已用完" }}
             </button>
           </div>
-          <div class="report-status">
-            <div class="report-dots" aria-hidden="true">
-              <i
-                v-for="index in dashboard.config.voteLimit"
-                :key="index"
-                :class="{ active: index <= item.reports }"
-              />
-            </div>
-            <span>{{ item.reports }} / {{ dashboard.config.voteLimit }} 人反馈用完</span>
-          </div>
         </article>
       </TransitionGroup>
 
@@ -169,11 +158,8 @@
         <button class="pool-button primary" type="button" @click="openUpload">上传推荐码</button>
       </section>
 
-      <p v-if="dashboard.items.length" class="pool-rule">
-        复制过的码才能反馈“已用完”，累计 {{ dashboard.config.voteLimit }} 人反馈后会自动下架。
-      </p>
-
-      <nav class="action-dock s-card" aria-label="邀请码互助池操作">
+      <!-- 额度、去重及下架阈值由后端执行，不在玩家操作界面展示。 -->
+      <div class="action-dock" role="group" aria-label="邀请码互助池操作">
         <button class="dock-action" type="button" :disabled="refreshing" @click="refreshBatch">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M20 7v5h-5" />
@@ -209,9 +195,9 @@
             <path d="M12 5v14" />
             <path d="M5 12h14" />
           </svg>
-          <span>上传码</span>
+          <span>上传</span>
         </button>
-      </nav>
+      </div>
     </template>
 
     <Modal
@@ -224,14 +210,8 @@
     >
       <form class="modal-form" @submit.prevent="submitUpload">
         <p class="modal-description">
-          上传一个仍可使用的推荐码。累计
-          {{ dashboard.config.voteLimit }} 人反馈用完后，它会自动下架。
+          分享你的推荐码，让其他玩家找到你。
         </p>
-        <div class="quota-box">
-          本小时还可上传 <strong>{{ dashboard.quota.upload.left }}</strong> 个
-          <span aria-hidden="true">·</span>
-          同时展示上限 {{ dashboard.config.activeOwnCap }} 个
-        </div>
         <label class="code-label" for="upload-code">推荐码</label>
         <input
           id="upload-code"
@@ -266,7 +246,6 @@
     >
       <div class="mine-summary">
         <span>共上传 {{ dashboard.mine.length }} 个</span>
-        <span>本小时还可上传 {{ dashboard.quota.upload.left }} 个</span>
       </div>
       <div v-if="dashboard.mine.length" class="mine-list">
         <article v-for="item in dashboard.mine" :key="item.id" class="mine-item">
@@ -278,7 +257,6 @@
           </div>
           <span class="mine-state" :class="item.active ? 'active' : 'retired'">
             {{ item.active ? "展示中" : "已下架" }}
-            <small>{{ item.reports }} / {{ dashboard.config.voteLimit }} 反馈</small>
           </span>
         </article>
       </div>
@@ -367,7 +345,12 @@ const applyDashboard = (data, { resetCopied = true } = {}) => {
   if (resetCopied) copiedIds.value = new Set();
 };
 
-const readableError = (error) => error?.message || "操作失败，请稍后再试";
+// 后端保留额度及容量校验，界面只提示用户下一步可以做什么。
+const readableError = (error) => {
+  if (error?.status === 429) return "请稍后再试";
+  if (error?.code === "ACTIVE_LIMIT_REACHED") return "你还有推荐码正在展示，过段时间再来分享吧";
+  return error?.message || "操作失败，请稍后再试";
+};
 
 const loadInitial = async () => {
   loading.value = true;
@@ -526,12 +509,7 @@ const reportUsed = async (item) => {
     dashboard.value.quota.vote = result.quota;
     removeCandidate(item.id, { noLongerActive: result.retired });
 
-    if (result.retired) {
-      notify("success", "收到，这个推荐码已自动下架");
-    } else {
-      const left = dashboard.value.config.voteLimit - result.reports;
-      notify("success", `感谢反馈，再有 ${left} 人确认后会自动下架`);
-    }
+    notify("success", "收到，谢谢你的反馈");
   } catch (error) {
     if (error?.code === "COPY_REQUIRED") {
       item.copied = false;
@@ -1189,11 +1167,17 @@ onBeforeUnmount(() => {
   z-index: 8;
   bottom: calc(0.8rem + env(safe-area-inset-bottom));
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.55rem;
-  margin-top: 1.15rem;
-  padding: 0.6rem;
-  background: color-mix(in srgb, var(--main-card-background) 90%, transparent);
+  grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(0, 1.25fr);
+  gap: 0.25rem;
+  width: 100%;
+  max-width: 540px;
+  box-sizing: border-box;
+  margin: 1.5rem auto 0;
+  padding: 0.5rem;
+  border: 1px solid var(--main-card-border);
+  border-radius: 20px;
+  box-shadow: 0 8px 30px rgb(0 0 0 / 8%);
+  background: var(--main-card-background);
   backdrop-filter: blur(18px);
 }
 
@@ -1201,11 +1185,16 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.4rem;
-  min-height: 45px;
-  padding: 0.55rem;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 0;
+  min-height: 56px;
+  margin: 0;
+  padding: 0.4rem 0.25rem;
   color: var(--main-font-second-color);
-  font-size: 0.83rem;
+  font-size: 0.875rem;
+  line-height: 1.3;
+  white-space: nowrap;
   font-weight: 650;
   background: transparent;
   border: 1px solid transparent;
@@ -1214,8 +1203,10 @@ onBeforeUnmount(() => {
   transition: 0.22s ease;
 
   svg {
-    width: 18px;
-    height: 18px;
+    display: block;
+    flex: 0 0 20px;
+    width: 20px;
+    height: 20px;
     fill: none;
     stroke: currentColor;
     stroke-width: 1.8;
@@ -1393,7 +1384,7 @@ onBeforeUnmount(() => {
   }
 
   .action-dock {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border-radius: 18px;
   }
 }
 
