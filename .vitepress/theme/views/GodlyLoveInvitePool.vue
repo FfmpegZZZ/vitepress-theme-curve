@@ -160,16 +160,16 @@
 
       <!-- 额度、去重及下架阈值由后端执行，不在玩家操作界面展示。 -->
       <div class="action-dock" role="group" aria-label="邀请码互助池操作">
-        <button class="dock-action" type="button" :disabled="refreshing" @click="refreshBatch">
+        <button class="dock-action" type="button" title="换一批推荐码" :disabled="refreshing" @click="refreshBatch">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M20 7v5h-5" />
             <path d="M4 17v-5h5" />
             <path d="M6.1 9A7 7 0 0 1 18 6.4L20 9" />
             <path d="M17.9 15A7 7 0 0 1 6 17.6L4 15" />
           </svg>
-          <span>{{ refreshing ? "刷新中" : "换一批" }}</span>
+          <span class="dock-label">{{ refreshing ? "刷新中" : "换一批" }}</span>
         </button>
-        <button class="dock-action" type="button" @click="showMine = true">
+        <button class="dock-action" type="button" title="查看我的推荐码" @click="showMine = true">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M8 7h11" />
             <path d="M8 12h11" />
@@ -178,9 +178,9 @@
             <path d="M4 12h.01" />
             <path d="M4 17h.01" />
           </svg>
-          <span>我的</span>
+          <span class="dock-label">我的码</span>
         </button>
-        <button class="dock-action" type="button" @click="sharePool">
+        <button class="dock-action" type="button" title="分享互助池" @click="sharePool">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <circle cx="18" cy="5" r="2" />
             <circle cx="6" cy="12" r="2" />
@@ -188,14 +188,14 @@
             <path d="m8 11 8-5" />
             <path d="m8 13 8 5" />
           </svg>
-          <span>分享</span>
+          <span class="dock-label">分享</span>
         </button>
-        <button class="dock-action primary" type="button" @click="openUpload">
+        <button class="dock-action dock-upload" type="button" title="上传推荐码" @click="openUpload">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M12 5v14" />
             <path d="M5 12h14" />
           </svg>
-          <span>上传</span>
+          <span class="dock-label">上传码</span>
         </button>
       </div>
     </template>
@@ -1160,51 +1160,76 @@ onBeforeUnmount(() => {
   text-align: center !important;
 }
 
-.action-dock {
+.invite-pool .action-dock {
   position: sticky;
   z-index: 8;
   bottom: calc(0.8rem + env(safe-area-inset-bottom));
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(0, 1.25fr);
-  gap: 0.25rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.5rem;
   width: 100%;
   max-width: 540px;
   box-sizing: border-box;
   margin: 1.5rem auto 0;
-  padding: 0.5rem;
+  padding: 0.625rem;
   border: 1px solid var(--main-card-border);
-  border-radius: 20px;
+  border-radius: 18px;
   box-shadow: 0 8px 30px rgb(0 0 0 / 8%);
   background: var(--main-card-background);
-  backdrop-filter: blur(18px);
 }
 
-.dock-action {
-  display: flex;
+.invite-pool .action-dock .dock-action {
+  appearance: none;
+  box-sizing: border-box;
+  position: relative;
+  display: grid;
+  grid-template-rows: 22px auto;
+  justify-items: center;
   align-items: center;
   justify-content: center;
-  flex-direction: column;
-  gap: 0.3rem;
+  align-content: center;
+  gap: 0.4rem;
   min-width: 0;
-  min-height: 56px;
+  width: 100%;
+  height: auto;
+  min-height: 66px;
   margin: 0;
-  padding: 0.4rem 0.25rem;
-  color: var(--main-font-second-color);
+  padding: 0.625rem 0.25rem;
+  color: var(--main-font-color);
   font-size: 0.875rem;
   line-height: 1.3;
   white-space: nowrap;
   font-weight: 650;
-  background: transparent;
-  border: 1px solid transparent;
-  border-radius: 11px;
+  background: var(--main-card-second-background);
+  border: 1px solid var(--main-card-border);
+  border-radius: 12px;
   cursor: pointer;
-  transition: 0.22s ease;
+  touch-action: manipulation;
+  transition: background-color 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+
+  .dock-label {
+    display: block;
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    color: inherit;
+    -webkit-text-fill-color: currentColor;
+    font: inherit;
+    line-height: 1.4;
+    opacity: 1;
+    visibility: visible;
+    white-space: nowrap;
+    transform: none;
+  }
 
   svg {
     display: block;
-    flex: 0 0 20px;
-    width: 20px;
-    height: 20px;
+    position: static;
+    width: 22px;
+    height: 22px;
+    margin: 0;
     fill: none;
     stroke: currentColor;
     stroke-width: 1.8;
@@ -1218,7 +1243,12 @@ onBeforeUnmount(() => {
   }
 
   &:focus-visible {
-    outline: 3px solid var(--main-color-bg);
+    outline: 2px solid var(--main-color);
+    outline-offset: 3px;
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(1px);
   }
 
   &:disabled {
@@ -1226,9 +1256,10 @@ onBeforeUnmount(() => {
     opacity: 0.55;
   }
 
-  &.primary {
+  &.dock-upload {
     color: #fff;
     background: var(--main-color);
+    border-color: var(--main-color);
 
     &:hover {
       color: #fff;
