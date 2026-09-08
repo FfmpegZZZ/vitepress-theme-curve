@@ -7,7 +7,12 @@ comment: false
 ---
 
 <script setup>
-import GodlyLoveInvitePool from '../.vitepress/theme/views/GodlyLoveInvitePool.vue';
+import { defineAsyncComponent } from 'vue';
+
+// 独立分包，防止页面 lean 构建剔除接口加载后才挂载的静态节点。
+const GodlyLoveInvitePool = defineAsyncComponent(() =>
+  import('../.vitepress/theme/views/GodlyLoveInvitePool.vue')
+);
 </script>
 
 <GodlyLoveInvitePool />
