@@ -566,7 +566,7 @@ const reportUsed = async (store, context, visitorId, actorId, rawId) => {
     store.get(voteKey(id, actorId), { consistency: "strong" }),
   ]);
   if (active?.id !== id) throw new ApiError(409, "CODE_RETIRED", "这个推荐码已经下架了");
-  if (!copied) throw new ApiError(409, "COPY_REQUIRED", "请先复制并尝试填写，再反馈已用完");
+  if (!copied) throw new ApiError(409, "COPY_REQUIRED", "请先复制并尝试填写，确认无法使用后再反馈");
   if (existingVote) throw new ApiError(409, "ALREADY_REPORTED", "你已经反馈过这个码了");
 
   // 先拦截瞬时并发，再占用分钟额度；不同窗口使用独立 key，旧小时额度不再读取。

@@ -145,7 +145,7 @@
                 <path d="m8 9 4 4 4-4" />
                 <path d="M5 17h14" />
               </svg>
-              {{ votingId === item.id ? "提交中…" : "已用完" }}
+              {{ votingId === item.id ? "提交中…" : "无法使用" }}
             </button>
           </div>
         </article>
