@@ -212,6 +212,28 @@
     </template>
 
     <Modal
+      :show="Boolean(pendingReport)"
+      title="确认无法使用？"
+      :max-width="480"
+      @mask-click="pendingReport = null"
+      @modal-close="pendingReport = null"
+    >
+      <div class="modal-form" role="dialog" aria-label="确认反馈无法使用">
+        <p class="modal-description">
+          确认已尝试填写推荐码 <strong>{{ pendingReport?.code }}</strong>，但无法使用吗？
+        </p>
+        <div class="report-confirm-actions">
+          <button class="pool-button secondary" type="button" @click="pendingReport = null">
+            取消
+          </button>
+          <button class="pool-button primary" type="button" :disabled="Boolean(votingId)" @click="confirmReport">
+            确认无法使用
+          </button>
+        </div>
+      </div>
+    </Modal>
+
+    <Modal
       :show="showUpload"
       title="上传推荐码"
       title-icon="game"
@@ -551,13 +573,22 @@ const copyCode = async (item) => {
   }
 };
 
-const reportUsed = async (item) => {
+const pendingReport = ref(null);
+
+const reportUsed = (item) => {
   if (copyingId.value || votingId.value) return;
   if (!isCopied(item)) {
     notify("info", "请先复制并尝试填写，确认无效后再反馈");
     return;
   }
 
+  pendingReport.value = item;
+};
+
+const confirmReport = async () => {
+  if (!pendingReport.value || copyingId.value || votingId.value) return;
+  const item = pendingReport.value;
+  pendingReport.value = null;
   votingId.value = item.id;
   try {
     const result = await reportInviteCodeUsed(item.id);
@@ -642,6 +673,7 @@ const formatRelativeTime = (timestamp) => {
 
 const handleEscape = (event) => {
   if (event.key !== "Escape" || submittingCode.value) return;
+  pendingReport.value = null;
   showUpload.value = false;
   showMine.value = false;
 };
@@ -1327,6 +1359,12 @@ onBeforeUnmount(() => {
       filter: brightness(1.08);
     }
   }
+}
+
+.report-confirm-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
 }
 
 .modal-form {
