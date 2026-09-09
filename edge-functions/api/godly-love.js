@@ -146,8 +146,14 @@ const errorResponse = (error, setCookie = null) => {
     );
   }
 
+  // 仅暴露固定诊断码，便于定位平台故障；不返回原始异常（可能含凭据或对象路径）。
+  const storageCodes = new Set([
+    "MISSING_ENVIRONMENT", "MISSING_PROJECT_ID", "CREDENTIAL_ERROR", "COS_ERROR",
+    "QUOTA_EXCEEDED", "RATE_LIMITED", "INVALID_KEY", "INVALID_STORE_NAME",
+  ]);
+  const diagnostic = storageCodes.has(error?.code) ? `BLOB_${error.code}` : "UNEXPECTED_ERROR";
   return jsonResponse(
-    { ok: false, error: { code: "INTERNAL_ERROR", message: "服务暂时不可用，请稍后再试" } },
+    { ok: false, error: { code: "INTERNAL_ERROR", diagnostic, message: "服务暂时不可用，请稍后再试" } },
     { status: 500, setCookie },
   );
 };
