@@ -152,8 +152,12 @@ const errorResponse = (error, setCookie = null) => {
     "QUOTA_EXCEEDED", "RATE_LIMITED", "INVALID_KEY", "INVALID_STORE_NAME",
   ]);
   const diagnostic = storageCodes.has(error?.code) ? `BLOB_${error.code}` : "UNEXPECTED_ERROR";
+  const upstreamStatus = error?.code === "COS_ERROR"
+    ? Number(String(error.message).match(/COS returned (\d+):/)?.[1]) || undefined : undefined;
+  const storageError = error?.code === "COS_ERROR"
+    ? String(error.message).match(/<Code>([A-Za-z0-9_]{1,80})<\/Code>/)?.[1] : undefined;
   return jsonResponse(
-    { ok: false, error: { code: "INTERNAL_ERROR", diagnostic, message: "服务暂时不可用，请稍后再试" } },
+    { ok: false, error: { code: "INTERNAL_ERROR", diagnostic, upstreamStatus, storageError, message: "服务暂时不可用，请稍后再试" } },
     { status: 500, setCookie },
   );
 };
