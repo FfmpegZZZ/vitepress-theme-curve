@@ -159,7 +159,10 @@ test("完整互助流程：上传、复制、单人单票和三票下架", async
   assert.equal(ownerUpload.status, 201);
   assert.equal(ownerUpload.payload.data.joined, true);
   assert.equal(ownerUpload.payload.data.mine[0].code, "ABCD1234");
-  assert.deepEqual(ownerUpload.payload.data.items, []);
+  const ownerAfterUpload = await readResponse(
+    await onRequestGet(requestContext(store, { cookie: ownerCookie })),
+  );
+  assert.deepEqual(ownerAfterUpload.payload.data.items, []);
 
   const helperOne = await startVisitor(store);
   const duplicate = await post(store, helperOne, {
@@ -317,4 +320,70 @@ test("按实际字节数拒绝没有 Content-Length 的超大请求", async () =
   });
   assert.equal(response.status, 413);
   assert.equal(response.payload.error.code, "BODY_TOO_LARGE");
+});
+
+test("大池和百条个人历史仍能在边缘函数子请求预算内读取，历史分页无遗漏", async () => {
+  const store = new MemoryStore();
+  const cookie = await startVisitor(store);
+  const visitorId = cookie.split("=")[1].split(".")[0];
+  for (let index = 1; index <= 2000; index++) {
+    const id = index.toString(16).padStart(24, "0");
+    const record = {
+      id,
+      code: String(index).padStart(8, "0"),
+      owner: index <= 100 ? visitorId : "someone-else",
+      createdAt: index,
+    };
+    await store.setJSON(`codes/${id}.json`, record);
+    await store.setJSON(`active/${id.slice(0, 1)}/${id}.json`, record);
+    if (index <= 100)
+      await store.setJSON(
+        `owners/${visitorId}/${String(9_999_999_999_999 - index).padStart(13, "0")}-${id}.json`,
+        record,
+      );
+  }
+  const check = async (suffix = "") => {
+    let calls = 0;
+    const budgeted = new Proxy(store, {
+      get(target, key) {
+        const value = target[key];
+        if (typeof value !== "function") return value;
+        return async (...args) => {
+          // SDK 每 1000 个对象会额外翻页；模拟真实出站请求而非仅计方法调用。
+          const cost =
+            key === "list"
+              ? Math.max(
+                  1,
+                  Math.ceil(
+                    [...target.values.keys()]
+                      .filter((k) => k.startsWith(args[0]?.prefix || ""))
+                      .slice(0, args[0]?.limit).length / 1000,
+                  ),
+                )
+              : 1;
+          calls += cost;
+          assert.ok(calls <= 48, `exceeded request budget: ${calls}`);
+          return value.apply(target, args);
+        };
+      },
+    });
+    const context = requestContext(budgeted, { cookie });
+    context.request = new Request(ENDPOINT + suffix, { headers: context.request.headers });
+    const result = await readResponse(await onRequestGet(context));
+    assert.equal(result.status, 200);
+    return result.payload.data;
+  };
+  const dashboard = await check();
+  assert.equal(dashboard.available, 2000);
+  assert.equal(dashboard.mineTotal, 100);
+  assert.equal(dashboard.joined, true);
+  const seen = new Set();
+  let offset = 0;
+  do {
+    const page = await check(`?view=mine&offset=${offset}`);
+    assert.ok(page.items.length <= 20);
+    for (const item of page.items) seen.add(item.id);
+    offset = page.nextOffset;
+  } while (offset !== null);
+  assert.equal(seen.size, 100);
 });

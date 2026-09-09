@@ -21,3 +21,10 @@ edgeone makers dev
 
 - `GET /api/godly-love`：获取随机推荐码、自己的推荐码与剩余额度。
 - `POST /api/godly-love`：提交 `upload`、`copy` 或 `vote` 操作。
+
+### 边缘函数请求预算
+
+EdgeOne 单次执行最多发起 64 次 fetch。Blob 的每次读写、列表翻页、凭据交换和重试都计入此限制。
+推荐列表只按需读取最多 8 个候选；上传成功后由客户端另发 GET 刷新，避免叠加读写开销。
+`GET /api/godly-love?view=mine&offset=0` 每页读取 20 条个人记录，返回 `items`、`total` 和 `nextOffset`，历史记录不再随每次换批全量读取。
+测试覆盖满池和 100 条个人历史，并把单次正常存储调用控制在 48 次以内，为平台凭据获取及重试留出余量。

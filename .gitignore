@@ -40,3 +40,8 @@ posts/2025/test.md
 public/models/
 public/embeddings.json
 .cache/transformers
+
+# Tencent Cloud EdgeOne
+.env
+.edgeone/*
+.tef_dist/*

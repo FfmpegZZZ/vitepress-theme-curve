@@ -14,7 +14,8 @@ const SESSION_MAX_AGE = 60 * 60 * 24 * 365;
 const HOUR_MS = 60 * 60 * 1000;
 const MAX_BODY_BYTES = 4096;
 const RATE_RETENTION_HOURS = 24;
-const ACTIVE_SAMPLE_SIZE = 48;
+// EdgeOne 单次函数最多 64 次 fetch，候选按需读取，给鉴权和重试留出空间。
+const ACTIVE_SAMPLE_SIZE = 8;
 const ACTIVE_POOL_CAP = 2000;
 const MINE_HISTORY_LIMIT = 100;
 
@@ -122,7 +123,23 @@ const getAbuseActorId = async (context, visitorId) => {
 const getInviteStore = (context) => {
   // 测试时可注入内存 Store；线上由 EdgeOne 自动注入 Blob 访问凭据。
   if (context.env?.INVITE_POOL_STORE) return context.env.INVITE_POOL_STORE;
-  return getStore({ name: STORE_NAME, consistency: "strong" });
+  const store = getStore({ name: STORE_NAME, consistency: "strong" });
+  let calls = 0;
+  return new Proxy(store, {
+    get(target, property) {
+      const value = target[property];
+      if (typeof value !== "function") return value;
+      return async (...args) => {
+        const call = ++calls;
+        try { return await value.apply(target, args); }
+        catch (error) {
+          error.storageOperation = String(property);
+          error.storageCall = call;
+          throw error;
+        }
+      };
+    },
+  });
 };
 
 const jsonResponse = (payload, { status = 200, setCookie = null, headers = {} } = {}) => {
@@ -148,16 +165,37 @@ const errorResponse = (error, setCookie = null) => {
 
   // 仅暴露固定诊断码，便于定位平台故障；不返回原始异常（可能含凭据或对象路径）。
   const storageCodes = new Set([
-    "MISSING_ENVIRONMENT", "MISSING_PROJECT_ID", "CREDENTIAL_ERROR", "COS_ERROR",
-    "QUOTA_EXCEEDED", "RATE_LIMITED", "INVALID_KEY", "INVALID_STORE_NAME",
+    "MISSING_ENVIRONMENT",
+    "MISSING_PROJECT_ID",
+    "CREDENTIAL_ERROR",
+    "COS_ERROR",
+    "QUOTA_EXCEEDED",
+    "RATE_LIMITED",
+    "INVALID_KEY",
+    "INVALID_STORE_NAME",
   ]);
   const diagnostic = storageCodes.has(error?.code) ? `BLOB_${error.code}` : "UNEXPECTED_ERROR";
-  const upstreamStatus = error?.code === "COS_ERROR"
-    ? Number(String(error.message).match(/COS returned (\d+):/)?.[1]) || undefined : undefined;
-  const storageError = error?.code === "COS_ERROR"
-    ? String(error.message).match(/<Code>([A-Za-z0-9_]{1,80})<\/Code>/)?.[1] : undefined;
+  const upstreamStatus =
+    error?.code === "COS_ERROR"
+      ? Number(String(error.message).match(/COS returned (\d+):/)?.[1]) || undefined
+      : undefined;
+  const storageError =
+    error?.code === "COS_ERROR"
+      ? String(error.message).match(/<Code>([A-Za-z0-9_]{1,80})<\/Code>/)?.[1]
+      : undefined;
   return jsonResponse(
-    { ok: false, error: { code: "INTERNAL_ERROR", diagnostic, upstreamStatus, storageError, message: "服务暂时不可用，请稍后再试" } },
+    {
+      ok: false,
+      error: {
+        code: "INTERNAL_ERROR",
+        diagnostic,
+        upstreamStatus,
+        storageError,
+        storageOperation: error?.storageOperation,
+        storageCall: error?.storageCall,
+        message: "服务暂时不可用，请稍后再试",
+      },
+    },
     { status: 500, setCookie },
   );
 };
@@ -307,52 +345,73 @@ const shuffle = (items) => {
 
 const getActiveSnapshot = async (store) => {
   const keys = await listKeys(store, "active/", ACTIVE_POOL_CAP + 1);
-  const sampledKeys = shuffle(keys).slice(0, ACTIVE_SAMPLE_SIZE);
-  const records = await Promise.all(sampledKeys.map((key) => readJson(store, key)));
   return {
     total: keys.length,
-    records: records.filter(
-      (record) =>
-        record &&
-        /^[a-f0-9]{24}$/.test(record.id || "") &&
-        /^[A-Z0-9]{8}$/.test(record.code || "") &&
-        typeof record.owner === "string" &&
-        Number.isFinite(record.createdAt),
+    keys,
+    ids: new Set(
+      keys.map((key) =>
+        key
+          .split("/")
+          .at(-1)
+          .replace(/\.json$/, ""),
+      ),
     ),
   };
 };
 
-const getMyCodes = async (store, visitorId) => {
+const getMyCodes = async (store, visitorId, active, { offset = 0, limit = 1 } = {}) => {
   const keys = await listKeys(store, `owners/${visitorId}/`, MINE_HISTORY_LIMIT);
-  const records = (await Promise.all(keys.map((key) => readJson(store, key))))
+  const selected = keys.slice(offset, offset + limit);
+  const records = (await Promise.all(selected.map((key) => readJson(store, key))))
     .filter(Boolean)
     .sort((left, right) => right.createdAt - left.createdAt);
 
-  return Promise.all(
+  const items = await Promise.all(
     records.map(async (record) => {
       const reports = await getReportCount(store, record.id);
-      const active = await readJson(store, activeKey(record.id));
       return {
         id: record.id,
         code: record.code,
         createdAt: record.createdAt,
         reports,
-        active: reports < CONFIG.voteLimit && active?.id === record.id,
+        active: reports < CONFIG.voteLimit && active.ids.has(record.id),
       };
     }),
   );
+  return {
+    items,
+    total: keys.length,
+    nextOffset: offset + selected.length < keys.length ? offset + selected.length : null,
+  };
 };
 
-const getBatch = async (store, visitorId, actorId, activeRecords, excludedIds) => {
-  const candidates = activeRecords.filter((record) => record.owner !== visitorId);
-  const preferred = shuffle(candidates.filter((record) => !excludedIds.has(record.id)));
-  const fallback = shuffle(candidates.filter((record) => excludedIds.has(record.id)));
+const getBatch = async (store, visitorId, actorId, activeKeys, excludedIds) => {
+  const isExcluded = (key) =>
+    excludedIds.has(
+      key
+        .split("/")
+        .at(-1)
+        .replace(/\.json$/, ""),
+    );
+  const preferred = shuffle(activeKeys.filter((key) => !isExcluded(key)));
+  const fallback = shuffle(activeKeys.filter(isExcluded));
   const items = [];
-  const ordered = [...preferred, ...fallback];
+  const ordered = [...preferred, ...fallback].slice(0, ACTIVE_SAMPLE_SIZE);
 
-  for (let offset = 0; offset < ordered.length && items.length < CONFIG.pageSize; offset += 8) {
+  // 只检查凑齐一页所需的候选，不预读整个池，也不并发检查多余的记录。
+  for (let offset = 0; offset < ordered.length && items.length < CONFIG.pageSize; ) {
+    const nextKeys = ordered.slice(offset, offset + CONFIG.pageSize - items.length);
+    offset += nextKeys.length;
     const candidatesWithState = await Promise.all(
-      ordered.slice(offset, offset + 8).map(async (record) => {
+      nextKeys.map(async (key) => {
+        const record = await readJson(store, key);
+        if (
+          !record ||
+          record.owner === visitorId ||
+          !/^[a-f0-9]{24}$/.test(record.id || "") ||
+          !/^[A-Z0-9]{8}$/.test(record.code || "")
+        )
+          return null;
         const [reports, copied, voted] = await Promise.all([
           getReportCount(store, record.id),
           store.get(copyKey(record.id, visitorId), { consistency: "strong" }),
@@ -377,8 +436,8 @@ const getBatch = async (store, visitorId, actorId, activeRecords, excludedIds) =
 const createDashboard = async (store, visitorId, actorId, excludedIds = new Set()) => {
   const active = await getActiveSnapshot(store);
   const [batch, mine, uploadQuota, voteQuota] = await Promise.all([
-    getBatch(store, visitorId, actorId, active.records, excludedIds),
-    getMyCodes(store, visitorId),
+    getBatch(store, visitorId, actorId, active.keys, excludedIds),
+    getMyCodes(store, visitorId, active),
     getRateStatus(store, "upload", actorId, CONFIG.uploadPerHour),
     getRateStatus(store, "vote-minute", actorId, CONFIG.votePerMinute, Date.now(), 60_000),
   ]);
@@ -387,8 +446,9 @@ const createDashboard = async (store, visitorId, actorId, excludedIds = new Set(
     config: CONFIG,
     items: batch,
     available: active.total,
-    mine,
-    joined: mine.length > 0,
+    mine: mine.items,
+    mineTotal: mine.total,
+    joined: mine.total > 0,
     quota: { upload: uploadQuota, vote: voteQuota },
   };
 };
@@ -434,15 +494,17 @@ const uploadCode = async (store, context, visitorId, actorId, rawCode) => {
     return existing;
   }
 
-  const [active, mine] = await Promise.all([
+  const [active, ownedKeys] = await Promise.all([
     getActiveSnapshot(store),
-    getMyCodes(store, visitorId),
+    listKeys(store, `owners/${visitorId}/`, MINE_HISTORY_LIMIT),
   ]);
   if (active.total >= ACTIVE_POOL_CAP) {
     throw new ApiError(503, "POOL_FULL", "互助池当前已满，请稍后再试");
   }
 
-  const ownActive = mine.filter((record) => record.active).length;
+  const ownActive = ownedKeys.filter((key) =>
+    active.ids.has(key.match(/-([a-f0-9]{24})\.json$/)?.[1]),
+  ).length;
   if (ownActive >= CONFIG.activeOwnCap) {
     throw new ApiError(
       409,
@@ -552,6 +614,19 @@ export async function onRequestGet(context) {
     setCookie = session.setCookie;
     const actorId = await getAbuseActorId(context, session.visitorId);
     const store = getInviteStore(context);
+    const url = new URL(context.request.url);
+    if (url.searchParams.get("view") === "mine") {
+      const offset = Math.max(
+        0,
+        Math.min(MINE_HISTORY_LIMIT, Number(url.searchParams.get("offset")) || 0),
+      );
+      const active = await getActiveSnapshot(store);
+      const result = await getMyCodes(store, session.visitorId, active, {
+        offset: Math.floor(offset),
+        limit: 20,
+      });
+      return jsonResponse({ ok: true, data: result }, { setCookie });
+    }
     const dashboard = await createDashboard(
       store,
       session.visitorId,
@@ -575,9 +650,26 @@ export async function onRequestPost(context) {
     const body = await parseJsonBody(context.request);
 
     if (body.action === "upload") {
-      await uploadCode(store, context, session.visitorId, actorId, body.code);
-      const dashboard = await createDashboard(store, session.visitorId, actorId);
-      return jsonResponse({ ok: true, data: dashboard }, { status: 201, setCookie });
+      const record = await uploadCode(store, context, session.visitorId, actorId, body.code);
+      // 兼容旧前端需要的基本状态；新前端单独刷新列表，避免一次调用重复读取整个池。
+      return jsonResponse(
+        {
+          ok: true,
+          data: {
+            joined: true,
+            mine: [
+              {
+                id: record.id,
+                code: record.code,
+                createdAt: record.createdAt,
+                active: true,
+                reports: 0,
+              },
+            ],
+          },
+        },
+        { status: 201, setCookie },
+      );
     }
     if (body.action === "copy") {
       const result = await markCopied(store, session.visitorId, body.id);

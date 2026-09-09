@@ -66,7 +66,14 @@ export const getInvitePool = (excludedIds = []) => {
   return request(`${API_ENDPOINT}${suffix}`);
 };
 
-export const uploadInviteCode = (code) => mutate("upload", { code });
+export const uploadInviteCode = async (code) => {
+  const result = await mutate("upload", { code });
+  // 上传已成功时，列表刷新失败也不应误报上传失败。
+  return getInvitePool().catch(() => result);
+};
+
+export const getMyInviteCodes = (offset = 0) =>
+  request(`${API_ENDPOINT}?view=mine&offset=${encodeURIComponent(offset)}`);
 
 export const markInviteCodeCopied = (id) => mutate("copy", { id });
 

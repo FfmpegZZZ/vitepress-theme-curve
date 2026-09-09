@@ -160,7 +160,13 @@
 
       <!-- 额度、去重及下架阈值由后端执行，不在玩家操作界面展示。 -->
       <div class="action-dock" role="group" aria-label="邀请码互助池操作">
-        <button class="dock-action" type="button" title="换一批推荐码" :disabled="refreshing" @click="refreshBatch">
+        <button
+          class="dock-action"
+          type="button"
+          title="换一批推荐码"
+          :disabled="refreshing"
+          @click="refreshBatch"
+        >
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M20 7v5h-5" />
             <path d="M4 17v-5h5" />
@@ -169,7 +175,7 @@
           </svg>
           <span class="dock-label">{{ refreshing ? "刷新中" : "换一批" }}</span>
         </button>
-        <button class="dock-action" type="button" title="查看我的推荐码" @click="showMine = true">
+        <button class="dock-action" type="button" title="查看我的推荐码" @click="openMine">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M8 7h11" />
             <path d="M8 12h11" />
@@ -190,7 +196,12 @@
           </svg>
           <span class="dock-label">分享</span>
         </button>
-        <button class="dock-action dock-upload" type="button" title="上传推荐码" @click="openUpload">
+        <button
+          class="dock-action dock-upload"
+          type="button"
+          title="上传推荐码"
+          @click="openUpload"
+        >
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M12 5v14" />
             <path d="M5 12h14" />
@@ -243,10 +254,10 @@
       @modal-close="showMine = false"
     >
       <div class="mine-summary">
-        <span>共上传 {{ dashboard.mine.length }} 个</span>
+        <span>共上传 {{ mineTotal }} 个</span>
       </div>
-      <div v-if="dashboard.mine.length" class="mine-list">
-        <article v-for="item in dashboard.mine" :key="item.id" class="mine-item">
+      <div v-if="mineItems.length" class="mine-list">
+        <article v-for="item in mineItems" :key="item.id" class="mine-item">
           <div>
             <strong>{{ item.code }}</strong>
             <time :datetime="new Date(item.createdAt).toISOString()">{{
@@ -258,7 +269,19 @@
           </span>
         </article>
       </div>
-      <div v-else class="modal-empty">你还没有上传过推荐码</div>
+      <p v-if="mineError" role="alert">{{ mineError }}</p>
+      <div v-else-if="!mineItems.length && !mineLoading" class="modal-empty">
+        你还没有上传过推荐码
+      </div>
+      <button
+        v-if="mineLoading || mineNextOffset !== null || mineError"
+        class="pool-button secondary wide"
+        type="button"
+        :disabled="mineLoading"
+        @click="loadMine"
+      >
+        {{ mineLoading ? "正在加载…" : mineError ? "重试" : "查看更多" }}
+      </button>
     </Modal>
   </div>
 </template>
@@ -268,6 +291,7 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref } from "vue";
 import Modal from "../components/Modal.vue";
 import {
   getInvitePool,
+  getMyInviteCodes,
   markInviteCodeCopied,
   reportInviteCodeUsed,
   uploadInviteCode,
@@ -311,6 +335,40 @@ const uploadError = ref("");
 const uploadInput = ref(null);
 const showUpload = ref(false);
 const showMine = ref(false);
+const mineItems = ref([]);
+const mineTotal = ref(0);
+const mineNextOffset = ref(0);
+const mineLoading = ref(false);
+const mineError = ref("");
+
+const loadMine = async () => {
+  if (mineLoading.value) return;
+  mineLoading.value = true;
+  mineError.value = "";
+  try {
+    const result = await getMyInviteCodes(mineNextOffset.value || 0);
+    const merged = new Map([...mineItems.value, ...result.items].map((item) => [item.id, item]));
+    mineItems.value = [...merged.values()];
+    mineTotal.value = result.total;
+    mineNextOffset.value = result.nextOffset;
+  } catch (error) {
+    mineError.value = readableError(error);
+  } finally {
+    mineLoading.value = false;
+  }
+};
+
+const openMine = () => {
+  if (mineLoading.value) {
+    showMine.value = true;
+    return;
+  }
+  mineItems.value = [];
+  mineTotal.value = dashboard.value.mineTotal || dashboard.value.mine.length;
+  mineNextOffset.value = 0;
+  showMine.value = true;
+  loadMine();
+};
 
 const copiedCount = computed(
   () => dashboard.value.items.filter((item) => item.copied || copiedIds.value.has(item.id)).length,
@@ -1205,7 +1263,10 @@ onBeforeUnmount(() => {
   border-radius: 12px;
   cursor: pointer;
   touch-action: manipulation;
-  transition: background-color 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    transform 0.18s ease;
 
   .dock-label {
     display: block;
