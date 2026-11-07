@@ -1,0 +1,20 @@
+{
+  "updated": "2026-11-05",
+  "fields": 1343,
+  "skills": 841,
+  "statuses": 97,
+  "unsupported": [],
+  "cards": 272,
+  "namedCards": 174,
+  "stagePlacements": 699,
+  "missingStageSkills": [
+    {
+      "skillId": "C04_SR_003S4",
+      "scenes": [
+        "Trial_42",
+        "Trial_50"
+      ]
+    }
+  ],
+  "validation": "字段审计及批量运行只验证解析、数值有效性和运行稳定性；技能语义由具体回归用例与客户端证据核对。未声称与实机逐帧等同。"
+}
