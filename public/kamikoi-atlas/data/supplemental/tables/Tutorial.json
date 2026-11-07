@@ -1,0 +1,146 @@
+[
+  {
+    "ID": "1",
+    "Condition1": "{Condition:\"NoPassTutor\",ID:\"1\"}",
+    "Condition2": "",
+    "Condition3": "",
+    "Condition4": "",
+    "Name": "序章"
+  },
+  {
+    "ID": "2",
+    "Condition1": "{Condition:\"QuestCanGetReward\",ID:\"Connection01\"}",
+    "Condition2": "{Condition:\"PassTutor\",ID:\"1\"}",
+    "Condition3": "",
+    "Condition4": "",
+    "Name": "緣分羈絆"
+  },
+  {
+    "ID": "3",
+    "Condition1": "{Condition:\"QuestRewarded\",ID:\"Connection01\"}",
+    "Condition2": "{Condition:\"NoPassScene\",ID:\"1_1_2\"}",
+    "Condition3": "",
+    "Condition4": "",
+    "Name": "選角出戰+戰鬥"
+  },
+  {
+    "ID": "4",
+    "Condition1": "{Condition:\"PassScene\",ID:\"1_1_2\"}",
+    "Condition2": "",
+    "Condition3": "",
+    "Condition4": "",
+    "Name": "心選教學"
+  },
+  {
+    "ID": "5",
+    "Condition1": "{Condition:\"PassScene\",ID:\"1_1_2\"}",
+    "Condition2": "{Condition:\"PassTutor\",ID:\"4\"}",
+    "Condition3": "",
+    "Condition4": "",
+    "Name": "羈絆列表"
+  },
+  {
+    "ID": "5_1",
+    "Condition1": "{Condition:\"PassScene\",ID:\"1_1_2\"}",
+    "Condition2": "{Condition:\"PassTutor\",ID:\"5\"}",
+    "Condition3": "",
+    "Condition4": "",
+    "Name": "引導到1-5劇情"
+  },
+  {
+    "ID": "5_2",
+    "Condition1": "{Condition:\"PassScene\",ID:\"1_1_3\"}",
+    "Condition2": "",
+    "Condition3": "",
+    "Condition4": "",
+    "Name": "自動組隊"
+  },
+  {
+    "ID": "6",
+    "Condition1": "{Condition:\"PassScene\",ID:\"1_1_2\"}",
+    "Condition2": "",
+    "Condition3": "",
+    "Condition4": "",
+    "Name": "升星教學"
+  },
+  {
+    "ID": "7",
+    "Condition1": "{Condition:\"PassScene\",ID:\"1_1_2\"}",
+    "Condition2": "",
+    "Condition3": "",
+    "Condition4": "",
+    "Name": "日程教學"
+  },
+  {
+    "ID": "8",
+    "Condition1": "{Condition:\"PassScene\",ID:\"1_1_16\"}",
+    "Condition2": "",
+    "Condition3": "",
+    "Condition4": "",
+    "Name": "粉絲團"
+  },
+  {
+    "ID": "9",
+    "Condition1": "{Condition:\"PassScene\",ID:\"1_1_21\"}",
+    "Condition2": "",
+    "Condition3": "",
+    "Condition4": "",
+    "Name": "第二章"
+  },
+  {
+    "ID": "10",
+    "Condition1": "{Condition:\"PassScene\",ID:\"1_2_2\"}",
+    "Condition2": "",
+    "Condition3": "",
+    "Condition4": "",
+    "Name": "秘境挑戰"
+  },
+  {
+    "ID": "10_0",
+    "Condition1": "{Condition:\"PassScene\",ID:\"1_2_2\"}",
+    "Condition2": "{Condition:\"NoPassTutor\",ID:\"10\"}",
+    "Condition3": "",
+    "Condition4": "",
+    "Name": "秘境挑戰前導"
+  },
+  {
+    "ID": "11",
+    "Condition1": "{Condition:\"PassScene\",ID:\"1_2_2\"}",
+    "Condition2": "",
+    "Condition3": "",
+    "Condition4": "",
+    "Name": "掃蕩"
+  },
+  {
+    "ID": "12",
+    "Condition1": "{Condition:\"PassScene\",ID:\"1_2_10\"}",
+    "Condition2": "",
+    "Condition3": "",
+    "Condition4": "",
+    "Name": "靈蝶尋覓"
+  },
+  {
+    "ID": "13",
+    "Condition1": "{Condition:\"PassScene\",ID:\"1_3_18\"}",
+    "Condition2": "{Condition:\"PassTutor\",ID:\"10\"}",
+    "Condition3": "",
+    "Condition4": "",
+    "Name": "幻影試煉"
+  },
+  {
+    "ID": "14",
+    "Condition1": "{Condition:\"PassScene\",ID:\"1_5_18\"}",
+    "Condition2": "{Condition:\"PassTutor\",ID:\"13\"}",
+    "Condition3": "",
+    "Condition4": "",
+    "Name": "活動故事"
+  },
+  {
+    "ID": "15",
+    "Condition1": "{Condition:\"PassScene\",ID:\"1_2_18\"}",
+    "Condition2": "",
+    "Condition3": "",
+    "Condition4": "",
+    "Name": "大廳角色"
+  }
+]

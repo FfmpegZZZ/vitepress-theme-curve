@@ -1,0 +1,482 @@
+[
+  {
+    "Level": "1",
+    "ExpToNextLevel": "50",
+    "MaxEnergy": "42",
+    "AddEnergy": "40"
+  },
+  {
+    "Level": "2",
+    "ExpToNextLevel": "300",
+    "MaxEnergy": "44",
+    "AddEnergy": "40"
+  },
+  {
+    "Level": "3",
+    "ExpToNextLevel": "550",
+    "MaxEnergy": "46",
+    "AddEnergy": "40"
+  },
+  {
+    "Level": "4",
+    "ExpToNextLevel": "800",
+    "MaxEnergy": "48",
+    "AddEnergy": "40"
+  },
+  {
+    "Level": "5",
+    "ExpToNextLevel": "1050",
+    "MaxEnergy": "50",
+    "AddEnergy": "40"
+  },
+  {
+    "Level": "6",
+    "ExpToNextLevel": "1300",
+    "MaxEnergy": "52",
+    "AddEnergy": "40"
+  },
+  {
+    "Level": "7",
+    "ExpToNextLevel": "1550",
+    "MaxEnergy": "54",
+    "AddEnergy": "40"
+  },
+  {
+    "Level": "8",
+    "ExpToNextLevel": "1800",
+    "MaxEnergy": "56",
+    "AddEnergy": "40"
+  },
+  {
+    "Level": "9",
+    "ExpToNextLevel": "2050",
+    "MaxEnergy": "58",
+    "AddEnergy": "40"
+  },
+  {
+    "Level": "10",
+    "ExpToNextLevel": "2300",
+    "MaxEnergy": "60",
+    "AddEnergy": "40"
+  },
+  {
+    "Level": "11",
+    "ExpToNextLevel": "2550",
+    "MaxEnergy": "62",
+    "AddEnergy": "50"
+  },
+  {
+    "Level": "12",
+    "ExpToNextLevel": "2800",
+    "MaxEnergy": "64",
+    "AddEnergy": "50"
+  },
+  {
+    "Level": "13",
+    "ExpToNextLevel": "3050",
+    "MaxEnergy": "66",
+    "AddEnergy": "50"
+  },
+  {
+    "Level": "14",
+    "ExpToNextLevel": "3300",
+    "MaxEnergy": "68",
+    "AddEnergy": "50"
+  },
+  {
+    "Level": "15",
+    "ExpToNextLevel": "3550",
+    "MaxEnergy": "70",
+    "AddEnergy": "50"
+  },
+  {
+    "Level": "16",
+    "ExpToNextLevel": "3800",
+    "MaxEnergy": "72",
+    "AddEnergy": "50"
+  },
+  {
+    "Level": "17",
+    "ExpToNextLevel": "4050",
+    "MaxEnergy": "74",
+    "AddEnergy": "50"
+  },
+  {
+    "Level": "18",
+    "ExpToNextLevel": "4300",
+    "MaxEnergy": "76",
+    "AddEnergy": "50"
+  },
+  {
+    "Level": "19",
+    "ExpToNextLevel": "4550",
+    "MaxEnergy": "78",
+    "AddEnergy": "50"
+  },
+  {
+    "Level": "20",
+    "ExpToNextLevel": "4800",
+    "MaxEnergy": "80",
+    "AddEnergy": "50"
+  },
+  {
+    "Level": "21",
+    "ExpToNextLevel": "5300",
+    "MaxEnergy": "82",
+    "AddEnergy": "60"
+  },
+  {
+    "Level": "22",
+    "ExpToNextLevel": "5800",
+    "MaxEnergy": "84",
+    "AddEnergy": "60"
+  },
+  {
+    "Level": "23",
+    "ExpToNextLevel": "6300",
+    "MaxEnergy": "86",
+    "AddEnergy": "60"
+  },
+  {
+    "Level": "24",
+    "ExpToNextLevel": "6800",
+    "MaxEnergy": "88",
+    "AddEnergy": "60"
+  },
+  {
+    "Level": "25",
+    "ExpToNextLevel": "7300",
+    "MaxEnergy": "90",
+    "AddEnergy": "60"
+  },
+  {
+    "Level": "26",
+    "ExpToNextLevel": "7800",
+    "MaxEnergy": "92",
+    "AddEnergy": "60"
+  },
+  {
+    "Level": "27",
+    "ExpToNextLevel": "8300",
+    "MaxEnergy": "94",
+    "AddEnergy": "60"
+  },
+  {
+    "Level": "28",
+    "ExpToNextLevel": "8800",
+    "MaxEnergy": "96",
+    "AddEnergy": "60"
+  },
+  {
+    "Level": "29",
+    "ExpToNextLevel": "9300",
+    "MaxEnergy": "98",
+    "AddEnergy": "60"
+  },
+  {
+    "Level": "30",
+    "ExpToNextLevel": "9800",
+    "MaxEnergy": "100",
+    "AddEnergy": "60"
+  },
+  {
+    "Level": "31",
+    "ExpToNextLevel": "10800",
+    "MaxEnergy": "102",
+    "AddEnergy": "70"
+  },
+  {
+    "Level": "32",
+    "ExpToNextLevel": "11800",
+    "MaxEnergy": "104",
+    "AddEnergy": "70"
+  },
+  {
+    "Level": "33",
+    "ExpToNextLevel": "12800",
+    "MaxEnergy": "106",
+    "AddEnergy": "70"
+  },
+  {
+    "Level": "34",
+    "ExpToNextLevel": "13800",
+    "MaxEnergy": "108",
+    "AddEnergy": "70"
+  },
+  {
+    "Level": "35",
+    "ExpToNextLevel": "14800",
+    "MaxEnergy": "110",
+    "AddEnergy": "70"
+  },
+  {
+    "Level": "36",
+    "ExpToNextLevel": "15800",
+    "MaxEnergy": "112",
+    "AddEnergy": "70"
+  },
+  {
+    "Level": "37",
+    "ExpToNextLevel": "16800",
+    "MaxEnergy": "114",
+    "AddEnergy": "70"
+  },
+  {
+    "Level": "38",
+    "ExpToNextLevel": "17800",
+    "MaxEnergy": "116",
+    "AddEnergy": "70"
+  },
+  {
+    "Level": "39",
+    "ExpToNextLevel": "18800",
+    "MaxEnergy": "118",
+    "AddEnergy": "70"
+  },
+  {
+    "Level": "40",
+    "ExpToNextLevel": "19800",
+    "MaxEnergy": "120",
+    "AddEnergy": "70"
+  },
+  {
+    "Level": "41",
+    "ExpToNextLevel": "21800",
+    "MaxEnergy": "122",
+    "AddEnergy": "80"
+  },
+  {
+    "Level": "42",
+    "ExpToNextLevel": "23800",
+    "MaxEnergy": "124",
+    "AddEnergy": "80"
+  },
+  {
+    "Level": "43",
+    "ExpToNextLevel": "25800",
+    "MaxEnergy": "126",
+    "AddEnergy": "80"
+  },
+  {
+    "Level": "44",
+    "ExpToNextLevel": "27800",
+    "MaxEnergy": "128",
+    "AddEnergy": "80"
+  },
+  {
+    "Level": "45",
+    "ExpToNextLevel": "29800",
+    "MaxEnergy": "130",
+    "AddEnergy": "80"
+  },
+  {
+    "Level": "46",
+    "ExpToNextLevel": "31800",
+    "MaxEnergy": "132",
+    "AddEnergy": "80"
+  },
+  {
+    "Level": "47",
+    "ExpToNextLevel": "33800",
+    "MaxEnergy": "134",
+    "AddEnergy": "80"
+  },
+  {
+    "Level": "48",
+    "ExpToNextLevel": "35800",
+    "MaxEnergy": "136",
+    "AddEnergy": "80"
+  },
+  {
+    "Level": "49",
+    "ExpToNextLevel": "37800",
+    "MaxEnergy": "138",
+    "AddEnergy": "80"
+  },
+  {
+    "Level": "50",
+    "ExpToNextLevel": "39800",
+    "MaxEnergy": "140",
+    "AddEnergy": "80"
+  },
+  {
+    "Level": "51",
+    "ExpToNextLevel": "45000",
+    "MaxEnergy": "142",
+    "AddEnergy": "100"
+  },
+  {
+    "Level": "52",
+    "ExpToNextLevel": "50000",
+    "MaxEnergy": "144",
+    "AddEnergy": "100"
+  },
+  {
+    "Level": "53",
+    "ExpToNextLevel": "55000",
+    "MaxEnergy": "146",
+    "AddEnergy": "100"
+  },
+  {
+    "Level": "54",
+    "ExpToNextLevel": "60000",
+    "MaxEnergy": "148",
+    "AddEnergy": "100"
+  },
+  {
+    "Level": "55",
+    "ExpToNextLevel": "65000",
+    "MaxEnergy": "150",
+    "AddEnergy": "100"
+  },
+  {
+    "Level": "56",
+    "ExpToNextLevel": "70000",
+    "MaxEnergy": "152",
+    "AddEnergy": "100"
+  },
+  {
+    "Level": "57",
+    "ExpToNextLevel": "75000",
+    "MaxEnergy": "154",
+    "AddEnergy": "100"
+  },
+  {
+    "Level": "58",
+    "ExpToNextLevel": "80000",
+    "MaxEnergy": "156",
+    "AddEnergy": "100"
+  },
+  {
+    "Level": "59",
+    "ExpToNextLevel": "85000",
+    "MaxEnergy": "158",
+    "AddEnergy": "100"
+  },
+  {
+    "Level": "60",
+    "ExpToNextLevel": "90000",
+    "MaxEnergy": "160",
+    "AddEnergy": "100"
+  },
+  {
+    "Level": "61",
+    "ExpToNextLevel": "100000",
+    "MaxEnergy": "162",
+    "AddEnergy": "110"
+  },
+  {
+    "Level": "62",
+    "ExpToNextLevel": "110000",
+    "MaxEnergy": "164",
+    "AddEnergy": "110"
+  },
+  {
+    "Level": "63",
+    "ExpToNextLevel": "120000",
+    "MaxEnergy": "166",
+    "AddEnergy": "110"
+  },
+  {
+    "Level": "64",
+    "ExpToNextLevel": "130000",
+    "MaxEnergy": "168",
+    "AddEnergy": "110"
+  },
+  {
+    "Level": "65",
+    "ExpToNextLevel": "140000",
+    "MaxEnergy": "170",
+    "AddEnergy": "110"
+  },
+  {
+    "Level": "66",
+    "ExpToNextLevel": "150000",
+    "MaxEnergy": "172",
+    "AddEnergy": "110"
+  },
+  {
+    "Level": "67",
+    "ExpToNextLevel": "160000",
+    "MaxEnergy": "174",
+    "AddEnergy": "110"
+  },
+  {
+    "Level": "68",
+    "ExpToNextLevel": "170000",
+    "MaxEnergy": "176",
+    "AddEnergy": "110"
+  },
+  {
+    "Level": "69",
+    "ExpToNextLevel": "180000",
+    "MaxEnergy": "178",
+    "AddEnergy": "110"
+  },
+  {
+    "Level": "70",
+    "ExpToNextLevel": "190000",
+    "MaxEnergy": "180",
+    "AddEnergy": "110"
+  },
+  {
+    "Level": "71",
+    "ExpToNextLevel": "210000",
+    "MaxEnergy": "182",
+    "AddEnergy": "120"
+  },
+  {
+    "Level": "72",
+    "ExpToNextLevel": "230000",
+    "MaxEnergy": "184",
+    "AddEnergy": "120"
+  },
+  {
+    "Level": "73",
+    "ExpToNextLevel": "250000",
+    "MaxEnergy": "186",
+    "AddEnergy": "120"
+  },
+  {
+    "Level": "74",
+    "ExpToNextLevel": "270000",
+    "MaxEnergy": "188",
+    "AddEnergy": "120"
+  },
+  {
+    "Level": "75",
+    "ExpToNextLevel": "290000",
+    "MaxEnergy": "190",
+    "AddEnergy": "120"
+  },
+  {
+    "Level": "76",
+    "ExpToNextLevel": "310000",
+    "MaxEnergy": "192",
+    "AddEnergy": "120"
+  },
+  {
+    "Level": "77",
+    "ExpToNextLevel": "330000",
+    "MaxEnergy": "194",
+    "AddEnergy": "120"
+  },
+  {
+    "Level": "78",
+    "ExpToNextLevel": "350000",
+    "MaxEnergy": "196",
+    "AddEnergy": "120"
+  },
+  {
+    "Level": "79",
+    "ExpToNextLevel": "370000",
+    "MaxEnergy": "198",
+    "AddEnergy": "120"
+  },
+  {
+    "Level": "80",
+    "ExpToNextLevel": "390000",
+    "MaxEnergy": "200",
+    "AddEnergy": "120"
+  }
+]

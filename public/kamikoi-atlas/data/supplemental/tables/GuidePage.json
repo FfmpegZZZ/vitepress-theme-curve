@@ -1,0 +1,65 @@
+[
+  {
+    "ID": "CombatContent01",
+    "GuideDocumentID": "CombatContent_1_1",
+    "Illustration": "GuideDocument/Illustration/TestIllustration",
+    "Title": "T_GuidePage_Title_CombatContent01",
+    "Content": "T_GuidePage_Content_CombatContent01"
+  },
+  {
+    "ID": "CombatContent02",
+    "GuideDocumentID": "CombatContent_1_1",
+    "Illustration": "GuideDocument/Illustration/TeamLeaderGuide",
+    "Title": "T_GuidePage_Title_CombatContent02",
+    "Content": "T_GuidePage_Content_CombatContent02"
+  },
+  {
+    "ID": "CombatContent03",
+    "GuideDocumentID": "CombatContent_1_1",
+    "Illustration": "GuideDocument/Illustration/CombatContent03",
+    "Title": "T_GuidePage_Title_CombatContent03",
+    "Content": "T_GuidePage_Content_CombatContent03"
+  },
+  {
+    "ID": "CombatContent04",
+    "GuideDocumentID": "CombatContent_1_1",
+    "Illustration": "GuideDocument/Illustration/CombatContent04",
+    "Title": "T_GuidePage_Title_CombatContent04",
+    "Content": "T_GuidePage_Content_CombatContent04"
+  },
+  {
+    "ID": "CombatContent05",
+    "GuideDocumentID": "CombatContent_1_1",
+    "Illustration": "GuideDocument/Illustration/CombatContent05",
+    "Title": "T_GuidePage_Title_CombatContent05",
+    "Content": "T_GuidePage_Content_CombatContent05"
+  },
+  {
+    "ID": "CombatContent06",
+    "GuideDocumentID": "CombatContent_1_1",
+    "Illustration": "GuideDocument/Illustration/CombatContent06",
+    "Title": "T_GuidePage_Title_CombatContent05",
+    "Content": "T_GuidePage_Content_CombatContent06"
+  },
+  {
+    "ID": "CombatContent07",
+    "GuideDocumentID": "CombatContent_1_1",
+    "Illustration": "GuideDocument/Illustration/CombatContent07",
+    "Title": "T_GuidePage_Title_CombatContent07",
+    "Content": "T_GuidePage_Content_CombatContent07"
+  },
+  {
+    "ID": "CombatContent08",
+    "GuideDocumentID": "CombatContent_1_1",
+    "Illustration": "GuideDocument/Illustration/CombatContent08",
+    "Title": "T_GuidePage_Title_CombatContent08",
+    "Content": "T_GuidePage_Content_CombatContent08"
+  },
+  {
+    "ID": "CombatContent09",
+    "GuideDocumentID": "CombatContent_1_1",
+    "Illustration": "GuideDocument/Illustration/CombatContent09",
+    "Title": "T_GuidePage_Title_CombatContent09",
+    "Content": "T_GuidePage_Content_CombatContent09"
+  }
+]

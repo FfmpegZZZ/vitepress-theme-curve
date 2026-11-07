@@ -1,0 +1,1 @@
+RoleID@LV@EnhanceSkill@Description@AwakenMaxValue@Cost@HPRate@AttackRate@DefenceRate@SkillProp.DynamicField1@SkillProp.DynamicField2

@@ -1,0 +1,13 @@
+ID@BuffName@Icon@Tip@StatusSource@IsAutoReceive@Type@DisplayType@LifeTimeType@LifeTime@TriggerType@TriggerValue@Mail@DropID@ItemID@Value@Rate@ConditionValue@Source@DropBonusString@ExtraDropString@DynamicField1
+TIME06@T_ServerStatus_BuffName_TIME06@Icon/Item[Diamod]@T_ServerStatus_Tip_TIME06@Account@FALSE@GetItem@@Day@43200@@@@@5@100@@@T_ServerStatus_Source_TIME06@@@ExtraServerStatusIDs#TIME08
+TIME07@T_ServerStatus_BuffName_TIME06@Icon/Item[Engergy]@T_ServerStatus_Tip_TIME07@Account@FALSE@GetItem@@Day@43200@@@@@3@120@@@T_ServerStatus_Source_TIME06@@@
+TIME08@T_ServerStatus_BuffName_TIME08@Icon/Item[Engergy]@T_ServerStatus_Tip_TIME08@Account@FALSE@OwnCommodity@@Day@43200@@@@@@@@LunchPaid~DinnerPaid@T_ServerStatus_Source_TIME06@@@
+TIME21@T_ServerStatus_BuffName_TIME08@Icon/Item[Diamod]@T_ServerStatus_Tip_TIME21@Account@FALSE@OwnCommodity@@Day@10080@@@@@@@@GIFTMonth01_02~GIFTMonth01_03@T_ServerStatus_Source_TIME06@@@
+BranchSSRBonus1@@@T_ServerStatus_Tip_BranchSSRBonus1@Activity@@DropBonus@@@@@@@@@@@@@{StatusSource:"Activity",TargetType:"ItemType",IDs:["ActivityCurrency"],CountMultiplier:0.2}@@
+BranchSSRBonus2@@@T_ServerStatus_Tip_BranchSSRBonus2@Activity@@DropBonus@@@@@@@@@@@@@{StatusSource:"Activity",TargetType:"ItemType",IDs:["ActivityCurrency"],CountMultiplier:0.4}@@
+BranchSSRBonus3@@@T_ServerStatus_Tip_BranchSSRBonus3@Activity@@DropBonus@@@@@@@@@@@@@{StatusSource:"Activity",TargetType:"ItemType",IDs:["ActivityCurrency"],CountMultiplier:0.6}@@
+BranchSSRBonus4@@@T_ServerStatus_Tip_BranchSSRBonus4@Activity@@DropBonus@@@@@@@@@@@@@{StatusSource:"Activity",TargetType:"ItemType",IDs:["ActivityCurrency"],CountMultiplier:0.8}@@
+BranchSSRBonus5@@@T_ServerStatus_Tip_BranchSSRBonus5@Activity@@DropBonus@@@@@@@@@@@@@{StatusSource:"Activity",TargetType:"ItemType",IDs:["ActivityCurrency"],CountMultiplier:1}@@
+BranchSSRBonus6@@@T_ServerStatus_Tip_BranchSSRBonus6@Activity@@DropBonus@@@@@@@@@@@@@{StatusSource:"Activity",TargetType:"ItemType",IDs:["ActivityCurrency"],CountMultiplier:1.2}@@
+FarmingSceneDropMultiplier@@@@Account@@SceneDropMultiplier@@@@@@@@@10@@@@{StatusSource:"Account",TargetType:"EpisodeID",IDs:["Coin","Exp","Element"],CountMultiplier:1}@@
+ActivityDrop@T_ServerStatus_BuffName_ActivityDrop@@@Activity@@DropBonus@@@@@@@@@@1@@T_ServerStatus_Source_ActivityDrop@{StatusSource:"Account",TargetType:"EpisodeID",IDs:["Coin","Exp","Element"],CountMultiplier:1}@@

@@ -1,0 +1,44 @@
+[
+  {
+    "ID": "GIFTAccountLV10",
+    "CommodityID": "GIFTLevel01",
+    "FreeDrops": "GIFTAccountLV10_1",
+    "PayDrops": "GIFTAccountLV10_2"
+  },
+  {
+    "ID": "GIFTAccountLV15",
+    "CommodityID": "GIFTLevel01",
+    "FreeDrops": "GIFTAccountLV15_1",
+    "PayDrops": "GIFTAccountLV15_2"
+  },
+  {
+    "ID": "GIFTAccountLV20",
+    "CommodityID": "GIFTLevel01",
+    "FreeDrops": "GIFTAccountLV20_1",
+    "PayDrops": "GIFTAccountLV20_2"
+  },
+  {
+    "ID": "GIFTAccountLV25",
+    "CommodityID": "GIFTLevel01",
+    "FreeDrops": "GIFTAccountLV25_1",
+    "PayDrops": "GIFTAccountLV25_2"
+  },
+  {
+    "ID": "GIFTAccountLV30",
+    "CommodityID": "GIFTLevel01",
+    "FreeDrops": "GIFTAccountLV30_1",
+    "PayDrops": "GIFTAccountLV30_2"
+  },
+  {
+    "ID": "GIFTAccountLV35",
+    "CommodityID": "GIFTLevel01",
+    "FreeDrops": "GIFTAccountLV35_1",
+    "PayDrops": "GIFTAccountLV35_2"
+  },
+  {
+    "ID": "GIFTAccountLV40",
+    "CommodityID": "GIFTLevel01",
+    "FreeDrops": "GIFTAccountLV40_1",
+    "PayDrops": "GIFTAccountLV40_2"
+  }
+]

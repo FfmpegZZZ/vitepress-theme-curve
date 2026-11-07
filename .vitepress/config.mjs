@@ -192,6 +192,17 @@ export default withPwa(
     // vite
     vite: {
       plugins: [
+        {
+          name: "kamikoi-atlas-directory-index",
+          configureServer(server) {
+            server.middlewares.use((req, _res, next) => {
+              if (req.url === "/kamikoi-atlas" || req.url === "/kamikoi-atlas/") {
+                req.url = "/kamikoi-atlas/index.html";
+              }
+              next();
+            });
+          },
+        },
         AutoImport({
           imports: ["vue", "vitepress"],
           dts: ".vitepress/auto-imports.d.ts",

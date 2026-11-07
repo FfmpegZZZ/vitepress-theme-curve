@@ -1,0 +1,1 @@
+ID@Name@Group@CostMins@CostEnergy@ConditionLV@AdministationLV@TransitstationsLV@BarracksLV@NeedLV@BonusJob@Drops@Icon@Character@QuestDialog

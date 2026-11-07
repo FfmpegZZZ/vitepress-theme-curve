@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>神明恋爱放送中 · 角色图鉴</title>
+  <link rel="icon" href="assets/ui/Brand/game-app-icon.webp" type="image/webp">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="game-ui.css?v=20261107-round-portraits">
+  <link rel="stylesheet" href="battle-charts.css?v=20261107-charts1">
+  <link rel="stylesheet" href="calculator.css?v=20261104-combat">
+  <link rel="stylesheet" href="team-calculator.css?v=20261107-round-portraits">
+  <link rel="stylesheet" href="growth-calculator.css?v=20261104-growth">
+  <link rel="stylesheet" href="user-data.css?v=20261105-effects">
+  <link rel="stylesheet" href="ui-polish.css?v=20261107-brand-name">
+  <link rel="stylesheet" href="rankings.css?v=20261107-round-portraits">
+  <link rel="stylesheet" href="media-library.css?v=20261107-materials2">
+  <script defer src="data/atlas.js?v=20261104-stats"></script>
+  <script defer src="data/trials.js?v=20261104-resources"></script>
+  <script defer src="game-ui.js?v=20261107-player-copy2"></script>
+  <script defer src="user-data.js?v=20261105-effects"></script>
+  <script defer src="user-data-ui.js?v=20261107-player-copy2"></script>
+  <script defer src="combat.js?v=20261107-player-copy2"></script>
+  <script defer src="calculator.js?v=20261107-player-copy2"></script>
+  <script defer src="data/battle-rules.js?v=20261105-effects"></script>
+  <script defer src="battle-rules.js?v=20261104-resources"></script>
+  <script defer src="full-effects.js?v=20261107-charts1"></script>
+  <script defer src="team-combat.js?v=20261105-effects"></script>
+  <script defer src="trial-profiles.js?v=20261104-resources"></script>
+  <script defer src="battle-charts.js?v=20261107-charts1"></script>
+  <script defer src="team-calculator.js?v=20261107-charts1"></script>
+  <script defer src="data/growth.js?v=20261104-growth"></script>
+  <script defer src="growth.js?v=20261107-player-copy2"></script>
+  <script defer src="growth-calculator.js?v=20261107-player-copy2"></script>
+  <script defer src="data/rankings.js?v=20261106-rarity-bands1"></script>
+  <script defer src="rankings-core.js?v=20261106-rarity-bands1"></script>
+  <script defer src="rankings.js?v=20261107-disclaimer"></script>
+  <script defer src="data/chibi.js?v=20261107-chibi1"></script>
+  <script defer src="chibi-gallery.js?v=20261107-chibi1"></script>
+  <script defer src="app.js?v=20261107-disclaimer"></script>
+</head>
+<body>
+  <aside class="sidebar">
+    <a class="brand" href="#"><span class="brand-symbol" aria-hidden="true"><img class="game-icon" src="assets/ui/Brand/game-app-icon.webp" alt=""></span><span class="brand-copy"><span class="brand-name">神明恋爱放送中</span><small>角色图鉴</small></span></a>
+    <nav class="side-tools" aria-label="常用工具"><button data-view="calculator">组队计算</button><button data-view="rankings">角色梯度</button><button data-view="growth">养成计算</button><button data-view="userdata">我的数据</button></nav>
+    <p class="side-label">角色档案 <span>CHARACTERS</span></p>
+    <nav id="character-nav" aria-label="按角色筛选"></nav>
+    <div class="side-bottom"><span class="status-dot"></span> 玩家图鉴 <p>资料版本 · 2026.11.03</p><button class="text-button" id="source-button">查看收录说明 ↗</button></div>
+  </aside>
+
+  <div class="main-shell">
+    <header class="topbar">
+      <div class="breadcrumbs">神明恋爱放送中 <span>/</span> 角色档案</div>
+      <span class="edition">PLAYER GUIDE <span class="status-dot"></span></span>
+    </header>
+    <main>
+      <section class="hero" id="hero" aria-labelledby="hero-title">
+        <div class="hero-copy"><p class="eyebrow">KAMIKOI · CHARACTER ARCHIVE</p><h1 id="hero-title">神明与羁绊</h1><p id="hero-description">从相遇的瞬间，到每一次并肩作战。<br>收藏角色立绘、羁绊卡面与战斗资料。</p><div class="hero-counts" id="hero-counts"></div></div>
+        <div class="hero-visual" id="hero-visual" aria-hidden="true"></div><span class="hero-index" id="hero-index">ARCHIVE / 001</span>
+      </section>
+
+      <div class="section-bar"><nav class="view-tabs" aria-label="图鉴视图"><button data-view="cards" class="active" aria-current="page">羁绊图鉴 <span id="card-total"></span></button><button data-view="people">角色立绘 <span>08</span></button><button data-view="rankings">角色梯度</button><button data-view="calculator">组队计算</button><button data-view="growth">养成计算</button><button data-view="userdata">我的数据</button><button data-view="about">收录说明</button></nav><span class="subtle hide-small">每一份羁绊，皆有迹可循</span></div>
+
+      <section id="cards-view">
+        <div class="filter-panel">
+          <label class="search-field"><span aria-hidden="true"><img class="game-icon game-icon-tile" src="assets/ui/Common/Icon_Magnifier.webp" alt=""></span><input id="search" type="search" placeholder="搜索羁绊、角色、技能或编号…" aria-label="搜索羁绊、角色、技能或编号"><kbd>/</kbd></label>
+          <div class="filter-line"><div id="rarity-filters" class="segmented" aria-label="稀有度筛选"><button data-rarity="" class="active" aria-pressed="true">全部</button><button data-rarity="SSR" aria-pressed="false">SSR</button><button data-rarity="SR" aria-pressed="false">SR</button><button data-rarity="R" aria-pressed="false">R</button></div><label class="select-wrap"><span>属性</span><select id="element-filter" aria-label="属性筛选"><option value="">全部属性</option></select></label><select id="availability-filter" aria-label="图片收录筛选"><option value="">全部资料</option><option value="image">已收录图片</option><option value="full">有完整卡面</option><option value="missing">图片暂缺</option></select><button id="reset-filters" class="reset-button">重置筛选</button></div>
+        </div>
+        <div class="results-bar"><p id="results-count" role="status" aria-live="polite"></p><div class="result-options"><label class="reserved-toggle"><input type="checkbox" id="include-reserved">显示名称待确认条目</label><select id="sort" aria-label="排序"><option value="default">有图优先</option><option value="rarity">稀有度排序</option><option value="name">名称排序</option></select></div></div>
+        <div id="card-grid" class="card-grid"></div>
+        <div id="empty-state" class="empty-state" hidden><img class="game-icon empty-game-icon" src="assets/ui/SystemIcon/Role.webp" alt=""><h2>没有找到符合条件的羁绊</h2><p>试试其他关键词，或重置筛选条件。</p><button class="primary-button" id="empty-reset">重置筛选</button></div>
+        <div class="page-controls" id="pagination"></div>
+        <p class="collection-note"><img class="game-icon game-icon-tile" src="assets/ui/Common/Icon_Info.webp" alt=""> 部分图片与技能说明暂未收录，开放情况与获取方式请以游戏内为准。</p>
+      </section>
+
+      <section id="people-view" hidden><div class="view-intro"><div><p class="eyebrow">THE CHARACTERS</p><h2>与神明相遇</h2></div><p>查阅角色立绘与Q版形象，支持放大查看和保存。</p></div><nav class="media-categories" aria-label="立绘类型"><button id="portrait-standard" type="button" class="media-category active" aria-pressed="true">常规立绘</button><button id="portrait-chibi" type="button" class="media-category" aria-pressed="false">Q版角色</button></nav><div id="standard-portraits"><div id="people-grid" class="people-grid"></div><div id="extra-art"></div></div><div id="chibi-gallery" hidden></div></section>
+      <section id="calculator-view" hidden><div id="team-calculator"></div><details class="team-single"><summary>单次伤害计算（进阶）</summary><div id="single-calculator"></div></details></section>
+      <section id="growth-view" hidden><div id="growth-calculator"></div></section>
+      <section id="rankings-view" hidden><div id="rankings"></div></section>
+      <section id="userdata-view" hidden><div id="user-data-manager"></div></section>
+      <section id="about-view" class="about-view" hidden></section>
+      <footer><span>神明恋爱放送中 · 玩家图鉴</span><span>资料版本 · 2026.11.03</span><p class="site-disclaimer">免责声明：本站为非官方玩家图鉴，数据、攻略、排行及计算结果仅供参考，可能存在遗漏或版本差异。实际数值、技能效果、消耗与奖励均以游戏内为准；模拟结果不代表实战通关保证。</p></footer>
+    </main>
+  </div>
+
+  <dialog id="detail-dialog" aria-labelledby="detail-title"><button class="dialog-close" id="detail-close" aria-label="关闭详情">×</button><div id="detail-content"></div></dialog>
+  <dialog id="zoom-dialog" aria-labelledby="zoom-title"><div class="zoom-toolbar"><span id="zoom-title"></span><div><a id="zoom-download" download>保存图片 ↓</a><button id="zoom-close" aria-label="关闭大图">×</button></div></div><div class="zoom-image-wrap"><img id="zoom-image" alt=""></div></dialog>
+  <noscript>请在浏览器中启用 JavaScript，以浏览图鉴。</noscript>
+</body>
+</html>
+
+

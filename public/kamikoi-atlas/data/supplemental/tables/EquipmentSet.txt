@@ -1,0 +1,1 @@
+ID@Count@Icon@Name@Description@HPRate@AttackRate@DefenceRate@SpeedRate@CriticalRate@CriticalDamageRate@PinchRate@CounterRate@EffectHitRate@ResistanceRate@LifeStealRate@DynamicField1@DynamicField2

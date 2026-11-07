@@ -1,0 +1,102 @@
+[
+  {
+    "Level": "1",
+    "ExpToNextLevel": "1300",
+    "MaxMemberCount": "16"
+  },
+  {
+    "Level": "2",
+    "ExpToNextLevel": "3000",
+    "MaxMemberCount": "18"
+  },
+  {
+    "Level": "3",
+    "ExpToNextLevel": "5000",
+    "MaxMemberCount": "20"
+  },
+  {
+    "Level": "4",
+    "ExpToNextLevel": "8000",
+    "MaxMemberCount": "21"
+  },
+  {
+    "Level": "5",
+    "ExpToNextLevel": "12000",
+    "MaxMemberCount": "22"
+  },
+  {
+    "Level": "6",
+    "ExpToNextLevel": "17000",
+    "MaxMemberCount": "23"
+  },
+  {
+    "Level": "7",
+    "ExpToNextLevel": "23000",
+    "MaxMemberCount": "24"
+  },
+  {
+    "Level": "8",
+    "ExpToNextLevel": "30000",
+    "MaxMemberCount": "25"
+  },
+  {
+    "Level": "9",
+    "ExpToNextLevel": "38000",
+    "MaxMemberCount": "26"
+  },
+  {
+    "Level": "10",
+    "ExpToNextLevel": "50000",
+    "MaxMemberCount": "27"
+  },
+  {
+    "Level": "11",
+    "ExpToNextLevel": "75000",
+    "MaxMemberCount": "27"
+  },
+  {
+    "Level": "12",
+    "ExpToNextLevel": "125000",
+    "MaxMemberCount": "28"
+  },
+  {
+    "Level": "13",
+    "ExpToNextLevel": "200000",
+    "MaxMemberCount": "28"
+  },
+  {
+    "Level": "14",
+    "ExpToNextLevel": "300000",
+    "MaxMemberCount": "29"
+  },
+  {
+    "Level": "15",
+    "ExpToNextLevel": "450000",
+    "MaxMemberCount": "29"
+  },
+  {
+    "Level": "16",
+    "ExpToNextLevel": "650000",
+    "MaxMemberCount": "30"
+  },
+  {
+    "Level": "17",
+    "ExpToNextLevel": "1050000",
+    "MaxMemberCount": "30"
+  },
+  {
+    "Level": "18",
+    "ExpToNextLevel": "2000000",
+    "MaxMemberCount": "30"
+  },
+  {
+    "Level": "19",
+    "ExpToNextLevel": "5000000",
+    "MaxMemberCount": "30"
+  },
+  {
+    "Level": "20",
+    "ExpToNextLevel": "9999999",
+    "MaxMemberCount": "30"
+  }
+]

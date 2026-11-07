@@ -1,0 +1,12 @@
+{
+  "format": "kamikoi-user-data",
+  "version": 1,
+  "name": "我的档案（请按实际情况修改）",
+  "fanRewards": 0,
+  "roster": [
+    {"cardId":"C04_SSR_002","level":40,"stars":2,"breakthrough":3,"exp":0},
+    {"cardId":"C01_SSR_001","level":20,"stars":0,"breakthrough":1,"exp":0}
+  ],
+  "team": ["C04_SSR_002","C01_SSR_001"],
+  "inventory": {"1":0,"100":0,"101":0,"102":0,"103":0,"R33":0,"R32":0,"R31":0}
+}

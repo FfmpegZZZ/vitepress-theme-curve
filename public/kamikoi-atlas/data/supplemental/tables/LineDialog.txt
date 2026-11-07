@@ -1,0 +1,1 @@
+ID@DramaID@Type@Speaker@SpeakerIcon@Dialog@NextDialogIDs@Energy@DialogImagePrefab@DialogDramaImage@DialogDramaID

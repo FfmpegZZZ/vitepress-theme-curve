@@ -1,0 +1,90 @@
+[
+  {
+    "ID": "Summon",
+    "Name": "T_AccountStageQuest_Name_Summon",
+    "Icon": "Icon/SystemIcon[Summon]",
+    "Condition": "PassScene",
+    "ConditionValue": "",
+    "ConditionID": "1_1_2"
+  },
+  {
+    "ID": "Store",
+    "Name": "T_AccountStageQuest_Name_Store",
+    "Icon": "Icon/SystemIcon[Shop]",
+    "Condition": "PassScene",
+    "ConditionValue": "",
+    "ConditionID": "1_1_2"
+  },
+  {
+    "ID": "RoleList",
+    "Name": "T_AccountStageQuest_Name_RoleList",
+    "Icon": "Icon/SystemIcon[Role]",
+    "Condition": "PassScene",
+    "ConditionValue": "",
+    "ConditionID": "1_1_2"
+  },
+  {
+    "ID": "Routine",
+    "Name": "T_AccountStageQuest_Name_Routine",
+    "Icon": "Icon/SystemIcon[Quest]",
+    "Condition": "PassScene",
+    "ConditionValue": "",
+    "ConditionID": "1_1_6"
+  },
+  {
+    "ID": "NormalActivity",
+    "Name": "T_AccountStageQuest_Name_NormalActivity",
+    "Icon": "Icon/SystemIcon[NormalActivity]",
+    "Condition": "PassScene",
+    "ConditionValue": "",
+    "ConditionID": "1_1_6"
+  },
+  {
+    "ID": "FanClub",
+    "Name": "T_QuestGroup_Name_Test_FanClub",
+    "Icon": "Icon/SystemIcon[FanClub]",
+    "Condition": "PassScene",
+    "ConditionValue": "",
+    "ConditionID": "1_1_16"
+  },
+  {
+    "ID": "ResourceScene",
+    "Name": "T_AccountStageQuest_Name_ResourceScene",
+    "Icon": "Icon/SystemIcon[Resource]",
+    "Condition": "PassScene",
+    "ConditionValue": "",
+    "ConditionID": "1_2_2"
+  },
+  {
+    "ID": "SearchSummon",
+    "Name": "T_AccountStageQuest_Name_SearchSummon",
+    "Icon": "Icon/SystemIcon[Search]",
+    "Condition": "PassScene",
+    "ConditionValue": "",
+    "ConditionID": "1_2_10"
+  },
+  {
+    "ID": "LobbyDecorate",
+    "Name": "T_AccountStageQuest_Name_LobbyDecorate",
+    "Icon": "Icon/SystemIcon[LobbyDecorate]",
+    "Condition": "PassScene",
+    "ConditionValue": "",
+    "ConditionID": "1_2_18"
+  },
+  {
+    "ID": "TrialScene",
+    "Name": "T_AccountStageQuest_Name_TrialScene",
+    "Icon": "Icon/SystemIcon[Trial]",
+    "Condition": "PassScene",
+    "ConditionValue": "",
+    "ConditionID": "1_3_18"
+  },
+  {
+    "ID": "SideStory",
+    "Name": "T_AccountStageQuest_Name_SideStory",
+    "Icon": "Icon/SystemIcon[Activity]",
+    "Condition": "PassScene",
+    "ConditionValue": "",
+    "ConditionID": "1_5_18"
+  }
+]

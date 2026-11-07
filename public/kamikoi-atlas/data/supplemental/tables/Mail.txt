@@ -1,0 +1,16 @@
+ID@Sender@Message@ShowGMTip@ShowMailMessageUI@SenderIcon@Type@Password@RetentionHours@ItemIcon@DropIDs@AutoDelete
+SignInReward@T_Mail_Sender_SignInReward@T_Mail_Message_SignInReward@FALSE@FALSE@@Normal@no@168@@@
+NewbieSignInReward@T_Mail_Sender_SignInReward@T_Mail_Message_NewbieSignInReward@FALSE@FALSE@@Normal@no@168@@@
+NewbieContinuousReward@T_Mail_Sender_SignInReward@T_Mail_Message_NewbieContinuousReward@FALSE@FALSE@@Normal@no@168@@@
+ActivitySignInReward@T_Mail_Sender_SignInReward@T_Mail_Message_ActivitySignInReward@FALSE@FALSE@@Normal@no@168@@@
+ActivityContinuousReward@T_Mail_Sender_SignInReward@T_Mail_Message_ActivityContinuousReward@FALSE@FALSE@@Normal@no@168@@@
+InvitationCode@T_Mail_Sender_SignInReward@T_Mail_Message_InvitationCode@FALSE@TRUE@@Normal@no@168@Icon/Item[ContractSummon]@InvitationCode@FALSE
+InviteCodePurchaseReward@T_Mail_Sender_SignInReward@T_Mail_Message_InviteCodePurchaseReward@FALSE@TRUE@@Normal@no@168@Icon/Item[ContractSummon]@InviteCodePurchaseReward@FALSE
+InvitedFriendPurchased@T_Mail_Sender_SignInReward@T_Mail_Message_InvitedFriendPurchased@FALSE@TRUE@@Normal@no@168@Icon/Item[ContractMystic]@InvitedFriendPurchased@FALSE
+SignUpBonus@T_Mail_Sender_SignInReward@T_Mail_Message_SignUpBonus@FALSE@TRUE@@Normal@no@168@Icon/Item[GiftPack]@NewBie0001@FALSE
+RedemptionSuccessful@T_Mail_Sender_SignInReward@T_Mail_Message_RedemptionSuccessful@FALSE@TRUE@@Normal@no@168@Icon/Item[ContractSummon]@RedemptionNumber@FALSE
+ReGIFT@T_Mail_Sender_SignInReward@T_Mail_Message_ReGIFT@FALSE@TRUE@@Normal@no@168@Icon/Item[GiftPack]@@FALSE
+MaintenanceCompensationLetter@T_Mail_Sender_SignInReward@T_Mail_Message_MaintenanceCompensationLetter@FALSE@TRUE@@Normal@no@168@Icon/Item[ContractSummon]@RedemptionNumber@FALSE
+CompensationLetter@T_Mail_Sender_SignInReward@T_Mail_Message_CompensationLetter@FALSE@TRUE@@Normal@no@168@Icon/Item[ContractSummon]@RedemptionNumber@FALSE
+Others@T_Mail_Sender_SignInReward@T_Mail_Message_Others@FALSE@TRUE@@Normal@no@168@Icon/Item[ContractSummon]@RedemptionNumber@FALSE
+RewardBeforeReset@T_Mail_Sender_SignInReward@T_Mail_Message_RewardBeforeReset@FALSE@TRUE@@Normal@no@168@Icon/Item[ContractSummon]@@FALSE
