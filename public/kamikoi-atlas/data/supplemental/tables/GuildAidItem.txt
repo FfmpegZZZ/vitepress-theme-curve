@@ -1,8 +1,0 @@
-ID@MaxCount@PerSupportCount@RewardCount
-CatalystRare@2@1@40
-Rune1@20@4@10
-Rune2@5@1@20
-Mat1@20@4@10
-Mat2@16@4@15
-Mat3@12@3@20
-Mat4@8@2@30

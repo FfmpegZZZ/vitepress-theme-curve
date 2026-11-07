@@ -1,1 +1,0 @@
-StrengthenLV@MaxEquipLV@MinEquipLV@Part@Group@HPValue@HPRate@AttackValue@AttackRate@DefenceValue@DefenceRate@SpeedValue@CriticalRate@CriticalDamageRate@PinchRate@CounterRate@EffectHitRate@ResistanceRate

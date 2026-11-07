@@ -1,1 +1,0 @@
-ID@Job@Star@Exp@IsActivity@IsFunSingle@Description@FunDescription@CanSell@Image@LongIcon@CutInPrefab@CutInSound@Base.AttackValue@Base.HPValue@Base.DefenceValue@Max.AttackValue@Max.HPValue@Max.DefenceValue@Base.DynamicField1@Base.DynamicField2@Base.DynamicField3@Base.DynamicField4@LVProp.DynamicField1@LVProp.DynamicField2@LVProp.DynamicField3@LVProp.DynamicField4

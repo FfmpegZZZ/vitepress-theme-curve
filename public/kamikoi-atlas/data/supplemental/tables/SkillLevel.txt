@@ -1,1 +1,0 @@
-SkillID@LV@Description@Cost@DynamicField1@DynamicField2@DynamicField3@DynamicField4

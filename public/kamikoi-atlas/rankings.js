@@ -35,7 +35,7 @@ window.AtlasRankings=(()=>{
   help.append(n('p','','T0 为 SSR 中本职业前两位以内、通关率至少 90% 且自身存活率至少 80% 的稳定领先者；第二位综合评分与领先者差不超过 0.25（其他维度为 0.5%）。第二、三位完全同分时不按编号凑名额，T0 可空缺。其余 SSR 列为 T1，表示常规培养选择，不保证当前关卡能通关。'));
   help.append(n('p','','SR 在本职业同稀有度内比较：相对分至少 50、通关率至少 90%、自身存活率至少 80% 为 T2，其余 T3。T2 为 SR 中优先选择，T3 为按需培养。四档是明确的培养优先级规则，并非模拟器证明的绝对战力倍数。综合合并职业，职业按钮过滤；搜索、属性、稀有度和拥有筛选均不重新评级。'));
   help.append(n('p','','这是基于当前数据与基准的参考榜，未代表官方、社区共识或实机通关结论。属性克制、首领免控、手动时机、队友搭配和关卡波次会改变结果。缺少技能中文说明的卡单列待评估；是否有图片不影响参评。低梯度卡也可能提供特定关卡需要的对策。'));
-  const source=n('a','download-button','下载完整评分与基准 JSON');source.href='data/rankings.json';source.download='神明恋爱-梯度排行依据.json';help.append(source);host.append(help);
+  const source=n('a','download-button','下载评分与基准数据（GZip）');source.href='data/rankings.json.gz';source.download='神明恋爱-梯度排行依据.json.gz';help.append(source);host.append(help);
   const enemyInfo=n('details','ranking-method');host.append(enemyInfo);
   const count=n('p','ranking-count');count.setAttribute('role','status');count.setAttribute('aria-live','polite');host.append(count);
   const ceiling=n('p','ranking-assumption');host.append(ceiling);

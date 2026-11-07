@@ -1,1 +1,0 @@
-ID@Part@EquipLV@MaxClassLV@MinClassLV@MainPropertyGroup@SubPropertyGroup@Sets@Tags

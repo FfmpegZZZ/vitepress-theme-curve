@@ -1,1 +1,0 @@
-MaxEquipLV@MinEquipLV@StrengthenLV@ClassLV0Exp@ClassLV1Exp@ClassLV2Exp@ClassLV3Exp@ClassLV4Exp

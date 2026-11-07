@@ -1,4 +1,0 @@
-Part@Chapter@Section@Name
-CombatContent@@@T_GuideDocument_Name_CombatContent
-CombatContent@1@@T_GuideDocument_Name_CombatContent
-CombatContent@1@1@T_GuideDocument_Name_CombatContent_2
