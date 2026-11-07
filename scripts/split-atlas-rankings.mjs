@@ -3,7 +3,7 @@ import { readFile, writeFile } from 'node:fs/promises'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-const root = resolve(dirname(fileURLToPath(import.meta.url)), '../public/kamikoi-atlas/data')
+const root = resolve(dirname(fileURLToPath(import.meta.url)), '../public/kamikoi/data')
 const source = JSON.parse(gunzipSync(await readFile(resolve(root, 'rankings.json.gz'))).toString('utf8'))
 const { profiles, ...metadata } = source
 

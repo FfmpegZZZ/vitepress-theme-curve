@@ -193,11 +193,11 @@ export default withPwa(
     vite: {
       plugins: [
         {
-          name: "kamikoi-atlas-directory-index",
+          name: "kamikoi-directory-index",
           configureServer(server) {
             server.middlewares.use((req, _res, next) => {
-              if (req.url === "/kamikoi-atlas" || req.url === "/kamikoi-atlas/") {
-                req.url = "/kamikoi-atlas/index.html";
+              if (["/kamikoi", "/kamikoi/", "/kamikoi-atlas", "/kamikoi-atlas/"].includes(req.url)) {
+                req.url = "/kamikoi/index.html";
               }
               next();
             });

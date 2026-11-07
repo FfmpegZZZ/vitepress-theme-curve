@@ -163,7 +163,7 @@ export const themeConfig = {
     {
       text: "工具",
       items: [
-        { text: "神明恋爱放送中图鉴", link: "/kamikoi-atlas/", icon: "game" },
+        { text: "神明恋爱放送中图鉴", link: "https://www.wudu.hk/kamikoi/", icon: "game" },
         { text: "其他工具", link: "/pages/tool", icon: "download" },
       ],
     },
